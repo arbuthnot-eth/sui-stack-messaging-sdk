@@ -187,10 +187,10 @@ export class SuiStackMessagingClient {
 	// ===== Private Helper Methods =====
 
 	/**
-	 * Get user's member cap ID for a specific channel
+	 * Get user's member cap ID for a specific channel.
 	 * @param userAddress - The user's address
 	 * @param channelId - The channel ID
-	 * @returns Member cap ID
+	 * @returns Member cap ID or throws if not found
 	 */
 	async #getUserMemberCapId(userAddress: string, channelId: string): Promise<string> {
 		let cursor: string | null = null;
