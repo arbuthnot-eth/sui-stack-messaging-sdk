@@ -35,3 +35,7 @@ export type * from './storage/adapters/walrus/types.js';
 
 // Logging utilities (optional - requires @logtape/logtape peer dependency)
 export { getLogger, LOG_CATEGORIES } from './logging/index.js';
+
+// Address resolution utilities (for SuiNS name resolution)
+export { SuiNSResolver, isSuiNSName } from './utils/addressResolution.js';
+export type { AddressResolver } from './utils/addressResolution.js';
