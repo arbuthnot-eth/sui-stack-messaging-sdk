@@ -62,6 +62,7 @@ import { EnvelopeEncryption } from './encryption/envelopeEncryption.js';
 
 import type { RawTransactionArgument } from './contracts/utils/index.js';
 import type { AddressResolver } from './utils/addressResolution.js';
+import type { ChannelNameResolver } from './utils/channelResolution.js';
 import {
 	CreatorCap,
 	transferToSender as transferCreatorCap,
@@ -81,6 +82,7 @@ export class SuiStackMessagingClient {
 	#envelopeEncryption: EnvelopeEncryption;
 	#sealConfig: SealConfig;
 	#addressResolver?: AddressResolver;
+	#channelResolver?: ChannelNameResolver;
 	// TODO: Leave the responsibility of caching to the caller
 	// #encryptedChannelDEKCache: Map<string, EncryptedSymmetricKey> = new Map(); // channelId --> EncryptedSymmetricKey
 	// #channelMessagesTableIdCache: Map<string, string> = new Map<string, string>(); // channelId --> messagesTableId
@@ -130,6 +132,9 @@ export class SuiStackMessagingClient {
 
 		// Initialize address resolver if provided
 		this.#addressResolver = options.addressResolver;
+
+		// Initialize channel resolver if provided
+		this.#channelResolver = options.channelResolver;
 	}
 
 	/** @deprecated use `messaging()` instead */
@@ -186,6 +191,7 @@ export class SuiStackMessagingClient {
 					sessionKeyConfig: 'sessionKeyConfig' in options ? options.sessionKeyConfig : undefined,
 					sealConfig: options.sealConfig,
 					addressResolver: options.addressResolver,
+					channelResolver: options.channelResolver,
 				});
 			},
 		};
@@ -204,6 +210,19 @@ export class SuiStackMessagingClient {
 			return addresses;
 		}
 		return this.#addressResolver.resolveMany(addresses);
+	}
+
+	/**
+	 * Resolve a channel name or ID to a channel object ID.
+	 * If no resolver is configured, returns the input unchanged.
+	 * @param channelNameOrId - A channel name (e.g., "#general") or channel object ID
+	 * @returns The resolved channel object ID
+	 */
+	async #resolveChannelId(channelNameOrId: string): Promise<string> {
+		if (!this.#channelResolver) {
+			return channelNameOrId;
+		}
+		return this.#channelResolver.resolve(channelNameOrId);
 	}
 
 	/**
@@ -523,12 +542,13 @@ export class SuiStackMessagingClient {
 
 	/**
 	 * Get all members of a channel
-	 * @param channelId - The channel ID
+	 * @param channelNameOrId - The channel ID or name (e.g., "#general" if channelResolver is configured)
 	 * @returns Channel members with addresses and member cap IDs
 	 */
-	async getChannelMembers(channelId: string): Promise<ChannelMembersResponse> {
+	async getChannelMembers(channelNameOrId: string): Promise<ChannelMembersResponse> {
+		const channelId = await this.#resolveChannelId(channelNameOrId);
 		const logger = getLogger(LOG_CATEGORIES.CLIENT_READS);
-		logger.debug('Fetching channel members', { channelId });
+		logger.debug('Fetching channel members', { channelId, originalInput: channelNameOrId });
 
 		// 1. Get the channel object to access the auth structure
 		const channelObjectsRes = await this.#suiClient.core.getObjects({
@@ -611,18 +631,19 @@ export class SuiStackMessagingClient {
 
 	/**
 	 * Get messages from a channel with pagination (returns decrypted messages)
-	 * @param request - Request parameters including channelId, userAddress, cursor, limit, and direction
+	 * @param request - Request parameters including channelId (or channel name), userAddress, cursor, limit, and direction
 	 * @returns Decrypted messages with pagination info
 	 */
 	async getChannelMessages({
-		channelId,
+		channelId: channelNameOrId,
 		userAddress,
 		cursor = null,
 		limit = 50,
 		direction = 'backward',
 	}: GetChannelMessagesRequest): Promise<DecryptedMessagesResponse> {
+		const channelId = await this.#resolveChannelId(channelNameOrId);
 		const logger = getLogger(LOG_CATEGORIES.CLIENT_READS);
-		logger.debug('Fetching channel messages', { channelId, userAddress, cursor, limit, direction });
+		logger.debug('Fetching channel messages', { channelId, originalInput: channelNameOrId, userAddress, cursor, limit, direction });
 
 		// 1. Get channel metadata (we need the raw channel object for metadata, not decrypted)
 		const channelObjectsRes = await this.#suiClient.core.getObjects({
@@ -717,15 +738,16 @@ export class SuiStackMessagingClient {
 
 	/**
 	 * Get new messages since last polling state (returns decrypted messages)
-	 * @param request - Request with channelId, userAddress, pollingState, and limit
+	 * @param request - Request with channelId (or channel name), userAddress, pollingState, and limit
 	 * @returns New decrypted messages since last poll
 	 */
 	async getLatestMessages({
-		channelId,
+		channelId: channelNameOrId,
 		userAddress,
 		pollingState,
 		limit = 50,
 	}: GetLatestMessagesRequest): Promise<DecryptedMessagesResponse> {
+		const channelId = await this.#resolveChannelId(channelNameOrId);
 		// 1. Get current channel state to check for new messages
 		const channelObjectsRes = await this.#suiClient.core.getObjects({
 			objectIds: [channelId],
@@ -1077,12 +1099,12 @@ export class SuiStackMessagingClient {
 
 	/**
 	 * Execute a send message transaction
-	 * @param params - Transaction parameters including signer, channelId, memberCapId, message, and encryptedKey
+	 * @param params - Transaction parameters including signer, channelId (or channel name), memberCapId, message, and encryptedKey
 	 * @returns Transaction digest and message ID
 	 */
 	async executeSendMessageTransaction({
 		signer,
-		channelId,
+		channelId: channelNameOrId,
 		memberCapId,
 		message,
 		attachments,
@@ -1094,10 +1116,12 @@ export class SuiStackMessagingClient {
 		encryptedKey: EncryptedSymmetricKey;
 		attachments?: File[];
 	} & { signer: Signer }): Promise<{ digest: string; messageId: string }> {
+		const channelId = await this.#resolveChannelId(channelNameOrId);
 		const logger = getLogger(LOG_CATEGORIES.CLIENT_WRITES);
 		const senderAddress = signer.toSuiAddress();
 		logger.debug('Sending message', {
 			channelId,
+			originalInput: channelNameOrId,
 			memberCapId,
 			senderAddress,
 			messageLength: message.length,
@@ -1157,7 +1181,9 @@ export class SuiStackMessagingClient {
 	 */
 	addMembers(options: AddMembersOptions) {
 		return async (tx: Transaction) => {
-			const { channelId, memberCapId, newMemberAddresses } = options;
+			const { memberCapId, newMemberAddresses } = options;
+			// Resolve channel name to ID if resolver is configured
+			const channelId = await this.#resolveChannelId(options.channelId);
 			const logger = getLogger(LOG_CATEGORIES.CLIENT_WRITES);
 
 			// Resolve SuiNS names to addresses if resolver is configured
@@ -1286,14 +1312,17 @@ export class SuiStackMessagingClient {
 		digest: string;
 		addedMembers: AddedMemberCap[];
 	}> {
+		// Resolve channel name to ID if resolver is configured
+		const channelId = await this.#resolveChannelId(options.channelId);
 		const logger = getLogger(LOG_CATEGORIES.CLIENT_WRITES);
 		logger.debug('Adding members to channel', {
-			channelId: options.channelId,
+			channelId,
+			originalInput: options.channelId,
 			newMemberAddresses: options.newMemberAddresses,
 		});
 
 		// If creatorCapId is not provided, use signer's address to fetch it
-		const { channelId, memberCapId, newMemberAddresses, creatorCapId } = options;
+		const { memberCapId, newMemberAddresses, creatorCapId } = options;
 		const addMembersOptions: AddMembersOptions = creatorCapId
 			? { channelId, memberCapId, newMemberAddresses, creatorCapId }
 			: { channelId, memberCapId, newMemberAddresses, address: signer.toSuiAddress() };
@@ -1937,6 +1966,7 @@ export function messaging(options: MessagingClientExtensionOptions) {
 				sessionKeyConfig: 'sessionKeyConfig' in options ? options.sessionKeyConfig : undefined,
 				sealConfig: options.sealConfig,
 				addressResolver: options.addressResolver,
+				channelResolver: options.channelResolver,
 			});
 		},
 	};
