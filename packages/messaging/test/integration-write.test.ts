@@ -100,6 +100,7 @@ describe('Integration tests - Write Path', () => {
 			// Fetch all the MemberCap objects using their IDs
 			const allMemberCapObjects = await client.core.getObjects({
 				objectIds: memberCapIds,
+				include: { content: true },
 			});
 
 			// Parse the MemberCap objects and filter out any errors
@@ -110,7 +111,7 @@ describe('Integration tests - Write Path', () => {
 					continue;
 				}
 				try {
-					const memberCap = MemberCap.parse(await obj.content);
+					const memberCap = MemberCap.parse(obj.content);
 					channelMemberCaps.push(memberCap);
 				} catch (error) {
 					console.warn('Failed to parse MemberCap object:', error);
@@ -363,10 +364,12 @@ describe('Integration tests - Write Path', () => {
 			tx.setSenderIfNotSet(signer.toSuiAddress());
 
 			// Sign and execute the transaction
-			const { digest } = await signer.signAndExecuteTransaction({
+			const result = await signer.signAndExecuteTransaction({
 				transaction: tx,
-				client: client.core,
+				client,
 			});
+			const txData = result.$kind === 'Transaction' ? result.Transaction : result.FailedTransaction;
+			const digest = txData!.digest;
 
 			expect(digest).toBeDefined();
 

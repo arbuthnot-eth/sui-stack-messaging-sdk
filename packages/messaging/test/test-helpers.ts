@@ -1,10 +1,10 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
-import { SuiClient } from '@mysten/sui/client';
+import { SuiJsonRpcClient, getJsonRpcFullnodeUrl } from '@mysten/sui/jsonRpc';
+import { BaseClient } from '@mysten/sui/client';
 import { EncryptedObject, SealClient } from '@mysten/seal';
 import { bcs } from '@mysten/sui/bcs';
 import { Signer } from '@mysten/sui/cryptography';
-import { getFullnodeUrl } from '@mysten/sui/client';
 import { Ed25519Keypair } from '@mysten/sui/keypairs/ed25519';
 import { Transaction } from '@mysten/sui/transactions';
 
@@ -21,7 +21,6 @@ import * as messageModule from '../src/contracts/sui_stack_messaging/message';
 import { StorageAdapter, StorageOptions } from '../src/storage/adapters/storage';
 import { getTestConfig, validateTestEnvironment, TestConfig } from './test-config';
 import { SuiGrpcClient } from '@mysten/sui/grpc';
-import { Experimental_BaseClient } from '@mysten/sui/dist/cjs/experimental';
 
 // --- Constants ---
 
@@ -41,7 +40,7 @@ export const TestConstants = {
 
 export interface TestEnvironmentSetup {
 	config: TestConfig;
-	suiClient: SuiClient;
+	suiClient: SuiJsonRpcClient;
 	suiGrpcClient?: SuiGrpcClient;
 	signer: Signer;
 	userSigner: Signer;
@@ -205,8 +204,9 @@ async function setupLocalnetEnvironment(config: TestConfig): Promise<TestEnviron
 	const packageId = published.packageId;
 
 	// Create Sui client with the deployed package ID
-	const suiClient = new SuiClient({
-		url: getFullnodeUrl('localnet'),
+	const suiClient = new SuiJsonRpcClient({
+		url: getJsonRpcFullnodeUrl('localnet'),
+		network: 'localnet',
 		mvr: {
 			overrides: {
 				packages: {
@@ -243,8 +243,9 @@ async function setupLocalnetEnvironment(config: TestConfig): Promise<TestEnviron
 
 async function setupTestnetEnvironment(config: TestConfig): Promise<TestEnvironmentSetup> {
 	// For testnet, we use the existing infrastructure without Docker containers
-	const suiClient = new SuiClient({
-		url: getFullnodeUrl('testnet'),
+	const suiClient = new SuiJsonRpcClient({
+		url: getJsonRpcFullnodeUrl('testnet'),
+		network: 'testnet',
 		mvr: {
 			overrides: {
 				packages: {
@@ -256,7 +257,7 @@ async function setupTestnetEnvironment(config: TestConfig): Promise<TestEnvironm
 
 	const suiGrpcClient = new SuiGrpcClient({
 		network: 'testnet',
-		baseUrl: getFullnodeUrl('testnet'),
+		baseUrl: getJsonRpcFullnodeUrl('testnet'),
 		mvr: {
 			overrides: {
 				packages: {
@@ -280,10 +281,11 @@ async function setupTestnetEnvironment(config: TestConfig): Promise<TestEnvironm
 	const tx = new Transaction();
 	const FUND_AMOUNT = 100_000_000; // 0.1 SUI in MIST
 	tx.transferObjects([tx.splitCoins(tx.gas, [FUND_AMOUNT])], userAddress);
-	const { digest } = await suiClient.signAndExecuteTransaction({
+	const result = await signer.signAndExecuteTransaction({
 		transaction: tx,
-		signer: signer,
+		client: suiClient,
 	});
+	const digest = (result.$kind === 'Transaction' ? result.Transaction : result.FailedTransaction)!.digest;
 
 	// Wait for transaction to be processed to avoid gas coin version conflicts
 	await suiClient.waitForTransaction({ digest });
@@ -420,7 +422,7 @@ class MockStorageAdapter implements StorageAdapter {
  * @returns An instance of the extended SuiStackMessagingClient.
  */
 export function createTestClient(
-	suiRpcClient: Experimental_BaseClient,
+	suiRpcClient: BaseClient,
 	config: TestConfig,
 	signer: Signer,
 ) {
@@ -475,9 +477,9 @@ export function createTestClient(
  * @param channelId - The ID of the channel object.
  * @returns The parsed Channel object.
  */
-export async function getChannelObject(client: SuiClient, channelId: string) {
-	const channelResponse = await client.core.getObject({ objectId: channelId });
-	const channelContent = await channelResponse.object.content;
+export async function getChannelObject(client: BaseClient, channelId: string) {
+	const channelResponse = await client.core.getObject({ objectId: channelId, include: { content: true } });
+	const channelContent = channelResponse.object.content;
 	return channelModule.Channel.parse(channelContent);
 }
 
@@ -487,9 +489,9 @@ export async function getChannelObject(client: SuiClient, channelId: string) {
  * @param channelId - The ID of the channel object.
  * @returns An array of members with their permissions.
  */
-export async function getMemberPermissions(client: SuiClient, channelId: string) {
-	const channelResponse = await client.core.getObject({ objectId: channelId });
-	const channelContent = await channelResponse.object.content;
+export async function getMemberPermissions(client: BaseClient, channelId: string) {
+	const channelResponse = await client.core.getObject({ objectId: channelId, include: { content: true } });
+	const channelContent = channelResponse.object.content;
 	const channel = channelModule.Channel.parse(channelContent);
 
 	// The auth struct contains member_permissions: VecMap<ID, VecSet<TypeName>>
@@ -511,10 +513,10 @@ export async function getMemberPermissions(client: SuiClient, channelId: string)
  * @param packageId - The ID of the Move package.
  * @returns An array of MemberCap objects.
  */
-export async function getChannelMemberCaps(client: SuiClient, channelId: string) {
+export async function getChannelMemberCaps(client: BaseClient, channelId: string) {
 	// Get the channel object to access its auth struct
-	const channelResponse = await client.core.getObject({ objectId: channelId });
-	const channelContent = await channelResponse.object.content;
+	const channelResponse = await client.core.getObject({ objectId: channelId, include: { content: true } });
+	const channelContent = channelResponse.object.content;
 	const channel = channelModule.Channel.parse(channelContent);
 
 	// Extract the member permissions from the auth struct
@@ -527,6 +529,7 @@ export async function getChannelMemberCaps(client: SuiClient, channelId: string)
 	// Now fetch all the MemberCap objects using their IDs
 	const memberCapObjects = await client.core.getObjects({
 		objectIds: memberCapIds,
+		include: { content: true },
 	});
 
 	// Parse the MemberCap objects and filter out any errors
@@ -538,7 +541,7 @@ export async function getChannelMemberCaps(client: SuiClient, channelId: string)
 		}
 
 		try {
-			const memberCap = memberCapModule.MemberCap.parse(await obj.content);
+			const memberCap = memberCapModule.MemberCap.parse(obj.content);
 			memberCaps.push(memberCap);
 		} catch (error) {
 			console.warn('Failed to parse MemberCap object:', error);
@@ -557,24 +560,23 @@ export async function getChannelMemberCaps(client: SuiClient, channelId: string)
  * @returns The MemberCap object.
  */
 export async function getMemberCapObject(
-	client: SuiClient,
+	client: BaseClient,
 	ownerAddress: string,
 	packageId: string,
 	channelId: string,
 ) {
-	const memberCaps = await client.core.getOwnedObjects({
-		address: ownerAddress,
+	const memberCaps = await client.core.listOwnedObjects({
+		owner: ownerAddress,
 		type: `${packageId}::member_cap::MemberCap`,
+		include: { content: true },
 	});
 
 	// Parse all MemberCaps and find the one that matches the channelId
-	const parsedCaps = await Promise.all(
-		memberCaps.objects.map(async (cap) => {
-			if (!cap.content) return null;
-			const parsedCap = memberCapModule.MemberCap.parse(await cap.content);
-			return parsedCap;
-		}),
-	);
+	const parsedCaps = memberCaps.objects.map((cap) => {
+		if (!cap.content) return null;
+		const parsedCap = memberCapModule.MemberCap.parse(cap.content);
+		return parsedCap;
+	});
 
 	const targetCap = parsedCaps.find((cap) => cap && cap.channel_id === channelId);
 
@@ -591,8 +593,8 @@ export async function getMemberCapObject(
  * @param messagesTableVecId - The ID of the messages TableVec.
  * @returns An array of parsed message objects.
  */
-export async function getMessages(client: SuiClient, messagesTableVecId: string) {
-	const messagesResponse = await client.core.getDynamicFields({ parentId: messagesTableVecId });
+export async function getMessages(client: BaseClient, messagesTableVecId: string) {
+	const messagesResponse = await client.core.listDynamicFields({ parentId: messagesTableVecId });
 	const messagesPromises = messagesResponse.dynamicFields.map(async (message) => {
 		const messageResponse = await client.core.getDynamicField({
 			parentId: messagesTableVecId,
@@ -622,7 +624,7 @@ export async function findChannelMembership(
 
 	while (hasNextPage && !membership) {
 		const memberships = await client.messaging.getChannelMemberships({
-			address,
+			owner: address,
 			cursor,
 		});
 		membership = memberships.memberships.find((m: any) => m.channel_id === channelId);
@@ -652,19 +654,20 @@ export async function getCreatorCapId(
 	let hasNextPage = true;
 
 	while (hasNextPage) {
-		const creatorCapsRes = await client.core.getOwnedObjects({
-			address: ownerAddress,
+		const creatorCapsRes = await client.core.listOwnedObjects({
+			owner: ownerAddress,
 			type: creatorCapType,
 			cursor,
+			include: { content: true },
 		});
 
 		for (const obj of creatorCapsRes.objects) {
-			if (obj instanceof Error || !obj.content) {
+			if (!obj.content) {
 				continue;
 			}
-			const parsedCap = creatorCapModule.CreatorCap.parse(await obj.content);
+			const parsedCap = creatorCapModule.CreatorCap.parse(obj.content);
 			if (parsedCap.channel_id === channelId) {
-				return obj.id;
+				return obj.objectId;
 			}
 		}
 

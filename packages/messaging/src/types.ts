@@ -3,9 +3,9 @@
 
 import type {
 	ClientWithExtensions,
-	Experimental_CoreClient,
-	Experimental_SuiClientTypes,
-} from '@mysten/sui/experimental';
+	CoreClient,
+	SuiClientTypes,
+} from '@mysten/sui/client';
 import type { SealClient, SessionKey } from '@mysten/seal';
 import type { WalrusClient } from '@mysten/walrus';
 import type { Transaction } from '@mysten/sui/transactions';
@@ -156,12 +156,12 @@ export interface MessagingPackageConfig {
 }
 
 export type MessagingCompatibleClient = ClientWithExtensions<{
-	core: Experimental_CoreClient;
+	core: CoreClient;
 	seal: SealClient;
 	walrus?: WalrusClient;
 }>;
 
-type MessagingOwnedObjects = Omit<Experimental_SuiClientTypes.GetOwnedObjectsOptions, 'type'>;
+type MessagingOwnedObjects = Omit<SuiClientTypes.ListOwnedObjectsOptions, 'type'>;
 
 export type PaginatedResponse<T> = T & {
 	hasNextPage: boolean;
@@ -198,7 +198,7 @@ export type ChannelMembersResponse = {
 };
 
 export type ChannelMessagesEncryptedRequest = Omit<
-	Experimental_SuiClientTypes.GetDynamicFieldsOptions,
+	SuiClientTypes.ListDynamicFieldsOptions,
 	'parentId'
 > & {
 	channelId: string;

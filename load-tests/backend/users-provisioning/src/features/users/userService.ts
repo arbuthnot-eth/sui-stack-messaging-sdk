@@ -1,5 +1,5 @@
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
-import { SuiClient } from "@mysten/sui/client";
+import { SuiJsonRpcClient, getJsonRpcFullnodeUrl } from "@mysten/sui/jsonRpc";
 import { Transaction } from "@mysten/sui/transactions";
 import { bcs } from "@mysten/sui/bcs";
 import type {
@@ -22,12 +22,12 @@ import {
  * Service for handling Sui user generation and management
  */
 export class SuiUserService {
-  private suiClient: SuiClient;
+  private suiClient: SuiJsonRpcClient;
   private userRepository: UserRepository;
 
   constructor(userRepository: UserRepository) {
     // Initialize SuiClient with testnet
-    this.suiClient = new SuiClient({ url: config.suiFullNode });
+    this.suiClient = new SuiJsonRpcClient({ url: config.suiFullNode, network: 'testnet' });
     this.userRepository = userRepository;
   }
 

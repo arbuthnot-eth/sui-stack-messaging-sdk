@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { bcs } from "@mysten/sui/bcs";
-import type { GasCostSummary, SuiObjectResponse } from "@mysten/sui/client";
-import { SuiClient } from "@mysten/sui/client";
+import type { GasCostSummary, SuiObjectResponse } from "@mysten/sui/jsonRpc";
+import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import {
   Transaction,
@@ -59,11 +59,11 @@ export type Channel = {
  * Service for handling Sui Contract interactions
  */
 export class SuiContractService {
-  private suiClient: SuiClient;
+  private suiClient: SuiJsonRpcClient;
   public lastDuration: number = 0;
   public lastGasCost: number = 0;
 
-  constructor(suiClient: SuiClient) {
+  constructor(suiClient: SuiJsonRpcClient) {
     this.suiClient = suiClient;
   }
 

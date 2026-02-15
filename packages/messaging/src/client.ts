@@ -5,7 +5,7 @@ import type { TransactionResult } from '@mysten/sui/transactions';
 import type { Signer } from '@mysten/sui/cryptography';
 import { deriveDynamicFieldID } from '@mysten/sui/utils';
 import { bcs } from '@mysten/sui/bcs';
-import type { Experimental_SuiClientTypes } from '@mysten/sui/experimental';
+import type { SuiClientTypes } from '@mysten/sui/client';
 import type { SessionKey } from '@mysten/seal';
 
 import { getLogger, LOG_CATEGORIES } from './logging/index.js';
@@ -337,14 +337,12 @@ export class SuiStackMessagingClient {
 	async getChannelMemberships(
 		request: ChannelMembershipsRequest,
 	): Promise<ChannelMembershipsResponse> {
-		const memberCapsRes = await this.#suiClient.core.getOwnedObjects({
+		const memberCapsRes = await this.#suiClient.core.listOwnedObjects({
 			...request,
 			type: MemberCap.name.replace('@local-pkg/sui-stack-messaging', this.#packageConfig.packageId),
+			include: { content: true },
 		});
-		// Filter out any error objects
-		const validObjects = memberCapsRes.objects.filter(
-			(object): object is Experimental_SuiClientTypes.ObjectResponse => !(object instanceof Error),
-		);
+		const validObjects = memberCapsRes.objects;
 
 		if (validObjects.length === 0) {
 			return {
@@ -395,7 +393,7 @@ export class SuiStackMessagingClient {
 
 		const channelObjects = await this.getChannelObjectsByChannelIds({
 			channelIds: deduplicatedMemberships.map((m) => m.channel_id),
-			userAddress: request.address,
+			userAddress: request.owner,
 			memberCapIds: deduplicatedMemberships.map((m) => m.member_cap_id),
 		});
 
@@ -424,6 +422,7 @@ export class SuiStackMessagingClient {
 
 		const channelObjectsRes = await this.#suiClient.core.getObjects({
 			objectIds: channelIds,
+			include: { content: true },
 		});
 
 		const parsedChannels = await Promise.all(
@@ -431,7 +430,7 @@ export class SuiStackMessagingClient {
 				if (object instanceof Error || !object.content) {
 					throw new MessagingClientError(`Failed to parse Channel object: ${object}`);
 				}
-				return Channel.parse(await object.content);
+				return Channel.parse(object.content);
 			}),
 		);
 
@@ -553,12 +552,13 @@ export class SuiStackMessagingClient {
 		// 1. Get the channel object to access the auth structure
 		const channelObjectsRes = await this.#suiClient.core.getObjects({
 			objectIds: [channelId],
+			include: { content: true },
 		});
 		const channelObject = channelObjectsRes.objects[0];
 		if (channelObject instanceof Error || !channelObject.content) {
 			throw new MessagingClientError(`Failed to parse Channel object: ${channelObject}`);
 		}
-		const channel = Channel.parse(await channelObject.content);
+		const channel = Channel.parse(channelObject.content);
 
 		// 2. Extract member cap IDs from the auth structure
 		const memberCapIds = channel.auth.member_permissions.contents.map((entry) => entry.key);
@@ -570,6 +570,7 @@ export class SuiStackMessagingClient {
 		// 3. Fetch all MemberCap objects
 		const memberCapObjects = await this.#suiClient.core.getObjects({
 			objectIds: memberCapIds,
+			include: { content: true },
 		});
 
 		// 4. Parse MemberCap objects and extract member addresses
@@ -584,7 +585,7 @@ export class SuiStackMessagingClient {
 			}
 
 			try {
-				const memberCap = MemberCap.parse(await obj.content);
+				const memberCap = MemberCap.parse(obj.content);
 
 				// Get the owner of the MemberCap object
 				if (obj.owner) {
@@ -648,12 +649,13 @@ export class SuiStackMessagingClient {
 		// 1. Get channel metadata (we need the raw channel object for metadata, not decrypted)
 		const channelObjectsRes = await this.#suiClient.core.getObjects({
 			objectIds: [channelId],
+			include: { content: true },
 		});
 		const channelObject = channelObjectsRes.objects[0];
 		if (channelObject instanceof Error || !channelObject.content) {
 			throw new MessagingClientError(`Failed to parse Channel object: ${channelObject}`);
 		}
-		const channel = Channel.parse(await channelObject.content);
+		const channel = Channel.parse(channelObject.content);
 
 		const messagesTableId = channel.messages.contents.id.id;
 		const totalMessagesCount = BigInt(channel.messages_count);
@@ -751,12 +753,13 @@ export class SuiStackMessagingClient {
 		// 1. Get current channel state to check for new messages
 		const channelObjectsRes = await this.#suiClient.core.getObjects({
 			objectIds: [channelId],
+			include: { content: true },
 		});
 		const channelObject = channelObjectsRes.objects[0];
 		if (channelObject instanceof Error || !channelObject.content) {
 			throw new MessagingClientError(`Failed to parse Channel object: ${channelObject}`);
 		}
-		const channel = Channel.parse(await channelObject.content);
+		const channel = Channel.parse(channelObject.content);
 		const latestMessageCount = BigInt(channel.messages_count);
 
 		// 2. Check if there are new messages since last poll
@@ -1141,7 +1144,7 @@ export class SuiStackMessagingClient {
 		const { digest, effects } = await this.#executeTransaction(tx, signer, 'send message', true);
 
 		// Get the created Message object ID
-		const messageId = effects.changedObjects.find((obj) => obj.idOperation === 'Created')?.id;
+		const messageId = effects.changedObjects.find((obj) => obj.idOperation === 'Created')?.objectId;
 		if (messageId === undefined) {
 			throw new MessagingClientError('Message id not found on the transaction effects');
 		}
@@ -1462,13 +1465,20 @@ export class SuiStackMessagingClient {
 	) {
 		transaction.setSenderIfNotSet(signer.toSuiAddress());
 
-		const { digest, effects } = await signer.signAndExecuteTransaction({
+		const result = await signer.signAndExecuteTransaction({
 			transaction,
 			client: this.#suiClient,
 		});
 
-		if (effects?.status.error) {
-			throw new MessagingClientError(`Failed to ${action} (${digest}): ${effects?.status.error}`);
+		const txData = result.$kind === 'Transaction' ? result.Transaction : result.FailedTransaction;
+		if (!txData) {
+			throw new MessagingClientError(`Failed to ${action}: no transaction data in result`);
+		}
+
+		const { digest, effects } = txData;
+
+		if (!effects!.status.success) {
+			throw new MessagingClientError(`Failed to ${action} (${digest}): ${effects!.status.error?.message}`);
 		}
 
 		if (waitForTransaction) {
@@ -1477,15 +1487,19 @@ export class SuiStackMessagingClient {
 			});
 		}
 
-		return { digest, effects };
+		return { digest, effects: effects! };
 	}
 
 	async #getGeneratedCaps(digest: string) {
-		const {
-			transaction: { effects },
-		} = await this.#suiClient.core.waitForTransaction({
+		const result = await this.#suiClient.core.waitForTransaction({
 			digest,
+			include: { effects: true },
 		});
+		const txData = result.$kind === 'Transaction' ? result.Transaction : result.FailedTransaction;
+		if (!txData) {
+			throw new MessagingClientError(`Failed to get transaction data for digest ${digest}`);
+		}
+		const effects = txData.effects!;
 
 		// Get CreatorCap
 		const creatorCapsWithOwner = await this.#getCreatedObjectsByType({
@@ -1553,11 +1567,11 @@ export class SuiStackMessagingClient {
 		parseFunction,
 		errorMessage,
 	}: {
-		effects: Experimental_SuiClientTypes.TransactionEffects;
+		effects: SuiClientTypes.TransactionEffects;
 		objectTypeName: string;
 		parseFunction: (content: Uint8Array) => T;
 		errorMessage: string;
-	}): Promise<Array<{ object: T; owner: Experimental_SuiClientTypes.ObjectOwner }>> {
+	}): Promise<Array<{ object: T; owner: SuiClientTypes.ObjectOwner }>> {
 		const objectType = objectTypeName.replace(
 			'@local-pkg/sui-stack-messaging',
 			this.#packageConfig.packageId,
@@ -1565,10 +1579,11 @@ export class SuiStackMessagingClient {
 
 		const createdObjectIds = effects.changedObjects
 			.filter((object) => object.idOperation === 'Created' && object.outputState !== 'DoesNotExist')
-			.map((object) => object.id);
+			.map((object) => object.objectId);
 
 		const createdObjects = await this.#suiClient.core.getObjects({
 			objectIds: createdObjectIds,
+			include: { content: true },
 		});
 
 		const matchingObjects = createdObjects.objects.filter(
@@ -1580,7 +1595,7 @@ export class SuiStackMessagingClient {
 				if (objectResponse instanceof Error || !objectResponse.content) {
 					throw new MessagingClientError(errorMessage);
 				}
-				const parsedObject = parseFunction(await objectResponse.content);
+				const parsedObject = parseFunction(objectResponse.content);
 				return { object: parsedObject, owner: objectResponse.owner! };
 			}),
 		);
@@ -1617,7 +1632,7 @@ export class SuiStackMessagingClient {
 	// Note: the given message objects response
 	// is in the form of dynamic_field::Field<u64, Message>
 	async #parseMessageObjects(
-		messageObjects: Experimental_SuiClientTypes.GetObjectsResponse,
+		messageObjects: SuiClientTypes.GetObjectsResponse<{ content: true }>,
 	): Promise<ParsedMessageObject[]> {
 		const DynamicFieldMessage = bcs.struct('DynamicFieldMessage', {
 			id: bcs.Address, // UID is represented as an address
@@ -1630,7 +1645,7 @@ export class SuiStackMessagingClient {
 				if (object instanceof Error || !object.content) {
 					throw new MessagingClientError(`Failed to parse message object: ${object}`);
 				}
-				const content = await object.content;
+				const content = object.content;
 				// Parse the dynamic field wrapper
 				const dynamicField = DynamicFieldMessage.parse(content);
 
@@ -1750,7 +1765,7 @@ export class SuiStackMessagingClient {
 			return [];
 		}
 
-		const messageObjects = await this.#suiClient.core.getObjects({ objectIds: messageIds });
+		const messageObjects = await this.#suiClient.core.getObjects({ objectIds: messageIds, include: { content: true } });
 		return await this.#parseMessageObjects(messageObjects);
 	}
 
@@ -1820,15 +1835,14 @@ export class SuiStackMessagingClient {
 		let hasNextPage = true;
 
 		while (hasNextPage) {
-			const response = await this.#suiClient.core.getOwnedObjects({
-				address: ownerAddress,
+			const response: SuiClientTypes.ListOwnedObjectsResponse<{ content: true }> = await this.#suiClient.core.listOwnedObjects({
+				owner: ownerAddress,
 				cursor,
 				type: objectType,
+				include: { content: true },
 			});
 
-			const validObjects = response.objects.filter(
-				(obj): obj is Experimental_SuiClientTypes.ObjectResponse => !(obj instanceof Error),
-			);
+			const validObjects = response.objects;
 
 			if (validObjects.length > 0) {
 				const contents = await this.#getObjectContents(validObjects);
@@ -1851,49 +1865,31 @@ export class SuiStackMessagingClient {
 	 * Helper method to get object contents, handling both SuiClient and SuiGrpcClient
 	 */
 	async #getObjectContents(
-		objects: Experimental_SuiClientTypes.ObjectResponse[],
+		objects: SuiClientTypes.Object<{ content: true }>[],
 	): Promise<Uint8Array[]> {
-		// First, try to get all contents directly (works for SuiClient)
-		const contentPromises = objects.map(async (object) => {
-			try {
-				return await object.content;
-			} catch (error) {
-				// If this is the gRPC error, we'll handle it below
-				if (
-					error instanceof Error &&
-					error.message.includes('GRPC does not return object contents')
-				) {
-					return null; // Mark for batch fetching
-				}
-				throw error;
-			}
-		});
+		// First, try to get all contents directly
+		const contents = objects.map((object) => object.content);
 
-		const contents = await Promise.all(contentPromises);
-
-		// Check if any failed with the gRPC error
-		const needsBatchFetch = contents.some((content) => content === null);
+		// Check if any are missing content (e.g., gRPC client may not return inline content)
+		const needsBatchFetch = contents.some((content) => content == null);
 
 		if (needsBatchFetch) {
-			// Batch fetch all objects that need content
-			const objectIds = objects.map((obj) => obj.id);
-			const objectResponses = await this.#suiClient.core.getObjects({ objectIds });
+			// Batch fetch all objects with content included
+			const objectIds = objects.map((obj) => obj.objectId);
+			const objectResponses = await this.#suiClient.core.getObjects({
+				objectIds,
+				include: { content: true },
+			});
 
-			// Map the results back to the original order and await the content
-			const batchContents = await Promise.all(
-				objectResponses.objects.map(async (obj) => {
-					if (obj instanceof Error || !obj.content) {
-						throw new MessagingClientError(`Failed to fetch object content: ${obj}`);
-					}
-					return await obj.content;
-				}),
-			);
-
-			return batchContents;
+			return objectResponses.objects.map((obj) => {
+				if (obj instanceof Error || !obj.content) {
+					throw new MessagingClientError(`Failed to fetch object content: ${obj}`);
+				}
+				return obj.content;
+			});
 		}
 
-		// Filter out null values and return
-		return contents.filter((content): content is Uint8Array => content !== null);
+		return contents.filter((content): content is Uint8Array<ArrayBuffer> => content != null);
 	}
 }
 
