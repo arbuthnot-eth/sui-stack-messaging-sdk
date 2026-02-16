@@ -44,7 +44,19 @@ var import_creator_cap = require("./contracts/sui_stack_messaging/creator_cap.js
 var import_member_cap = require("./contracts/sui_stack_messaging/member_cap.js");
 var import_config = require("./contracts/sui_stack_messaging/config.js");
 var import_message = require("./contracts/sui_stack_messaging/message.js");
-var _suiClient, _packageConfig, _storage, _envelopeEncryption, _sealConfig, _addressResolver, _channelResolver, _SuiStackMessagingClient_instances, resolveAddresses_fn, resolveChannelId_fn, getUserMemberCapId_fn, getEncryptionKeyFromChannel_fn, decryptMessage_fn, createAttachmentsVec_fn, resolveCreatorCapId_fn, executeTransaction_fn, getGeneratedCaps_fn, getCreatedObjectsByType_fn, deduplicateAddresses_fn, deriveMessageIDsFromRange_fn, parseMessageObjects_fn, createLazyAttachmentDataPromise_fn, calculateFetchRange_fn, fetchMessagesInRange_fn, determineNextPagination_fn, createEmptyMessagesResponse_fn, findOwnedObjectByChannelId_fn, getObjectContents_fn;
+var _suiClient, _packageConfig, _storage, _envelopeEncryption, _sealConfig, _addressResolver, _channelResolver, _SuiStackMessagingClient_instances, resolveAddresses_fn, resolveChannelId_fn, resolveSignerAddress_fn, getUserMemberCapId_fn, getEncryptionKeyFromChannel_fn, decryptMessage_fn, createAttachmentsVec_fn, resolveCreatorCapId_fn, executeTransaction_fn, getGeneratedCaps_fn, getCreatedObjectsByType_fn, deduplicateAddresses_fn, deriveMessageIDsFromRange_fn, parseMessageObjects_fn, createLazyAttachmentDataPromise_fn, calculateFetchRange_fn, fetchMessagesInRange_fn, determineNextPagination_fn, createEmptyMessagesResponse_fn, findOwnedObjectByChannelId_fn, getObjectContents_fn;
+const ZERO_SUI_ADDRESS = `0x${"0".repeat(64)}`;
+function normalizeNonZeroSuiAddress(value) {
+  if (typeof value !== "string") return null;
+  let raw = value.trim().toLowerCase();
+  if (!raw) return null;
+  if (raw.startsWith("0x")) raw = raw.slice(2);
+  if (!raw || raw.length > 64 || /[^0-9a-f]/.test(raw)) return null;
+  raw = raw.replace(/^0+/, "");
+  if (!raw) return null;
+  const normalized = `0x${raw.padStart(64, "0")}`;
+  return normalized === ZERO_SUI_ADDRESS ? null : normalized;
+}
 const _SuiStackMessagingClient = class _SuiStackMessagingClient {
   // TODO: Leave the responsibility of caching to the caller
   // #encryptedChannelDEKCache: Map<string, EncryptedSymmetricKey> = new Map(); // channelId --> EncryptedSymmetricKey
@@ -705,7 +717,7 @@ const _SuiStackMessagingClient = class _SuiStackMessagingClient {
   }) {
     const channelId = await __privateMethod(this, _SuiStackMessagingClient_instances, resolveChannelId_fn).call(this, channelNameOrId);
     const logger = (0, import_logging.getLogger)(import_logging.LOG_CATEGORIES.CLIENT_WRITES);
-    const senderAddress = signer.toSuiAddress();
+    const senderAddress = __privateMethod(this, _SuiStackMessagingClient_instances, resolveSignerAddress_fn).call(this, signer, "send message");
     logger.debug("Sending message", {
       channelId,
       originalInput: channelNameOrId,
@@ -871,7 +883,8 @@ const _SuiStackMessagingClient = class _SuiStackMessagingClient {
       newMemberAddresses: options.newMemberAddresses
     });
     const { memberCapId, newMemberAddresses, creatorCapId } = options;
-    const addMembersOptions = creatorCapId ? { channelId, memberCapId, newMemberAddresses, creatorCapId } : { channelId, memberCapId, newMemberAddresses, address: signer.toSuiAddress() };
+    const signerAddress = __privateMethod(this, _SuiStackMessagingClient_instances, resolveSignerAddress_fn).call(this, signer, "add members");
+    const addMembersOptions = creatorCapId ? { channelId, memberCapId, newMemberAddresses, creatorCapId } : { channelId, memberCapId, newMemberAddresses, address: signerAddress };
     const tx = transaction ?? new import_transactions.Transaction();
     const addMembersTxBuilder = this.addMembers(addMembersOptions);
     await addMembersTxBuilder(tx);
@@ -930,7 +943,7 @@ const _SuiStackMessagingClient = class _SuiStackMessagingClient {
     initialMembers
   }) {
     const logger = (0, import_logging.getLogger)(import_logging.LOG_CATEGORIES.CLIENT_WRITES);
-    const creatorAddress = signer.toSuiAddress();
+    const creatorAddress = __privateMethod(this, _SuiStackMessagingClient_instances, resolveSignerAddress_fn).call(this, signer, "create channel");
     logger.debug("Creating channel", {
       creatorAddress,
       initialMemberCount: initialMembers?.length ?? 0
@@ -981,6 +994,13 @@ resolveChannelId_fn = async function(channelNameOrId) {
     return channelNameOrId;
   }
   return __privateGet(this, _channelResolver).resolve(channelNameOrId);
+};
+resolveSignerAddress_fn = function(signer, action) {
+  const directAddress = normalizeNonZeroSuiAddress(signer.toSuiAddress());
+  if (directAddress) return directAddress;
+  const keyAddress = normalizeNonZeroSuiAddress(signer.getPublicKey().toSuiAddress());
+  if (keyAddress) return keyAddress;
+  throw new import_error.MessagingClientError(`Signer returned invalid address while trying to ${action}`);
 };
 getUserMemberCapId_fn = async function(userAddress, channelId) {
   const memberCap = await this.getUserMemberCap(userAddress, channelId);
@@ -1124,7 +1144,7 @@ resolveCreatorCapId_fn = async function(options) {
   return creatorCap.id.id;
 };
 executeTransaction_fn = async function(transaction, signer, action, waitForTransaction = true) {
-  transaction.setSenderIfNotSet(signer.toSuiAddress());
+  transaction.setSenderIfNotSet(__privateMethod(this, _SuiStackMessagingClient_instances, resolveSignerAddress_fn).call(this, signer, action));
   const result = await signer.signAndExecuteTransaction({
     transaction,
     client: __privateGet(this, _suiClient)

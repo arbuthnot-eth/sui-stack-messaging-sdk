@@ -75,6 +75,20 @@ import {
 import { none as noneConfig } from './contracts/sui_stack_messaging/config.js';
 import { Message } from './contracts/sui_stack_messaging/message.js';
 
+const ZERO_SUI_ADDRESS = `0x${'0'.repeat(64)}`;
+
+function normalizeNonZeroSuiAddress(value: unknown): string | null {
+	if (typeof value !== 'string') return null;
+	let raw = value.trim().toLowerCase();
+	if (!raw) return null;
+	if (raw.startsWith('0x')) raw = raw.slice(2);
+	if (!raw || raw.length > 64 || /[^0-9a-f]/.test(raw)) return null;
+	raw = raw.replace(/^0+/, '');
+	if (!raw) return null;
+	const normalized = `0x${raw.padStart(64, '0')}`;
+	return normalized === ZERO_SUI_ADDRESS ? null : normalized;
+}
+
 export class SuiStackMessagingClient {
 	#suiClient: MessagingCompatibleClient;
 	#packageConfig: MessagingPackageConfig;
@@ -223,6 +237,14 @@ export class SuiStackMessagingClient {
 			return channelNameOrId;
 		}
 		return this.#channelResolver.resolve(channelNameOrId);
+	}
+
+	#resolveSignerAddress(signer: Signer, action: string): string {
+		const directAddress = normalizeNonZeroSuiAddress(signer.toSuiAddress());
+		if (directAddress) return directAddress;
+		const keyAddress = normalizeNonZeroSuiAddress(signer.getPublicKey().toSuiAddress());
+		if (keyAddress) return keyAddress;
+		throw new MessagingClientError(`Signer returned invalid address while trying to ${action}`);
 	}
 
 	/**
@@ -1141,7 +1163,7 @@ export class SuiStackMessagingClient {
 	} & { signer: Signer }): Promise<{ digest: string; messageId: string }> {
 		const channelId = await this.#resolveChannelId(channelNameOrId);
 		const logger = getLogger(LOG_CATEGORIES.CLIENT_WRITES);
-		const senderAddress = signer.toSuiAddress();
+		const senderAddress = this.#resolveSignerAddress(signer, 'send message');
 		logger.debug('Sending message', {
 			channelId,
 			originalInput: channelNameOrId,
@@ -1348,9 +1370,10 @@ export class SuiStackMessagingClient {
 
 		// If creatorCapId is not provided, use signer's address to fetch it
 		const { memberCapId, newMemberAddresses, creatorCapId } = options;
+		const signerAddress = this.#resolveSignerAddress(signer, 'add members');
 		const addMembersOptions: AddMembersOptions = creatorCapId
 			? { channelId, memberCapId, newMemberAddresses, creatorCapId }
-			: { channelId, memberCapId, newMemberAddresses, address: signer.toSuiAddress() };
+			: { channelId, memberCapId, newMemberAddresses, address: signerAddress };
 
 		const tx = transaction ?? new Transaction();
 		const addMembersTxBuilder = this.addMembers(addMembersOptions);
@@ -1428,7 +1451,7 @@ export class SuiStackMessagingClient {
 		encryptedKeyBytes: Uint8Array<ArrayBuffer>;
 	}> {
 		const logger = getLogger(LOG_CATEGORIES.CLIENT_WRITES);
-		const creatorAddress = signer.toSuiAddress();
+		const creatorAddress = this.#resolveSignerAddress(signer, 'create channel');
 		logger.debug('Creating channel', {
 			creatorAddress,
 			initialMemberCount: initialMembers?.length ?? 0,
@@ -1485,7 +1508,7 @@ export class SuiStackMessagingClient {
 		action: string,
 		waitForTransaction: boolean = true,
 	) {
-		transaction.setSenderIfNotSet(signer.toSuiAddress());
+		transaction.setSenderIfNotSet(this.#resolveSignerAddress(signer, action));
 
 		const result = await signer.signAndExecuteTransaction({
 			transaction,
