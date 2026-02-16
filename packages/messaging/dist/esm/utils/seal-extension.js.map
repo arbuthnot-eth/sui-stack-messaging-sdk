@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../../src/utils/seal-extension.ts"],
+  "sourcesContent": ["// Copyright (c) Mysten Labs, Inc.\n// SPDX-License-Identifier: Apache-2.0\n\nimport { SealClient } from '@mysten/seal';\nimport type { KeyServerConfig } from '@mysten/seal';\nimport type { ClientWithExtensions, CoreClient } from '@mysten/sui/client';\n\ntype SealCompatibleClient = ClientWithExtensions<{\n\tcore: CoreClient;\n}>;\n\nexport interface SealClientExtensionOptions {\n\tserverConfigs: KeyServerConfig[];\n\tverifyKeyServers?: boolean;\n\ttimeout?: number;\n}\n\nexport function sealClientExtension(options: SealClientExtensionOptions) {\n\treturn {\n\t\tname: 'seal' as const,\n\t\tregister: (client: SealCompatibleClient) => {\n\t\t\treturn new SealClient({\n\t\t\t\tsuiClient: client,\n\t\t\t\tserverConfigs: options.serverConfigs,\n\t\t\t\tverifyKeyServers: options.verifyKeyServers ?? true,\n\t\t\t\ttimeout: options.timeout,\n\t\t\t});\n\t\t},\n\t};\n}\n"],
+  "mappings": "AAGA,SAAS,kBAAkB;AAcpB,SAAS,oBAAoB,SAAqC;AACxE,SAAO;AAAA,IACN,MAAM;AAAA,IACN,UAAU,CAAC,WAAiC;AAC3C,aAAO,IAAI,WAAW;AAAA,QACrB,WAAW;AAAA,QACX,eAAe,QAAQ;AAAA,QACvB,kBAAkB,QAAQ,oBAAoB;AAAA,QAC9C,SAAS,QAAQ;AAAA,MAClB,CAAC;AAAA,IACF;AAAA,EACD;AACD;",
+  "names": []
+}

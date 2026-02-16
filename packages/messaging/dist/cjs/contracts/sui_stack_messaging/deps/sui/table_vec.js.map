@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../../../../../src/contracts/sui_stack_messaging/deps/sui/table_vec.ts"],
+  "sourcesContent": ["// Copyright (c) Mysten Labs, Inc.\n// SPDX-License-Identifier: Apache-2.0\n\n/** A basic scalable vector library implemented using `Table`. */\n\nimport { MoveStruct } from '../../../utils/index.js';\nimport * as table from './table.js';\nconst $moduleName = '0x2::table_vec';\nexport const TableVec = new MoveStruct({\n\tname: `${$moduleName}::TableVec`,\n\tfields: {\n\t\t/** The contents of the table vector. */\n\t\tcontents: table.Table,\n\t},\n});\n"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAKA,mBAA2B;AAC3B,YAAuB;AACvB,MAAM,cAAc;AACb,MAAM,WAAW,IAAI,wBAAW;AAAA,EACtC,MAAM,GAAG,WAAW;AAAA,EACpB,QAAQ;AAAA;AAAA,IAEP,UAAU,MAAM;AAAA,EACjB;AACD,CAAC;",
+  "names": []
+}

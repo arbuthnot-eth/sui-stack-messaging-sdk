@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../../../src/contracts/sui_stack_messaging/admin.ts"],
+  "sourcesContent": ["// Copyright (c) Mysten Labs, Inc.\n// SPDX-License-Identifier: Apache-2.0\n\n/**\n * Package-level Admin features: Change package version Change Channel object's\n * version Change limit constants\n */\n\nimport { MoveTuple } from '../utils/index.js';\nimport { bcs } from '@mysten/sui/bcs';\nconst $moduleName = '@local-pkg/sui-stack-messaging::admin';\nexport const Admin = new MoveTuple({ name: `${$moduleName}::Admin`, fields: [bcs.bool()] });\n"],
+  "mappings": "AAQA,SAAS,iBAAiB;AAC1B,SAAS,WAAW;AACpB,MAAM,cAAc;AACb,MAAM,QAAQ,IAAI,UAAU,EAAE,MAAM,GAAG,WAAW,WAAW,QAAQ,CAAC,IAAI,KAAK,CAAC,EAAE,CAAC;",
+  "names": []
+}

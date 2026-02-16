@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../../../../src/storage/adapters/walrus/types.ts"],
+  "sourcesContent": ["// Copyright (c) Mysten Labs, Inc.\n// SPDX-License-Identifier: Apache-2.0\nexport interface BlobObject {\n\tid: string;\n\tregisteredEpoch: number;\n\tblobId: string;\n\tsize: number;\n\tencodingType: string;\n\tcertifiedEpoch: number | null;\n\tstorage: {\n\t\tid: string;\n\t\tstartEpoch: number;\n\t\tendEpoch: number;\n\t\tstorageSize: number;\n\t};\n\tdeletable: boolean;\n}\n\nexport interface NewlyCreatedBlob {\n\tblobObject: BlobObject;\n\tresourceOperation: {\n\t\tregisterFromScratch: {\n\t\t\tencodedLength: number;\n\t\t\tepochsAhead: number;\n\t\t};\n\t};\n\tcost: number;\n}\n\nexport interface AlreadyCertifiedBlob {\n\tblobId: string;\n\tevent: {\n\t\ttxDigest: string;\n\t\teventSeq: string;\n\t};\n\tendEpoch: number;\n}\n\nexport interface QuiltBlob {\n\tidentifier: string;\n\tquiltPatchId: string;\n}\n\nexport interface WalrusResponse {\n\tnewlyCreated?: NewlyCreatedBlob;\n\talreadyCertified?: AlreadyCertifiedBlob;\n\tblobStoreResult?: {\n\t\tnewlyCreated?: NewlyCreatedBlob;\n\t};\n\tstoredQuiltBlobs?: QuiltBlob[];\n}\n"],
+  "mappings": ";;;;;;;;;;;;;;AAAA;AAAA;",
+  "names": []
+}
