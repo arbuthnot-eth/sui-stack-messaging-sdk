@@ -1186,7 +1186,8 @@ export class SuiStackMessagingClient {
 		const { digest, effects } = await this.#executeTransaction(tx, signer, 'send message', true);
 
 		// Get the created Message object ID
-		const messageId = effects.changedObjects.find(
+		const changedObjects = Array.isArray(effects?.changedObjects) ? effects.changedObjects : [];
+		const messageId = changedObjects.find(
 			(obj: SuiClientTypes.ChangedObject) => obj.idOperation === 'Created',
 		)?.objectId;
 		if (messageId === undefined) {
@@ -1526,13 +1527,22 @@ export class SuiStackMessagingClient {
 			throw new MessagingClientError(`Failed to ${action} (${digest}): ${effects?.status.error}`);
 		}
 
+		let resolvedEffects = effects;
 		if (waitForTransaction) {
-			await this.#suiClient.core.waitForTransaction({
+			const waitResult = await this.#suiClient.core.waitForTransaction({
 				digest,
+				include: { effects: true },
 			});
+			const waitedTxn =
+				waitResult.$kind === 'Transaction'
+					? waitResult.Transaction
+					: waitResult.FailedTransaction;
+			if (waitedTxn?.effects) {
+				resolvedEffects = waitedTxn.effects;
+			}
 		}
 
-		return { digest, effects };
+		return { digest, effects: resolvedEffects };
 	}
 
 	async #getGeneratedCaps(digest: string) {
@@ -1625,7 +1635,8 @@ export class SuiStackMessagingClient {
 			this.#packageConfig.packageId,
 		);
 
-		const createdObjectIds = effects.changedObjects
+		const changedObjects = Array.isArray(effects.changedObjects) ? effects.changedObjects : [];
+		const createdObjectIds = changedObjects
 			.filter((object) => object.idOperation === 'Created' && object.outputState !== 'DoesNotExist')
 			.map((object) => object.objectId);
 

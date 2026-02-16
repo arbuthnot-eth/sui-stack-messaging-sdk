@@ -16484,7 +16484,8 @@ var _SuiStackMessagingClient = class _SuiStackMessagingClient2 {
     );
     await sendMessageTxBuilder(tx);
     const { digest, effects } = await __privateMethod3(this, _SuiStackMessagingClient_instances, executeTransaction_fn).call(this, tx, signer, "send message", true);
-    const messageId = effects.changedObjects.find(
+    const changedObjects = Array.isArray(effects?.changedObjects) ? effects.changedObjects : [];
+    const messageId = changedObjects.find(
       (obj) => obj.idOperation === "Created"
     )?.objectId;
     if (messageId === void 0) {
@@ -16904,12 +16905,18 @@ executeTransaction_fn = async function(transaction, signer, action, waitForTrans
   if (effects?.status.error) {
     throw new MessagingClientError(`Failed to ${action} (${digest}): ${effects?.status.error}`);
   }
+  let resolvedEffects = effects;
   if (waitForTransaction) {
-    await __privateGet2(this, _suiClient2).core.waitForTransaction({
-      digest
+    const waitResult = await __privateGet2(this, _suiClient2).core.waitForTransaction({
+      digest,
+      include: { effects: true }
     });
+    const waitedTxn = waitResult.$kind === "Transaction" ? waitResult.Transaction : waitResult.FailedTransaction;
+    if (waitedTxn?.effects) {
+      resolvedEffects = waitedTxn.effects;
+    }
   }
-  return { digest, effects };
+  return { digest, effects: resolvedEffects };
 };
 getGeneratedCaps_fn = async function(digest) {
   const waitResult = await __privateGet2(this, _suiClient2).core.waitForTransaction({
@@ -16967,7 +16974,8 @@ getCreatedObjectsByType_fn = async function({
     "@local-pkg/sui-stack-messaging",
     __privateGet2(this, _packageConfig).packageId
   );
-  const createdObjectIds = effects.changedObjects.filter((object2) => object2.idOperation === "Created" && object2.outputState !== "DoesNotExist").map((object2) => object2.objectId);
+  const changedObjects = Array.isArray(effects.changedObjects) ? effects.changedObjects : [];
+  const createdObjectIds = changedObjects.filter((object2) => object2.idOperation === "Created" && object2.outputState !== "DoesNotExist").map((object2) => object2.objectId);
   const createdObjects = await __privateGet2(this, _suiClient2).core.getObjects({
     objectIds: createdObjectIds,
     include: { content: true }
