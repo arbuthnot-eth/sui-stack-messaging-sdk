@@ -13,6 +13,7 @@ export declare class SessionKeyManager {
     private readonly suiClient;
     private readonly sealApproveContract;
     private managedSessionKey?;
+    private static normalizeNonZeroSuiAddress;
     constructor(sessionKey: SessionKey | undefined, sessionKeyConfig: SessionKeyConfig | undefined, suiClient: MessagingCompatibleClient, sealApproveContract: SealApproveContract);
     /**
      * Get a valid SessionKey instance
@@ -26,4 +27,5 @@ export declare class SessionKeyManager {
      * Force refresh the managed SessionKey
      */
     refreshManagedSessionKey(): Promise<SessionKey>;
+    resolveSessionAddress(activeSessionKey?: SessionKey): string | null;
 }

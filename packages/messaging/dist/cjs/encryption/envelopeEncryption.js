@@ -518,12 +518,17 @@ class EnvelopeEncryption {
         tx.object(memberCapId)
       ]
     });
+    const sessionKey = await __privateGet(this, _sessionKeyManager).getSessionKey();
+    const sessionAddress = __privateGet(this, _sessionKeyManager).resolveSessionAddress(sessionKey);
+    if (sessionAddress) {
+      tx.setSenderIfNotSet(sessionAddress);
+    }
     const txBytes = await tx.build({ client: __privateGet(this, _suiClient), onlyTransactionKind: true });
     let dekBytes;
     try {
       dekBytes = await __privateGet(this, _suiClient).seal.decrypt({
         data: encryptedKey.encryptedBytes,
-        sessionKey: await __privateGet(this, _sessionKeyManager).getSessionKey(),
+        sessionKey,
         txBytes,
         checkLEEncoding: true
         // Support legacy LE-encoded ciphertexts

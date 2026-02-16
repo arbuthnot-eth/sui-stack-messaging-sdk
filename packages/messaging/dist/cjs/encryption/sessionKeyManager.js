@@ -35,6 +35,17 @@ class SessionKeyManager {
       throw new Error("Cannot provide both sessionKey and sessionKeyConfig. Choose one.");
     }
   }
+  static normalizeNonZeroSuiAddress(value) {
+    if (typeof value !== "string") return null;
+    let raw = value.trim().toLowerCase();
+    if (!raw) return null;
+    if (raw.startsWith("0x")) raw = raw.slice(2);
+    if (!raw || raw.length > 64 || /[^0-9a-f]/.test(raw)) return null;
+    raw = raw.replace(/^0+/, "");
+    if (!raw) return null;
+    const normalized = `0x${raw.padStart(64, "0")}`;
+    return normalized === `0x${"0".repeat(64)}` ? null : normalized;
+  }
   /**
    * Get a valid SessionKey instance
    */
@@ -81,6 +92,23 @@ class SessionKeyManager {
     }
     this.managedSessionKey = void 0;
     return this.getSessionKey();
+  }
+  resolveSessionAddress(activeSessionKey) {
+    const fromConfig = SessionKeyManager.normalizeNonZeroSuiAddress(this.sessionKeyConfig?.address);
+    if (fromConfig) return fromConfig;
+    const key = activeSessionKey ?? this.sessionKey ?? this.managedSessionKey;
+    if (!key) return null;
+    try {
+      const keyWithAddress = key;
+      if (typeof keyWithAddress.getAddress === "function") {
+        const fromMethod = SessionKeyManager.normalizeNonZeroSuiAddress(keyWithAddress.getAddress());
+        if (fromMethod) return fromMethod;
+      }
+      const fromField = SessionKeyManager.normalizeNonZeroSuiAddress(keyWithAddress.address);
+      if (fromField) return fromField;
+    } catch (_error) {
+    }
+    return null;
   }
 }
 //# sourceMappingURL=sessionKeyManager.js.map
