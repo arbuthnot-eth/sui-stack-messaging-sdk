@@ -1,10 +1,10 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
-import { SuiClient } from '@mysten/sui/client';
+import { SuiJsonRpcClient, getJsonRpcFullnodeUrl } from '@mysten/sui/jsonRpc';
+import { fromBase58, toHex } from '@mysten/sui/utils';
 import { EncryptedObject, SealClient } from '@mysten/seal';
 import { bcs } from '@mysten/sui/bcs';
 import { Signer } from '@mysten/sui/cryptography';
-import { getFullnodeUrl } from '@mysten/sui/client';
 import { Ed25519Keypair } from '@mysten/sui/keypairs/ed25519';
 import { Transaction } from '@mysten/sui/transactions';
 
@@ -21,7 +21,7 @@ import * as messageModule from '../src/contracts/sui_stack_messaging/message';
 import { StorageAdapter, StorageOptions } from '../src/storage/adapters/storage';
 import { getTestConfig, validateTestEnvironment, TestConfig } from './test-config';
 import { SuiGrpcClient } from '@mysten/sui/grpc';
-import { Experimental_BaseClient } from '@mysten/sui/dist/cjs/experimental';
+import { BaseClient } from '@mysten/sui/client';
 
 // --- Constants ---
 
@@ -41,7 +41,7 @@ export const TestConstants = {
 
 export interface TestEnvironmentSetup {
 	config: TestConfig;
-	suiClient: SuiClient;
+	suiClient: SuiJsonRpcClient;
 	suiGrpcClient?: SuiGrpcClient;
 	signer: Signer;
 	userSigner: Signer;
@@ -70,9 +70,7 @@ export async function setupTestEnvironment(): Promise<TestEnvironmentSetup> {
 async function setupLocalnetEnvironment(config: TestConfig): Promise<TestEnvironmentSetup> {
 	const SUI_TOOLS_TAG =
 		process.env.SUI_TOOLS_TAG ||
-		(process.arch === 'arm64'
-			? 'e4d7ef827d609d606907969372bb30ff4c10d60a-arm64'
-			: 'e4d7ef827d609d606907969372bb30ff4c10d60a');
+		(process.arch === 'arm64' ? 'mainnet-v1.65.2-arm64' : 'mainnet-v1.65.2');
 
 	// Start Docker network
 	const dockerNetwork = await new Network().start();
@@ -89,24 +87,16 @@ async function setupLocalnetEnvironment(config: TestConfig): Promise<TestEnviron
 		.withNetwork(dockerNetwork)
 		.start();
 
-	// Start Sui local node
+	// Start Sui local node (Sui 1.65+ uses --with-indexer=<DATABASE_URL>)
+	const pgHost = pg.getIpAddress(dockerNetwork.getName());
+	const dbUrl = `postgres://postgres:postgrespw@${pgHost}:5432/sui_indexer_v2`;
 	const suiLocalNode = await new GenericContainer(`mysten/sui-tools:${SUI_TOOLS_TAG}`)
 		.withCommand([
 			'sui',
 			'start',
 			'--with-faucet',
 			'--force-regenesis',
-			'--with-indexer',
-			'--pg-port',
-			'5432',
-			'--pg-db-name',
-			'sui_indexer_v2',
-			'--pg-host',
-			pg.getIpAddress(dockerNetwork.getName()),
-			'--pg-user',
-			'postgres',
-			'--pg-password',
-			'postgrespw',
+			`--with-indexer=${dbUrl}`,
 			'--with-graphql',
 		])
 		.withCopyDirectoriesToContainer([
@@ -116,12 +106,7 @@ async function setupLocalnetEnvironment(config: TestConfig): Promise<TestEnviron
 			},
 		])
 		.withNetwork(dockerNetwork)
-		.withExposedPorts(
-			{ host: 9000, container: 9000 },
-			{ host: 9123, container: 9123 },
-			{ host: 9124, container: 9124 },
-			{ host: 9125, container: 9125 },
-		)
+		.withExposedPorts(9000, 9123, 9124, 9125)
 		.withLogConsumer((stream) => {
 			stream.on('data', (data) => {
 				console.log(data.toString());
@@ -129,84 +114,153 @@ async function setupLocalnetEnvironment(config: TestConfig): Promise<TestEnviron
 		})
 		.start();
 
-	// Setup Sui client and signer - exactly as it was in the original test
+	// Create config and signer - Sui 1.65: use new-address for predictable output
+	const clientConfig = '/root/.sui/sui_config/client.yaml';
+	// -y skips "create config?" prompt when config doesn't exist
 	const configResult = await suiLocalNode.exec([
 		'sui',
 		'client',
-		'--yes',
+		'-y',
 		'--client.config',
-		'/root/.sui/sui_config/client.yaml',
-	]);
-
-	const phraseRegex = /Secret Recovery Phrase\s*:\s*\[(.*?)]/;
-	const phraseMatch = configResult.stdout.match(phraseRegex);
-	if (!phraseMatch || !phraseMatch[1]) {
-		throw new Error('Failed to extract recovery phrase from sui client config');
-	}
-
-	const recoveryPhrase = phraseMatch[1].trim();
-	const signer = Ed25519Keypair.deriveKeypair(recoveryPhrase);
-
-	// Verify the address matches
-	const addressRegex = /address with scheme "ed25519" \[.*?: (0x[a-fA-F0-9]+)]/;
-	const addressMatch = configResult.stdout.match(addressRegex);
-	if (!addressMatch || !addressMatch[1]) {
-		throw new Error('Failed to extract address from sui client config');
-	}
-
-	const address = addressMatch[1].trim();
-	if (signer.toSuiAddress() !== address) {
-		throw new Error('Signer address does not match extracted address');
-	}
-
-	// Setup localnet environment
-	await suiLocalNode.exec([
-		'sui',
-		'client',
-		'new-env',
-		'--alias',
-		'localnet',
-		'--rpc',
-		'http://127.0.0.1:9000',
+		clientConfig,
+		'new-address',
+		'ed25519',
 		'--json',
 	]);
 
-	await suiLocalNode.exec(['sui', 'client', 'switch', '--env', 'localnet', '--json']);
+	const out = configResult.stdout + (configResult.stderr ?? '');
+	// Parse recovery phrase: "secret recovery phrase : [words]" or JSON "recoveryPhrase":"..."
+	const phraseRegex = /secret recovery phrase\s*:\s*\[([^\]]+)\]/i;
+	const phraseMatch = out.match(phraseRegex);
+	let recoveryPhrase: string;
+	if (phraseMatch?.[1]) {
+		recoveryPhrase = phraseMatch[1].trim();
+	} else {
+		const jsonMatch = out.match(/"recoveryPhrase"\s*:\s*"([^"]+)"/);
+		if (jsonMatch?.[1]) {
+			recoveryPhrase = jsonMatch[1].trim();
+		} else {
+			throw new Error('Failed to extract recovery phrase. Output: ' + out.slice(0, 600));
+		}
+	}
+	const signer = Ed25519Keypair.deriveKeypair(recoveryPhrase);
+
+	// Verify the address matches (formats: [alias: 0x...] or "address":"0x...")
+	const addressRegex = /(?::\s*|"address"\s*:\s*")(0x[a-fA-F0-9]{64})/;
+	const addressMatch = out.match(addressRegex);
+	if (!addressMatch?.[1]) {
+		throw new Error('Failed to extract address. Output: ' + out.slice(0, 400));
+	}
+	const address = addressMatch[1].trim();
+	if (signer.toSuiAddress() !== address) {
+		throw new Error(`Signer address mismatch: ${signer.toSuiAddress()} vs ${address}`);
+	}
+
+	// Config at clientConfig; use for commands that accept it. Publish does not accept --client.config.
+	const clientArgs = (cmd: string[], subArgs: string[], withConfig = true) =>
+		withConfig
+			? ['sui', 'client', '--client.config', clientConfig, ...cmd, ...subArgs]
+			: ['sui', 'client', ...cmd, ...subArgs];
+
+	// Setup localnet environment
+	await suiLocalNode.exec(
+		clientArgs(['new-env'], ['--alias', 'localnet', '--rpc', 'http://127.0.0.1:9000', '--json']),
+	);
+
+	await suiLocalNode.exec(clientArgs(['switch'], ['--env', 'localnet', '--json']));
 
 	// Fund the account
-	await suiLocalNode.exec(['sui', 'client', 'faucet']);
+	await suiLocalNode.exec(clientArgs(['faucet'], []));
 
 	// Create and fund a user signer
 	const userKeypair = Ed25519Keypair.generate();
 	const userAddress = userKeypair.toSuiAddress();
-	await suiLocalNode.exec(['sui', 'client', 'faucet', '--address', userAddress]);
+	await suiLocalNode.exec(clientArgs(['faucet'], ['--address', userAddress]));
 
-	// Publish the package
-	const publishResult = await suiLocalNode.exec([
-		'sui',
-		'client',
-		'publish',
-		'./sui_stack_messaging',
-		'--json',
-	]);
+	// Publish: localnet is not in Move.toml, so use test-publish (ephemeral publication)
+	const publishResult = await suiLocalNode.exec(
+		clientArgs(
+			['test-publish', '/sui/sui_stack_messaging', '--build-env', 'localnet', '--json'],
+			[],
+			false,
+		),
+	);
 
-	const publishResultJson = JSON.parse(publishResult.stdout);
-	if (publishResultJson.effects.status.status !== 'success') {
-		throw new Error('Failed to publish package to localnet');
+	const output = publishResult.stdout.trim() || publishResult.stderr?.trim() || '';
+	if (publishResult.exitCode !== 0) {
+		throw new Error(
+			`sui client test-publish failed (exit ${publishResult.exitCode}): ${output.slice(0, 500)}`,
+		);
 	}
 
-	const published = publishResultJson.objectChanges.find(
-		(change: any) => change.type === 'published',
-	);
-	if (!published) {
+	let publishResultJson: {
+		effects?: {
+			status?: string;
+			V2?: {
+				status?: string;
+				changed_objects?: Array<[string, { output_state?: { PackageWrite?: [number, string] } }]>;
+			};
+		};
+		objectChanges?: Array<{ type: string; packageId?: string }>;
+	};
+	try {
+		publishResultJson = JSON.parse(output);
+	} catch {
+		throw new Error(`sui client test-publish did not return valid JSON: ${output.slice(0, 300)}`);
+	}
+
+	const effects = publishResultJson.effects as any;
+	const effectsStatus = effects?.V2?.status ?? effects?.status;
+	const isSuccess =
+		effectsStatus === 'success' ||
+		effectsStatus === 'Success' ||
+		(typeof effectsStatus === 'object' &&
+			(effectsStatus?.status === 'success' || effectsStatus?.success === true));
+	if (!isSuccess) {
+		throw new Error(
+			`Failed to publish package to localnet: ${JSON.stringify(publishResultJson.effects ?? publishResultJson)}`,
+		);
+	}
+
+	// Sui 2.x: changed_objects; older: objectChanges with type published
+	let packageId: string | undefined;
+	const objChanges = effects?.V2?.changed_objects;
+	if (objChanges) {
+		for (const [, change] of objChanges) {
+			const pkg = change?.output_state?.PackageWrite;
+			if (pkg?.[1]) {
+				packageId = pkg[1];
+				break;
+			}
+		}
+	}
+	if (!packageId) {
+		const published = publishResultJson.objectChanges?.find((c: any) => c.type === 'published');
+		packageId = published?.packageId;
+	}
+	if (!packageId) {
 		throw new Error('Published package not found in transaction effects');
 	}
+	// test-publish returns base58 IDs; MVR expects hex. Convert if non-hex.
+	const hexOnly = /^0?x?[0-9a-fA-F]{64}$/;
+	if (!hexOnly.test(packageId.replace(/^0x/, ''))) {
+		try {
+			const bytes = fromBase58(packageId);
+			packageId = toHex(bytes);
+			if (!packageId.startsWith('0x')) packageId = `0x${packageId}`;
+		} catch {
+			// keep as-is if conversion fails
+		}
+	} else if (!packageId.startsWith('0x')) {
+		packageId = `0x${packageId}`;
+	}
 
-	const packageId = published.packageId;
-
-	// Create Sui client with the deployed package ID
-	const suiClient = new SuiClient({
-		url: getFullnodeUrl('localnet'),
+	// Create Sui client with the deployed package ID (use mapped port for host access)
+	const rpcPort = suiLocalNode.getMappedPort(9000);
+	const rpcUrl = `http://127.0.0.1:${rpcPort}`;
+	const suiClient = new SuiJsonRpcClient({
+		network: 'localnet',
+		url: rpcUrl,
 		mvr: {
 			overrides: {
 				packages: {
@@ -216,6 +270,17 @@ async function setupLocalnetEnvironment(config: TestConfig): Promise<TestEnviron
 		},
 	});
 
+	// Wait for publish transaction to be finalized before running tests
+	const publishDigest =
+		(publishResultJson as any).digest ??
+		effects?.V2?.transaction_digest ??
+		effects?.transaction_digest;
+	if (publishDigest) {
+		await suiClient.core.waitForTransaction({ digest: publishDigest });
+		// Allow fullnode to propagate package state (localnet can have slight delay)
+		await new Promise((r) => setTimeout(r, 2000));
+	}
+
 	// Cleanup function
 	const cleanup = async () => {
 		await pg.stop();
@@ -223,11 +288,21 @@ async function setupLocalnetEnvironment(config: TestConfig): Promise<TestEnviron
 		await dockerNetwork.stop();
 	};
 
-	// Update the config with the actual deployed package ID
+	// Update the config with the actual deployed package ID and localnet URLs
+	const graphqlPort = suiLocalNode.getMappedPort(9125);
 	const updatedConfig: TestConfig = {
 		...config,
 		packageConfig: {
 			packageId,
+		},
+		suiClientConfig: {
+			...config.suiClientConfig,
+			url: rpcUrl,
+		},
+		localnetUrls: {
+			rpc: rpcUrl,
+			graphql: `http://127.0.0.1:${graphqlPort}`,
+			grpc: `http://127.0.0.1:${rpcPort}`,
 		},
 	};
 
@@ -243,8 +318,9 @@ async function setupLocalnetEnvironment(config: TestConfig): Promise<TestEnviron
 
 async function setupTestnetEnvironment(config: TestConfig): Promise<TestEnvironmentSetup> {
 	// For testnet, we use the existing infrastructure without Docker containers
-	const suiClient = new SuiClient({
-		url: getFullnodeUrl('testnet'),
+	const suiClient = new SuiJsonRpcClient({
+		network: 'testnet',
+		url: getJsonRpcFullnodeUrl('testnet'),
 		mvr: {
 			overrides: {
 				packages: {
@@ -256,7 +332,7 @@ async function setupTestnetEnvironment(config: TestConfig): Promise<TestEnvironm
 
 	const suiGrpcClient = new SuiGrpcClient({
 		network: 'testnet',
-		baseUrl: getFullnodeUrl('testnet'),
+		baseUrl: 'https://grpc-testnet.sui.io',
 		mvr: {
 			overrides: {
 				packages: {
@@ -419,11 +495,7 @@ class MockStorageAdapter implements StorageAdapter {
  * @param signer - The signer to use for transactions.
  * @returns An instance of the extended SuiStackMessagingClient.
  */
-export function createTestClient(
-	suiRpcClient: Experimental_BaseClient,
-	config: TestConfig,
-	signer: Signer,
-) {
+export function createTestClient(suiRpcClient: BaseClient, config: TestConfig, signer: Signer) {
 	// Create a single shared MockStorageAdapter instance for localnet
 	// This ensures uploaded data persists across operations
 	const mockStorage = new MockStorageAdapter();
@@ -441,14 +513,14 @@ export function createTestClient(
 				}),
 			)
 		: suiRpcClient
-				.$extend(
-					// NOTE: Using deprecated asClientExtension() because the new seal() function
-					// is not exported from @mysten/seal package index (v0.9.1).
-					// TODO: Switch to seal() once available
-					SealClient.asClientExtension({
-						serverConfigs: config.sealConfig?.serverConfigs || [],
-					}),
-				)
+				.$extend({
+					name: 'seal' as const,
+					register: (client: BaseClient) =>
+						new SealClient({
+							suiClient: client,
+							serverConfigs: config.sealConfig?.serverConfigs || [],
+						}),
+				})
 				.$extend(
 					messaging({
 						packageConfig: config.packageConfig,
@@ -475,8 +547,11 @@ export function createTestClient(
  * @param channelId - The ID of the channel object.
  * @returns The parsed Channel object.
  */
-export async function getChannelObject(client: SuiClient, channelId: string) {
-	const channelResponse = await client.core.getObject({ objectId: channelId });
+export async function getChannelObject(client: SuiJsonRpcClient, channelId: string) {
+	const channelResponse = await client.core.getObject({
+		objectId: channelId,
+		include: { content: true },
+	});
 	const channelContent = await channelResponse.object.content;
 	return channelModule.Channel.parse(channelContent);
 }
@@ -487,8 +562,11 @@ export async function getChannelObject(client: SuiClient, channelId: string) {
  * @param channelId - The ID of the channel object.
  * @returns An array of members with their permissions.
  */
-export async function getMemberPermissions(client: SuiClient, channelId: string) {
-	const channelResponse = await client.core.getObject({ objectId: channelId });
+export async function getMemberPermissions(client: SuiJsonRpcClient, channelId: string) {
+	const channelResponse = await client.core.getObject({
+		objectId: channelId,
+		include: { content: true },
+	});
 	const channelContent = await channelResponse.object.content;
 	const channel = channelModule.Channel.parse(channelContent);
 
@@ -511,9 +589,12 @@ export async function getMemberPermissions(client: SuiClient, channelId: string)
  * @param packageId - The ID of the Move package.
  * @returns An array of MemberCap objects.
  */
-export async function getChannelMemberCaps(client: SuiClient, channelId: string) {
+export async function getChannelMemberCaps(client: SuiJsonRpcClient, channelId: string) {
 	// Get the channel object to access its auth struct
-	const channelResponse = await client.core.getObject({ objectId: channelId });
+	const channelResponse = await client.core.getObject({
+		objectId: channelId,
+		include: { content: true },
+	});
 	const channelContent = await channelResponse.object.content;
 	const channel = channelModule.Channel.parse(channelContent);
 
@@ -557,13 +638,13 @@ export async function getChannelMemberCaps(client: SuiClient, channelId: string)
  * @returns The MemberCap object.
  */
 export async function getMemberCapObject(
-	client: SuiClient,
+	client: SuiJsonRpcClient,
 	ownerAddress: string,
 	packageId: string,
 	channelId: string,
 ) {
-	const memberCaps = await client.core.getOwnedObjects({
-		address: ownerAddress,
+	const memberCaps = await client.core.listOwnedObjects({
+		owner: ownerAddress,
 		type: `${packageId}::member_cap::MemberCap`,
 	});
 
@@ -591,8 +672,8 @@ export async function getMemberCapObject(
  * @param messagesTableVecId - The ID of the messages TableVec.
  * @returns An array of parsed message objects.
  */
-export async function getMessages(client: SuiClient, messagesTableVecId: string) {
-	const messagesResponse = await client.core.getDynamicFields({ parentId: messagesTableVecId });
+export async function getMessages(client: SuiJsonRpcClient, messagesTableVecId: string) {
+	const messagesResponse = await client.core.listDynamicFields({ parentId: messagesTableVecId });
 	const messagesPromises = messagesResponse.dynamicFields.map(async (message) => {
 		const messageResponse = await client.core.getDynamicField({
 			parentId: messagesTableVecId,
@@ -600,7 +681,7 @@ export async function getMessages(client: SuiClient, messagesTableVecId: string)
 		});
 		const messageNameContent = messageResponse.dynamicField.name.bcs;
 		const messageName = bcs.U64.parse(messageNameContent);
-		const messageId = messageResponse.dynamicField.id;
+		const messageId = messageResponse.dynamicField.fieldId;
 		const messageContent = messageResponse.dynamicField.value.bcs;
 		const messageObj = messageModule.Message.parse(messageContent);
 		return { name: messageName, id: messageId, message: messageObj };
@@ -613,7 +694,7 @@ export async function getMessages(client: SuiClient, messagesTableVecId: string)
  */
 export async function findChannelMembership(
 	client: ReturnType<typeof createTestClient>,
-	address: string,
+	owner: string,
 	channelId: string,
 ): Promise<any | null> {
 	let membership: any | null = null;
@@ -621,10 +702,11 @@ export async function findChannelMembership(
 	let hasNextPage: boolean = true;
 
 	while (hasNextPage && !membership) {
-		const memberships = await client.messaging.getChannelMemberships({
-			address,
-			cursor,
-		});
+		const memberships: Awaited<ReturnType<typeof client.messaging.getChannelMemberships>> =
+			await client.messaging.getChannelMemberships({
+				owner,
+				cursor,
+			});
 		membership = memberships.memberships.find((m: any) => m.channel_id === channelId);
 		hasNextPage = memberships.hasNextPage;
 		cursor = memberships.cursor;
@@ -652,19 +734,19 @@ export async function getCreatorCapId(
 	let hasNextPage = true;
 
 	while (hasNextPage) {
-		const creatorCapsRes = await client.core.getOwnedObjects({
-			address: ownerAddress,
+		const creatorCapsRes: Awaited<
+			ReturnType<typeof client.core.listOwnedObjects<{ content: true }>>
+		> = await client.core.listOwnedObjects({
+			owner: ownerAddress,
 			type: creatorCapType,
 			cursor,
+			include: { content: true },
 		});
 
 		for (const obj of creatorCapsRes.objects) {
-			if (obj instanceof Error || !obj.content) {
-				continue;
-			}
 			const parsedCap = creatorCapModule.CreatorCap.parse(await obj.content);
 			if (parsedCap.channel_id === channelId) {
-				return obj.id;
+				return obj.objectId;
 			}
 		}
 

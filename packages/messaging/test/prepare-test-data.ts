@@ -6,7 +6,7 @@ import { EncryptedSymmetricKey } from '../src/encryption/types';
 import { writeFileSync } from 'fs';
 import { join } from 'path';
 import { loadTestUsers, getTestUserKeypair } from './fund-test-users';
-import { ClientWithExtensions } from '@mysten/sui/experimental';
+import { ClientWithExtensions } from '@mysten/sui/client';
 import { SuiStackMessagingClient } from '../src/client';
 import { Signer } from '@mysten/sui/cryptography';
 import { Membership } from '../src/types';
@@ -222,7 +222,7 @@ async function createTestChannel(
 	let hasNextPage: boolean = true;
 	while (hasNextPage && !creatorMembership) {
 		let memberships = await client.messaging.getChannelMemberships({
-			address: creator.toSuiAddress(),
+			owner: creator.toSuiAddress(),
 			cursor,
 		});
 		creatorMembership = memberships.memberships.find((m) => m.channel_id === channelId);
@@ -255,7 +255,7 @@ async function createTestChannel(
 	// Get initial members' member caps
 	for (const memberAddress of initialMembers) {
 		const memberMemberships = await client.messaging.getChannelMemberships({
-			address: memberAddress,
+			owner: memberAddress,
 		});
 		const memberMembership = memberMemberships.memberships.find(
 			(m: any) => m.channel_id === channelId,

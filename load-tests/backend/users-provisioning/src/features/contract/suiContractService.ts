@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { bcs } from "@mysten/sui/bcs";
-import type { GasCostSummary, SuiObjectResponse } from "@mysten/sui/client";
-import { SuiClient } from "@mysten/sui/client";
+import type { SuiClientTypes } from "@mysten/sui/client";
+import type { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import {
   Transaction,
@@ -59,11 +59,11 @@ export type Channel = {
  * Service for handling Sui Contract interactions
  */
 export class SuiContractService {
-  private suiClient: SuiClient;
+  private suiClient: SuiJsonRpcClient;
   public lastDuration: number = 0;
   public lastGasCost: number = 0;
 
-  constructor(suiClient: SuiClient) {
+  constructor(suiClient: SuiJsonRpcClient) {
     this.suiClient = suiClient;
   }
 
@@ -129,15 +129,17 @@ export class SuiContractService {
         senderKeypair
       );
 
-      const sharedObject: any = result.objectChanges?.find(
+      // JSON-RPC objectChanges: { type: 'created', objectId, objectType, ... }
+      const objectChanges = result.objectChanges ?? [];
+      const sharedObject = objectChanges.find(
         (o: any) => o.type === "created" && o.objectType === CHANNEL_TYPE
-      );
+      ) as { objectId: string } | undefined;
       if (!sharedObject)
         throw new Error("Channel creation did not return a shared object.");
 
-      const creatorCapObject: any = result.objectChanges?.find(
+      const creatorCapObject = objectChanges.find(
         (o: any) => o.type === "created" && o.objectType === CREATOR_CAP_TYPE
-      );
+      ) as { objectId: string } | undefined;
       if (!creatorCapObject) throw new Error("CreatorCap was not created.");
 
       // console.log(
@@ -246,16 +248,16 @@ export class SuiContractService {
     return this.measure(async () => {
       // console.log(`Fetching channel object for ${channelId}...`);
 
-      const channelObjectResponse = await this.suiClient.getObject({
-        id: channelId,
-        options: { showContent: true },
+      const { object } = await this.suiClient.core.getObject({
+        objectId: channelId,
+        include: { json: true },
       });
 
-      if (!channelObjectResponse.data?.content) {
+      if (!object?.json) {
         throw new Error(`Channel ${channelId} not found`);
       }
 
-      const fields = (channelObjectResponse.data.content as any).fields;
+      const fields = (object.json as any).fields ?? object.json;
 
       // Extract messages table ID from the nested structure
       const messageTableId = fields.messages.fields.contents.fields.id.id;
@@ -278,20 +280,20 @@ export class SuiContractService {
 
   async fetchChannelObjects(channelIds: string[]): Promise<Channel[]> {
     // console.log(`Fetching channel objects for IDs: ${channelIds.join(", ")}`);
-    const response = await this.suiClient.multiGetObjects({
-      ids: channelIds,
-      options: { showContent: true },
+    const { objects } = await this.suiClient.core.getObjects({
+      objectIds: channelIds,
+      include: { content: true },
     });
 
-    const channelObjects: Channel[] = response.map((channelObjRes) => {
-      if (channelObjRes.error) {
+    const channelObjects: Channel[] = objects.map((channelObjRes) => {
+      if (channelObjRes instanceof Error) {
         console.error(
-          `- Error fetching channel: ${JSON.stringify(channelObjRes.error)}`
+          `- Error fetching channel: ${JSON.stringify(channelObjRes.message)}`
         );
       }
 
       // TODO: proper typescript
-      const content = channelObjRes.data?.content as unknown as any;
+      const content = (channelObjRes as any)?.content as unknown as any;
       const fields = content.fields;
       const id = fields.id.id;
       const version = fields.version;
@@ -360,32 +362,37 @@ export class SuiContractService {
     limit: number = 10
   ): Promise<{ memberCapId: string; channelId: string }[]> {
     return this.measure(async () => {
-      const response = await this.suiClient.getOwnedObjects({
+      const response = await this.suiClient.core.listOwnedObjects({
         owner: userAddress,
-        filter: { StructType: MEMBER_CAP_TYPE },
-        options: { showContent: true },
+        type: MEMBER_CAP_TYPE,
         limit,
+        include: { content: true },
       });
 
-      const latestMemberCaps = response.data;
+      const latestMemberCaps = response.objects;
 
       if (latestMemberCaps.length === 0) {
         console.log("No channel memberships found for this user.");
         return [];
       }
 
-      // console.log(
-      // `Found ${latestMemberCaps.length} channel membership(s). Fetching details...`
-      // );
+      const contents = await Promise.all(
+        latestMemberCaps.map(async (obj) => {
+          if (obj instanceof Error || !obj.content) return null;
+          const content = await obj.content;
+          return { objectId: obj.objectId, content };
+        })
+      );
 
-      // const channelIds = latestMemberCaps.map(
-      //   (cap: any) => cap.data.content.fields.channel_id
-      // );
-
-      return latestMemberCaps.map((cap, index) => ({
-        memberCapId: cap.data!.objectId,
-        channelId: (cap.data!.content! as unknown as any).fields!.channel_id,
-      }));
+      return contents
+        .filter((c): c is NonNullable<typeof c> => c !== null)
+        .map((cap) => {
+          const fields = (cap.content as any)?.fields ?? cap.content;
+          return {
+            memberCapId: cap.objectId,
+            channelId: fields?.channel_id ?? fields?.channelId,
+          };
+        });
     });
   }
 
@@ -398,13 +405,13 @@ export class SuiContractService {
       // `Fetching latest ${limit} messages for channel ${channelId}...`
       // );
 
-      const channelObjetResponse = await this.suiClient.getObject({
-        id: channelId,
-        options: { showContent: true },
+      const { object } = await this.suiClient.core.getObject({
+        objectId: channelId,
+        include: { json: true },
       });
 
-      const messageTableId = (channelObjetResponse.data?.content as any).fields
-        .messages.fields.contents.fields.id.id;
+      const fields = (object?.json as any)?.fields ?? object?.json;
+      const messageTableId = fields?.messages?.fields?.contents?.fields?.id?.id;
 
       const messages = await this.fetchLatestMessagesByTableId(
         messageTableId,
@@ -419,17 +426,29 @@ export class SuiContractService {
     limit: number = 10
   ): Promise<Message[]> {
     return this.measure(async () => {
-      const response = await this.suiClient.getDynamicFields({
-        parentId: messsageTableId,
-        limit,
+      const { dynamicFields } =
+        await this.suiClient.core.listDynamicFields({
+          parentId: messsageTableId,
+          limit,
+        });
+      const messageIds = await Promise.all(
+        dynamicFields.slice(0, limit).map(async (field) => {
+          const { dynamicField } =
+            await this.suiClient.core.getDynamicField({
+              parentId: messsageTableId,
+              name: field.name,
+            });
+          return dynamicField.fieldId;
+        })
+      );
+      const { objects } = await this.suiClient.core.getObjects({
+        objectIds: messageIds,
+        include: { json: true },
       });
-      const messageIds = response.data.map((field) => field.objectId);
-      const messageObjectsResponse = await this.suiClient.multiGetObjects({
-        ids: messageIds,
-        options: { showContent: true },
-      });
-      return messageObjectsResponse.map((objRes: any) => {
-        const fields = objRes.data.content.fields.value.fields;
+      return objects.map((objRes: any) => {
+        const content = objRes?.json ?? objRes?.content;
+        const fields =
+          content?.fields?.value?.fields ?? content?.value?.fields ?? content;
         return {
           sender: fields.sender,
           ciphertext: fields.ciphertext,
@@ -477,7 +496,7 @@ export class SuiContractService {
     return tx;
   }
 
-  private calculateGasCost(gasUsed: GasCostSummary): number {
+  private calculateGasCost(gasUsed: SuiClientTypes.GasCostSummary): number {
     return (
       parseInt(gasUsed.computationCost) +
       parseInt(gasUsed.storageCost) -

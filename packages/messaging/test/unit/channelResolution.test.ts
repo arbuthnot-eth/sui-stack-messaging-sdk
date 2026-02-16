@@ -27,9 +27,9 @@ describe('isChannelName', () => {
 	it('rejects addresses (starting with 0x)', () => {
 		expect(isChannelName('0x123')).toBe(false);
 		expect(isChannelName('0xabcdef1234567890')).toBe(false);
-		expect(isChannelName('0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef')).toBe(
-			false,
-		);
+		expect(
+			isChannelName('0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef'),
+		).toBe(false);
 	});
 
 	it('rejects empty strings', () => {
@@ -136,7 +136,9 @@ describe('LocalChannelRegistry', () => {
 		});
 
 		it('throws for unregistered names', async () => {
-			await expect(registry.resolve('#unknown')).rejects.toThrow('Channel name not found: #unknown');
+			await expect(registry.resolve('#unknown')).rejects.toThrow(
+				'Channel name not found: #unknown',
+			);
 			await expect(registry.resolve('notfound')).rejects.toThrow(
 				'Channel name not found: #notfound',
 			);

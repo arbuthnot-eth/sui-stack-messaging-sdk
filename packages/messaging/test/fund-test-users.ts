@@ -1,9 +1,8 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
-import { SuiClient } from '@mysten/sui/client';
+import { SuiJsonRpcClient, getJsonRpcFullnodeUrl } from '@mysten/sui/jsonRpc';
 import { Ed25519Keypair } from '@mysten/sui/keypairs/ed25519';
 import { Transaction } from '@mysten/sui/transactions';
-import { getFullnodeUrl } from '@mysten/sui/client';
 import { writeFileSync, readFileSync } from 'fs';
 import { join } from 'path';
 
@@ -37,8 +36,9 @@ async function fundTestUsers(): Promise<void> {
 	console.log('🚀 Starting test user funding process...');
 
 	// Create Sui client
-	const suiClient = new SuiClient({
-		url: getFullnodeUrl('testnet'),
+	const suiClient = new SuiJsonRpcClient({
+		network: 'testnet',
+		url: getJsonRpcFullnodeUrl('testnet'),
 	});
 
 	// Create funder signer

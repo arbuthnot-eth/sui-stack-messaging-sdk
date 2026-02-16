@@ -14,6 +14,8 @@ export interface TestConfig {
 		url: string;
 		network: 'localnet' | 'testnet';
 	};
+	/** Set when environment is localnet - URLs for RPC, GraphQL, gRPC (from container port mapping) */
+	localnetUrls?: { rpc: string; graphql: string; grpc: string };
 	sealConfig?: {
 		serverConfigs: KeyServerConfig[];
 	};
