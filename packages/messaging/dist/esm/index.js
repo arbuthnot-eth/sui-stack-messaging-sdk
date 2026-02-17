@@ -16,6 +16,14 @@ import {
   PersistentChannelRegistry
 } from "./utils/channelResolution.js";
 import { sealClientExtension } from "./utils/seal-extension.js";
+import {
+  createThunderAction,
+  serializeThunderAction,
+  deserializeThunderAction,
+  THUNDER_TOOLS,
+  THUNDER_VERSION
+} from "./thunder.js";
+import { appendThunderMessage } from "./compose.js";
 export {
   DEFAULT_SEAL_APPROVE_CONTRACT,
   LOG_CATEGORIES,
@@ -25,13 +33,19 @@ export {
   SuiNSResolver,
   SuiStackMessagingClient,
   TESTNET_MESSAGING_PACKAGE_CONFIG,
+  THUNDER_TOOLS,
+  THUNDER_VERSION,
   WalrusStorageAdapter,
+  appendThunderMessage,
+  createThunderAction,
+  deserializeThunderAction,
   formatChannelName,
   getLogger,
   isChannelName,
   isSuiNSName,
   messaging,
   normalizeChannelName,
-  sealClientExtension
+  sealClientExtension,
+  serializeThunderAction
 };
 //# sourceMappingURL=index.js.map

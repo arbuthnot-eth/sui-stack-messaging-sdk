@@ -731,7 +731,8 @@ const _SuiStackMessagingClient = class _SuiStackMessagingClient {
     );
     await sendMessageTxBuilder(tx);
     const { digest, effects } = await __privateMethod(this, _SuiStackMessagingClient_instances, executeTransaction_fn).call(this, tx, signer, "send message", true);
-    const messageId = effects.changedObjects.find(
+    const changedObjects = Array.isArray(effects?.changedObjects) ? effects.changedObjects : [];
+    const messageId = changedObjects.find(
       (obj) => obj.idOperation === "Created"
     )?.objectId;
     if (messageId === void 0) {
@@ -745,6 +746,26 @@ const _SuiStackMessagingClient = class _SuiStackMessagingClient {
       digest
     });
     return { digest, messageId };
+  }
+  /**
+   * Append a Thunder action message to an existing transaction.
+   * The action is serialized, encrypted, and added as a send_message MoveCall.
+   * This allows atomic journaling: the action and its log entry succeed or fail together.
+   */
+  async appendThunderAction(tx, channelId, memberCapId, action, encryptedKey, sender) {
+    const { appendThunderMessage } = await import("./compose.js");
+    await appendThunderMessage(
+      tx,
+      {
+        packageId: __privateGet(this, _packageConfig).packageId,
+        channelId,
+        memberCapId,
+        action,
+        encryptedKey,
+        sender
+      },
+      __privateGet(this, _envelopeEncryption)
+    );
   }
   /**
    * Add members to a channel
@@ -1151,12 +1172,18 @@ executeTransaction_fn = async function(transaction, signer, action, waitForTrans
   if (effects?.status.error) {
     throw new MessagingClientError(`Failed to ${action} (${digest}): ${effects?.status.error}`);
   }
+  let resolvedEffects = effects;
   if (waitForTransaction) {
-    await __privateGet(this, _suiClient).core.waitForTransaction({
-      digest
+    const waitResult = await __privateGet(this, _suiClient).core.waitForTransaction({
+      digest,
+      include: { effects: true }
     });
+    const waitedTxn = waitResult.$kind === "Transaction" ? waitResult.Transaction : waitResult.FailedTransaction;
+    if (waitedTxn?.effects) {
+      resolvedEffects = waitedTxn.effects;
+    }
   }
-  return { digest, effects };
+  return { digest, effects: resolvedEffects };
 };
 getGeneratedCaps_fn = async function(digest) {
   const waitResult = await __privateGet(this, _suiClient).core.waitForTransaction({
@@ -1214,7 +1241,8 @@ getCreatedObjectsByType_fn = async function({
     "@local-pkg/sui-stack-messaging",
     __privateGet(this, _packageConfig).packageId
   );
-  const createdObjectIds = effects.changedObjects.filter((object) => object.idOperation === "Created" && object.outputState !== "DoesNotExist").map((object) => object.objectId);
+  const changedObjects = Array.isArray(effects.changedObjects) ? effects.changedObjects : [];
+  const createdObjectIds = changedObjects.filter((object) => object.idOperation === "Created" && object.outputState !== "DoesNotExist").map((object) => object.objectId);
   const createdObjects = await __privateGet(this, _suiClient).core.getObjects({
     objectIds: createdObjectIds,
     include: { content: true }

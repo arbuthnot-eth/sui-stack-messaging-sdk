@@ -1,33 +1,55 @@
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/utils/suins.mjs
-var SUI_NS_NAME_REGEX = /^(?!.*(^(?!@)|[-.@])($|[-.@]))(?:[a-z0-9-]{0,63}(?:\.[a-z0-9-]{0,63})*)?@[a-z0-9-]{0,63}$/i;
-var SUI_NS_DOMAIN_REGEX = /^(?!.*(^|[-.])($|[-.]))(?:[a-z0-9-]{0,63}\.)+sui$/i;
-var MAX_SUI_NS_NAME_LENGTH = 235;
+var __defProp = Object.defineProperty;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __esm = (fn, res) => function __init() {
+  return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
+};
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/utils/suins.mjs
 function isValidSuiNSName(name) {
   if (name.length > MAX_SUI_NS_NAME_LENGTH) return false;
   if (name.includes("@")) return SUI_NS_NAME_REGEX.test(name);
   return SUI_NS_DOMAIN_REGEX.test(name);
 }
+var SUI_NS_NAME_REGEX, SUI_NS_DOMAIN_REGEX, MAX_SUI_NS_NAME_LENGTH;
+var init_suins = __esm({
+  "packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/utils/suins.mjs"() {
+    SUI_NS_NAME_REGEX = /^(?!.*(^(?!@)|[-.@])($|[-.@]))(?:[a-z0-9-]{0,63}(?:\.[a-z0-9-]{0,63})*)?@[a-z0-9-]{0,63}$/i;
+    SUI_NS_DOMAIN_REGEX = /^(?!.*(^|[-.])($|[-.]))(?:[a-z0-9-]{0,63}\.)+sui$/i;
+    MAX_SUI_NS_NAME_LENGTH = 235;
+  }
+});
 
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/utils/move-registry.mjs
-var NAME_PATTERN = /^([a-z0-9]+(?:-[a-z0-9]+)*)$/;
-var VERSION_REGEX = /^\d+$/;
-var MAX_APP_SIZE = 64;
-var NAME_SEPARATOR = "/";
-var isValidNamedPackage = (name) => {
-  const parts = name.split(NAME_SEPARATOR);
-  if (parts.length < 2 || parts.length > 3) return false;
-  const [org, app, version] = parts;
-  if (version !== void 0 && !VERSION_REGEX.test(version)) return false;
-  if (!isValidSuiNSName(org)) return false;
-  return NAME_PATTERN.test(app) && app.length < MAX_APP_SIZE;
-};
-var isValidNamedType = (type) => {
-  const splitType = type.split(/::|<|>|,/);
-  for (const t of splitType) if (t.includes(NAME_SEPARATOR) && !isValidNamedPackage(t)) return false;
-  return isValidStructTag(type);
-};
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/utils/move-registry.mjs
+var NAME_PATTERN, VERSION_REGEX, MAX_APP_SIZE, NAME_SEPARATOR, isValidNamedPackage, isValidNamedType;
+var init_move_registry = __esm({
+  "packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/utils/move-registry.mjs"() {
+    init_suins();
+    init_sui_types();
+    NAME_PATTERN = /^([a-z0-9]+(?:-[a-z0-9]+)*)$/;
+    VERSION_REGEX = /^\d+$/;
+    MAX_APP_SIZE = 64;
+    NAME_SEPARATOR = "/";
+    isValidNamedPackage = (name) => {
+      const parts = name.split(NAME_SEPARATOR);
+      if (parts.length < 2 || parts.length > 3) return false;
+      const [org, app, version] = parts;
+      if (version !== void 0 && !VERSION_REGEX.test(version)) return false;
+      if (!isValidSuiNSName(org)) return false;
+      return NAME_PATTERN.test(app) && app.length < MAX_APP_SIZE;
+    };
+    isValidNamedType = (type) => {
+      const splitType = type.split(/::|<|>|,/);
+      for (const t of splitType) if (t.includes(NAME_SEPARATOR) && !isValidNamedPackage(t)) return false;
+      return isValidStructTag(type);
+    };
+  }
+});
 
-// node_modules/.pnpm/@mysten+bcs@2.0.2/node_modules/@mysten/bcs/dist/uleb.mjs
+// packages/node_modules/.pnpm/@mysten+bcs@2.0.2/node_modules/@mysten/bcs/dist/uleb.mjs
 function ulebEncode(num) {
   let bigNum = BigInt(num);
   const arr = [];
@@ -59,115 +81,125 @@ function ulebDecode(arr) {
     length: len
   };
 }
+var init_uleb = __esm({
+  "packages/node_modules/.pnpm/@mysten+bcs@2.0.2/node_modules/@mysten/bcs/dist/uleb.mjs"() {
+  }
+});
 
-// node_modules/.pnpm/@mysten+bcs@2.0.2/node_modules/@mysten/bcs/dist/reader.mjs
-var BcsReader = class {
-  /**
-  * @param {Uint8Array} data Data to use as a buffer.
-  */
-  constructor(data) {
-    this.bytePosition = 0;
-    this.dataView = new DataView(data.buffer, data.byteOffset, data.byteLength);
+// packages/node_modules/.pnpm/@mysten+bcs@2.0.2/node_modules/@mysten/bcs/dist/reader.mjs
+var BcsReader;
+var init_reader = __esm({
+  "packages/node_modules/.pnpm/@mysten+bcs@2.0.2/node_modules/@mysten/bcs/dist/reader.mjs"() {
+    init_uleb();
+    BcsReader = class {
+      /**
+      * @param {Uint8Array} data Data to use as a buffer.
+      */
+      constructor(data) {
+        this.bytePosition = 0;
+        this.dataView = new DataView(data.buffer, data.byteOffset, data.byteLength);
+      }
+      /**
+      * Shift current cursor position by `bytes`.
+      *
+      * @param {Number} bytes Number of bytes to
+      * @returns {this} Self for possible chaining.
+      */
+      shift(bytes) {
+        this.bytePosition += bytes;
+        return this;
+      }
+      /**
+      * Read U8 value from the buffer and shift cursor by 1.
+      * @returns
+      */
+      read8() {
+        const value = this.dataView.getUint8(this.bytePosition);
+        this.shift(1);
+        return value;
+      }
+      /**
+      * Read U16 value from the buffer and shift cursor by 2.
+      * @returns
+      */
+      read16() {
+        const value = this.dataView.getUint16(this.bytePosition, true);
+        this.shift(2);
+        return value;
+      }
+      /**
+      * Read U32 value from the buffer and shift cursor by 4.
+      * @returns
+      */
+      read32() {
+        const value = this.dataView.getUint32(this.bytePosition, true);
+        this.shift(4);
+        return value;
+      }
+      /**
+      * Read U64 value from the buffer and shift cursor by 8.
+      * @returns
+      */
+      read64() {
+        const value1 = this.read32();
+        const result = this.read32().toString(16) + value1.toString(16).padStart(8, "0");
+        return BigInt("0x" + result).toString(10);
+      }
+      /**
+      * Read U128 value from the buffer and shift cursor by 16.
+      */
+      read128() {
+        const value1 = BigInt(this.read64());
+        const result = BigInt(this.read64()).toString(16) + value1.toString(16).padStart(16, "0");
+        return BigInt("0x" + result).toString(10);
+      }
+      /**
+      * Read U128 value from the buffer and shift cursor by 32.
+      * @returns
+      */
+      read256() {
+        const value1 = BigInt(this.read128());
+        const result = BigInt(this.read128()).toString(16) + value1.toString(16).padStart(32, "0");
+        return BigInt("0x" + result).toString(10);
+      }
+      /**
+      * Read `num` number of bytes from the buffer and shift cursor by `num`.
+      * @param num Number of bytes to read.
+      */
+      readBytes(num) {
+        const start = this.bytePosition + this.dataView.byteOffset;
+        const value = new Uint8Array(this.dataView.buffer, start, num);
+        this.shift(num);
+        return value;
+      }
+      /**
+      * Read ULEB value - an integer of varying size. Used for enum indexes and
+      * vector lengths.
+      * @returns {Number} The ULEB value.
+      */
+      readULEB() {
+        const start = this.bytePosition + this.dataView.byteOffset;
+        const { value, length } = ulebDecode(new Uint8Array(this.dataView.buffer, start));
+        this.shift(length);
+        return value;
+      }
+      /**
+      * Read a BCS vector: read a length and then apply function `cb` X times
+      * where X is the length of the vector, defined as ULEB in BCS bytes.
+      * @param cb Callback to process elements of vector.
+      * @returns {Array<Any>} Array of the resulting values, returned by callback.
+      */
+      readVec(cb) {
+        const length = this.readULEB();
+        const result = [];
+        for (let i = 0; i < length; i++) result.push(cb(this, i, length));
+        return result;
+      }
+    };
   }
-  /**
-  * Shift current cursor position by `bytes`.
-  *
-  * @param {Number} bytes Number of bytes to
-  * @returns {this} Self for possible chaining.
-  */
-  shift(bytes) {
-    this.bytePosition += bytes;
-    return this;
-  }
-  /**
-  * Read U8 value from the buffer and shift cursor by 1.
-  * @returns
-  */
-  read8() {
-    const value = this.dataView.getUint8(this.bytePosition);
-    this.shift(1);
-    return value;
-  }
-  /**
-  * Read U16 value from the buffer and shift cursor by 2.
-  * @returns
-  */
-  read16() {
-    const value = this.dataView.getUint16(this.bytePosition, true);
-    this.shift(2);
-    return value;
-  }
-  /**
-  * Read U32 value from the buffer and shift cursor by 4.
-  * @returns
-  */
-  read32() {
-    const value = this.dataView.getUint32(this.bytePosition, true);
-    this.shift(4);
-    return value;
-  }
-  /**
-  * Read U64 value from the buffer and shift cursor by 8.
-  * @returns
-  */
-  read64() {
-    const value1 = this.read32();
-    const result = this.read32().toString(16) + value1.toString(16).padStart(8, "0");
-    return BigInt("0x" + result).toString(10);
-  }
-  /**
-  * Read U128 value from the buffer and shift cursor by 16.
-  */
-  read128() {
-    const value1 = BigInt(this.read64());
-    const result = BigInt(this.read64()).toString(16) + value1.toString(16).padStart(16, "0");
-    return BigInt("0x" + result).toString(10);
-  }
-  /**
-  * Read U128 value from the buffer and shift cursor by 32.
-  * @returns
-  */
-  read256() {
-    const value1 = BigInt(this.read128());
-    const result = BigInt(this.read128()).toString(16) + value1.toString(16).padStart(32, "0");
-    return BigInt("0x" + result).toString(10);
-  }
-  /**
-  * Read `num` number of bytes from the buffer and shift cursor by `num`.
-  * @param num Number of bytes to read.
-  */
-  readBytes(num) {
-    const start = this.bytePosition + this.dataView.byteOffset;
-    const value = new Uint8Array(this.dataView.buffer, start, num);
-    this.shift(num);
-    return value;
-  }
-  /**
-  * Read ULEB value - an integer of varying size. Used for enum indexes and
-  * vector lengths.
-  * @returns {Number} The ULEB value.
-  */
-  readULEB() {
-    const start = this.bytePosition + this.dataView.byteOffset;
-    const { value, length } = ulebDecode(new Uint8Array(this.dataView.buffer, start));
-    this.shift(length);
-    return value;
-  }
-  /**
-  * Read a BCS vector: read a length and then apply function `cb` X times
-  * where X is the length of the vector, defined as ULEB in BCS bytes.
-  * @param cb Callback to process elements of vector.
-  * @returns {Array<Any>} Array of the resulting values, returned by callback.
-  */
-  readVec(cb) {
-    const length = this.readULEB();
-    const result = [];
-    for (let i = 0; i < length; i++) result.push(cb(this, i, length));
-    return result;
-  }
-};
+});
 
-// node_modules/.pnpm/@scure+base@2.0.0/node_modules/@scure/base/index.js
+// packages/node_modules/.pnpm/@scure+base@2.0.0/node_modules/@scure/base/index.js
 function isBytes(a) {
   return a instanceof Uint8Array || ArrayBuffer.isView(a) && a.constructor.name === "Uint8Array";
 }
@@ -305,14 +337,6 @@ function convertRadix(data, from, to) {
     res.push(0);
   return res.reverse();
 }
-var gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
-var radix2carry = /* @__NO_SIDE_EFFECTS__ */ (from, to) => from + (to - gcd(from, to));
-var powers = /* @__PURE__ */ (() => {
-  let res = [];
-  for (let i = 0; i < 40; i++)
-    res.push(2 ** i);
-  return res;
-})();
 function convertRadix2(data, from, to, padding) {
   aArr(data);
   if (from <= 0 || from > 32)
@@ -395,10 +419,6 @@ function unsafeWrapper(fn) {
     }
   };
 }
-var genBase58 = /* @__NO_SIDE_EFFECTS__ */ (abc) => /* @__PURE__ */ chain(/* @__PURE__ */ radix(58), /* @__PURE__ */ alphabet(abc), /* @__PURE__ */ join(""));
-var base58 = /* @__PURE__ */ genBase58("123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz");
-var BECH_ALPHABET = /* @__PURE__ */ chain(/* @__PURE__ */ alphabet("qpzry9x8gf2tvdw0s3jn54khce6mua7l"), /* @__PURE__ */ join(""));
-var POLYMOD_GENERATORS = [996825010, 642813549, 513874426, 1027748829, 705979059];
 function bech32Polymod(pre) {
   const b = pre >> 25;
   let chk = (pre & 33554431) << 5;
@@ -489,17 +509,39 @@ function genBech32(encoding) {
     toWords
   };
 }
-var bech32 = /* @__PURE__ */ genBech32("bech32");
+var gcd, radix2carry, powers, genBase58, base58, BECH_ALPHABET, POLYMOD_GENERATORS, bech32;
+var init_base = __esm({
+  "packages/node_modules/.pnpm/@scure+base@2.0.0/node_modules/@scure/base/index.js"() {
+    gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
+    radix2carry = /* @__NO_SIDE_EFFECTS__ */ (from, to) => from + (to - gcd(from, to));
+    powers = /* @__PURE__ */ (() => {
+      let res = [];
+      for (let i = 0; i < 40; i++)
+        res.push(2 ** i);
+      return res;
+    })();
+    genBase58 = /* @__NO_SIDE_EFFECTS__ */ (abc) => /* @__PURE__ */ chain(/* @__PURE__ */ radix(58), /* @__PURE__ */ alphabet(abc), /* @__PURE__ */ join(""));
+    base58 = /* @__PURE__ */ genBase58("123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz");
+    BECH_ALPHABET = /* @__PURE__ */ chain(/* @__PURE__ */ alphabet("qpzry9x8gf2tvdw0s3jn54khce6mua7l"), /* @__PURE__ */ join(""));
+    POLYMOD_GENERATORS = [996825010, 642813549, 513874426, 1027748829, 705979059];
+    bech32 = /* @__PURE__ */ genBech32("bech32");
+  }
+});
 
-// node_modules/.pnpm/@mysten+utils@0.3.1/node_modules/@mysten/utils/dist/b58.mjs
-var toBase58 = (buffer) => base58.encode(buffer);
-var fromBase58 = (str) => base58.decode(str);
+// packages/node_modules/.pnpm/@mysten+utils@0.3.1/node_modules/@mysten/utils/dist/b58.mjs
+var toBase58, fromBase58;
+var init_b58 = __esm({
+  "packages/node_modules/.pnpm/@mysten+utils@0.3.1/node_modules/@mysten/utils/dist/b58.mjs"() {
+    init_base();
+    toBase58 = (buffer) => base58.encode(buffer);
+    fromBase58 = (str) => base58.decode(str);
+  }
+});
 
-// node_modules/.pnpm/@mysten+utils@0.3.1/node_modules/@mysten/utils/dist/b64.mjs
+// packages/node_modules/.pnpm/@mysten+utils@0.3.1/node_modules/@mysten/utils/dist/b64.mjs
 function fromBase64(base64String2) {
   return Uint8Array.from(atob(base64String2), (char) => char.charCodeAt(0));
 }
-var CHUNK_SIZE = 8192;
 function toBase64(bytes) {
   if (bytes.length < CHUNK_SIZE) return btoa(String.fromCharCode(...bytes));
   let output = "";
@@ -509,8 +551,14 @@ function toBase64(bytes) {
   }
   return btoa(output);
 }
+var CHUNK_SIZE;
+var init_b64 = __esm({
+  "packages/node_modules/.pnpm/@mysten+utils@0.3.1/node_modules/@mysten/utils/dist/b64.mjs"() {
+    CHUNK_SIZE = 8192;
+  }
+});
 
-// node_modules/.pnpm/@mysten+utils@0.3.1/node_modules/@mysten/utils/dist/hex.mjs
+// packages/node_modules/.pnpm/@mysten+utils@0.3.1/node_modules/@mysten/utils/dist/hex.mjs
 function fromHex(hexStr) {
   const normalized = hexStr.startsWith("0x") ? hexStr.slice(2) : hexStr;
   const padded = normalized.length % 2 === 0 ? normalized : `0${normalized}`;
@@ -521,15 +569,33 @@ function fromHex(hexStr) {
 function toHex(bytes) {
   return bytes.reduce((str, byte) => str + byte.toString(16).padStart(2, "0"), "");
 }
+var init_hex = __esm({
+  "packages/node_modules/.pnpm/@mysten+utils@0.3.1/node_modules/@mysten/utils/dist/hex.mjs"() {
+  }
+});
 
-// node_modules/.pnpm/@mysten+utils@0.3.1/node_modules/@mysten/utils/dist/chunk.mjs
+// packages/node_modules/.pnpm/@mysten+utils@0.3.1/node_modules/@mysten/utils/dist/chunk.mjs
 function chunk(array2, size) {
   return Array.from({ length: Math.ceil(array2.length / size) }, (_, i) => {
     return array2.slice(i * size, (i + 1) * size);
   });
 }
+var init_chunk = __esm({
+  "packages/node_modules/.pnpm/@mysten+utils@0.3.1/node_modules/@mysten/utils/dist/chunk.mjs"() {
+  }
+});
 
-// node_modules/.pnpm/@mysten+bcs@2.0.2/node_modules/@mysten/bcs/dist/utils.mjs
+// packages/node_modules/.pnpm/@mysten+utils@0.3.1/node_modules/@mysten/utils/dist/index.mjs
+var init_dist = __esm({
+  "packages/node_modules/.pnpm/@mysten+utils@0.3.1/node_modules/@mysten/utils/dist/index.mjs"() {
+    init_b58();
+    init_b64();
+    init_hex();
+    init_chunk();
+  }
+});
+
+// packages/node_modules/.pnpm/@mysten+bcs@2.0.2/node_modules/@mysten/bcs/dist/utils.mjs
 function encodeStr(data, encoding) {
   switch (encoding) {
     case "base58":
@@ -561,152 +627,13 @@ function splitGenericParameters(str, genericSeparators = ["<", ">"]) {
   tok.push(word.trim());
   return tok;
 }
+var init_utils = __esm({
+  "packages/node_modules/.pnpm/@mysten+bcs@2.0.2/node_modules/@mysten/bcs/dist/utils.mjs"() {
+    init_dist();
+  }
+});
 
-// node_modules/.pnpm/@mysten+bcs@2.0.2/node_modules/@mysten/bcs/dist/writer.mjs
-var BcsWriter = class {
-  constructor({ initialSize = 1024, maxSize = Infinity, allocateSize = 1024 } = {}) {
-    this.bytePosition = 0;
-    this.size = initialSize;
-    this.maxSize = maxSize;
-    this.allocateSize = allocateSize;
-    this.dataView = new DataView(new ArrayBuffer(initialSize));
-  }
-  ensureSizeOrGrow(bytes) {
-    const requiredSize = this.bytePosition + bytes;
-    if (requiredSize > this.size) {
-      const nextSize = Math.min(this.maxSize, Math.max(this.size + requiredSize, this.size + this.allocateSize));
-      if (requiredSize > nextSize) throw new Error(`Attempting to serialize to BCS, but buffer does not have enough size. Allocated size: ${this.size}, Max size: ${this.maxSize}, Required size: ${requiredSize}`);
-      this.size = nextSize;
-      const nextBuffer = new ArrayBuffer(this.size);
-      new Uint8Array(nextBuffer).set(new Uint8Array(this.dataView.buffer));
-      this.dataView = new DataView(nextBuffer);
-    }
-  }
-  /**
-  * Shift current cursor position by `bytes`.
-  *
-  * @param {Number} bytes Number of bytes to
-  * @returns {this} Self for possible chaining.
-  */
-  shift(bytes) {
-    this.bytePosition += bytes;
-    return this;
-  }
-  /**
-  * Write a U8 value into a buffer and shift cursor position by 1.
-  * @param {Number} value Value to write.
-  * @returns {this}
-  */
-  write8(value) {
-    this.ensureSizeOrGrow(1);
-    this.dataView.setUint8(this.bytePosition, Number(value));
-    return this.shift(1);
-  }
-  /**
-  * Write a U8 value into a buffer and shift cursor position by 1.
-  * @param {Number} value Value to write.
-  * @returns {this}
-  */
-  writeBytes(bytes) {
-    this.ensureSizeOrGrow(bytes.length);
-    for (let i = 0; i < bytes.length; i++) this.dataView.setUint8(this.bytePosition + i, bytes[i]);
-    return this.shift(bytes.length);
-  }
-  /**
-  * Write a U16 value into a buffer and shift cursor position by 2.
-  * @param {Number} value Value to write.
-  * @returns {this}
-  */
-  write16(value) {
-    this.ensureSizeOrGrow(2);
-    this.dataView.setUint16(this.bytePosition, Number(value), true);
-    return this.shift(2);
-  }
-  /**
-  * Write a U32 value into a buffer and shift cursor position by 4.
-  * @param {Number} value Value to write.
-  * @returns {this}
-  */
-  write32(value) {
-    this.ensureSizeOrGrow(4);
-    this.dataView.setUint32(this.bytePosition, Number(value), true);
-    return this.shift(4);
-  }
-  /**
-  * Write a U64 value into a buffer and shift cursor position by 8.
-  * @param {bigint} value Value to write.
-  * @returns {this}
-  */
-  write64(value) {
-    toLittleEndian(BigInt(value), 8).forEach((el) => this.write8(el));
-    return this;
-  }
-  /**
-  * Write a U128 value into a buffer and shift cursor position by 16.
-  *
-  * @param {bigint} value Value to write.
-  * @returns {this}
-  */
-  write128(value) {
-    toLittleEndian(BigInt(value), 16).forEach((el) => this.write8(el));
-    return this;
-  }
-  /**
-  * Write a U256 value into a buffer and shift cursor position by 16.
-  *
-  * @param {bigint} value Value to write.
-  * @returns {this}
-  */
-  write256(value) {
-    toLittleEndian(BigInt(value), 32).forEach((el) => this.write8(el));
-    return this;
-  }
-  /**
-  * Write a ULEB value into a buffer and shift cursor position by number of bytes
-  * written.
-  * @param {Number} value Value to write.
-  * @returns {this}
-  */
-  writeULEB(value) {
-    ulebEncode(value).forEach((el) => this.write8(el));
-    return this;
-  }
-  /**
-  * Write a vector into a buffer by first writing the vector length and then calling
-  * a callback on each passed value.
-  *
-  * @param {Array<Any>} vector Array of elements to write.
-  * @param {WriteVecCb} cb Callback to call on each element of the vector.
-  * @returns {this}
-  */
-  writeVec(vector2, cb) {
-    this.writeULEB(vector2.length);
-    Array.from(vector2).forEach((el, i) => cb(this, el, i, vector2.length));
-    return this;
-  }
-  /**
-  * Adds support for iterations over the object.
-  * @returns {Uint8Array}
-  */
-  *[Symbol.iterator]() {
-    for (let i = 0; i < this.bytePosition; i++) yield this.dataView.getUint8(i);
-    return this.toBytes();
-  }
-  /**
-  * Get underlying buffer taking only value bytes (in case initial buffer size was bigger).
-  * @returns {Uint8Array} Resulting bcs.
-  */
-  toBytes() {
-    return new Uint8Array(this.dataView.buffer.slice(0, this.bytePosition));
-  }
-  /**
-  * Represent data as 'hex' or 'base64'
-  * @param encoding Encoding to use: 'base64' or 'hex'
-  */
-  toString(encoding) {
-    return encodeStr(this.toBytes(), encoding);
-  }
-};
+// packages/node_modules/.pnpm/@mysten+bcs@2.0.2/node_modules/@mysten/bcs/dist/writer.mjs
 function toLittleEndian(bigint2, size) {
   const result = new Uint8Array(size);
   let i = 0;
@@ -717,92 +644,162 @@ function toLittleEndian(bigint2, size) {
   }
   return result;
 }
-
-// node_modules/.pnpm/@mysten+bcs@2.0.2/node_modules/@mysten/bcs/dist/bcs-type.mjs
-var BcsType = class BcsType2 {
-  #write;
-  #serialize;
-  constructor(options) {
-    this.name = options.name;
-    this.read = options.read;
-    this.serializedSize = options.serializedSize ?? (() => null);
-    this.#write = options.write;
-    this.#serialize = options.serialize ?? ((value, options$1) => {
-      const writer = new BcsWriter({
-        initialSize: this.serializedSize(value) ?? void 0,
-        ...options$1
-      });
-      this.#write(value, writer);
-      return writer.toBytes();
-    });
-    this.validate = options.validate ?? (() => {
-    });
-  }
-  write(value, writer) {
-    this.validate(value);
-    this.#write(value, writer);
-  }
-  serialize(value, options) {
-    this.validate(value);
-    return new SerializedBcs(this, this.#serialize(value, options));
-  }
-  parse(bytes) {
-    const reader = new BcsReader(bytes);
-    return this.read(reader);
-  }
-  fromHex(hex) {
-    return this.parse(fromHex(hex));
-  }
-  fromBase58(b64) {
-    return this.parse(fromBase58(b64));
-  }
-  fromBase64(b64) {
-    return this.parse(fromBase64(b64));
-  }
-  transform({ name, input, output, validate: validate2 }) {
-    return new BcsType2({
-      name: name ?? this.name,
-      read: (reader) => output ? output(this.read(reader)) : this.read(reader),
-      write: (value, writer) => this.#write(input ? input(value) : value, writer),
-      serializedSize: (value) => this.serializedSize(input ? input(value) : value),
-      serialize: (value, options) => this.#serialize(input ? input(value) : value, options),
-      validate: (value) => {
-        validate2?.(value);
-        this.validate(input ? input(value) : value);
+var BcsWriter;
+var init_writer = __esm({
+  "packages/node_modules/.pnpm/@mysten+bcs@2.0.2/node_modules/@mysten/bcs/dist/writer.mjs"() {
+    init_uleb();
+    init_utils();
+    BcsWriter = class {
+      constructor({ initialSize = 1024, maxSize = Infinity, allocateSize = 1024 } = {}) {
+        this.bytePosition = 0;
+        this.size = initialSize;
+        this.maxSize = maxSize;
+        this.allocateSize = allocateSize;
+        this.dataView = new DataView(new ArrayBuffer(initialSize));
       }
-    });
+      ensureSizeOrGrow(bytes) {
+        const requiredSize = this.bytePosition + bytes;
+        if (requiredSize > this.size) {
+          const nextSize = Math.min(this.maxSize, Math.max(this.size + requiredSize, this.size + this.allocateSize));
+          if (requiredSize > nextSize) throw new Error(`Attempting to serialize to BCS, but buffer does not have enough size. Allocated size: ${this.size}, Max size: ${this.maxSize}, Required size: ${requiredSize}`);
+          this.size = nextSize;
+          const nextBuffer = new ArrayBuffer(this.size);
+          new Uint8Array(nextBuffer).set(new Uint8Array(this.dataView.buffer));
+          this.dataView = new DataView(nextBuffer);
+        }
+      }
+      /**
+      * Shift current cursor position by `bytes`.
+      *
+      * @param {Number} bytes Number of bytes to
+      * @returns {this} Self for possible chaining.
+      */
+      shift(bytes) {
+        this.bytePosition += bytes;
+        return this;
+      }
+      /**
+      * Write a U8 value into a buffer and shift cursor position by 1.
+      * @param {Number} value Value to write.
+      * @returns {this}
+      */
+      write8(value) {
+        this.ensureSizeOrGrow(1);
+        this.dataView.setUint8(this.bytePosition, Number(value));
+        return this.shift(1);
+      }
+      /**
+      * Write a U8 value into a buffer and shift cursor position by 1.
+      * @param {Number} value Value to write.
+      * @returns {this}
+      */
+      writeBytes(bytes) {
+        this.ensureSizeOrGrow(bytes.length);
+        for (let i = 0; i < bytes.length; i++) this.dataView.setUint8(this.bytePosition + i, bytes[i]);
+        return this.shift(bytes.length);
+      }
+      /**
+      * Write a U16 value into a buffer and shift cursor position by 2.
+      * @param {Number} value Value to write.
+      * @returns {this}
+      */
+      write16(value) {
+        this.ensureSizeOrGrow(2);
+        this.dataView.setUint16(this.bytePosition, Number(value), true);
+        return this.shift(2);
+      }
+      /**
+      * Write a U32 value into a buffer and shift cursor position by 4.
+      * @param {Number} value Value to write.
+      * @returns {this}
+      */
+      write32(value) {
+        this.ensureSizeOrGrow(4);
+        this.dataView.setUint32(this.bytePosition, Number(value), true);
+        return this.shift(4);
+      }
+      /**
+      * Write a U64 value into a buffer and shift cursor position by 8.
+      * @param {bigint} value Value to write.
+      * @returns {this}
+      */
+      write64(value) {
+        toLittleEndian(BigInt(value), 8).forEach((el) => this.write8(el));
+        return this;
+      }
+      /**
+      * Write a U128 value into a buffer and shift cursor position by 16.
+      *
+      * @param {bigint} value Value to write.
+      * @returns {this}
+      */
+      write128(value) {
+        toLittleEndian(BigInt(value), 16).forEach((el) => this.write8(el));
+        return this;
+      }
+      /**
+      * Write a U256 value into a buffer and shift cursor position by 16.
+      *
+      * @param {bigint} value Value to write.
+      * @returns {this}
+      */
+      write256(value) {
+        toLittleEndian(BigInt(value), 32).forEach((el) => this.write8(el));
+        return this;
+      }
+      /**
+      * Write a ULEB value into a buffer and shift cursor position by number of bytes
+      * written.
+      * @param {Number} value Value to write.
+      * @returns {this}
+      */
+      writeULEB(value) {
+        ulebEncode(value).forEach((el) => this.write8(el));
+        return this;
+      }
+      /**
+      * Write a vector into a buffer by first writing the vector length and then calling
+      * a callback on each passed value.
+      *
+      * @param {Array<Any>} vector Array of elements to write.
+      * @param {WriteVecCb} cb Callback to call on each element of the vector.
+      * @returns {this}
+      */
+      writeVec(vector2, cb) {
+        this.writeULEB(vector2.length);
+        Array.from(vector2).forEach((el, i) => cb(this, el, i, vector2.length));
+        return this;
+      }
+      /**
+      * Adds support for iterations over the object.
+      * @returns {Uint8Array}
+      */
+      *[Symbol.iterator]() {
+        for (let i = 0; i < this.bytePosition; i++) yield this.dataView.getUint8(i);
+        return this.toBytes();
+      }
+      /**
+      * Get underlying buffer taking only value bytes (in case initial buffer size was bigger).
+      * @returns {Uint8Array} Resulting bcs.
+      */
+      toBytes() {
+        return new Uint8Array(this.dataView.buffer.slice(0, this.bytePosition));
+      }
+      /**
+      * Represent data as 'hex' or 'base64'
+      * @param encoding Encoding to use: 'base64' or 'hex'
+      */
+      toString(encoding) {
+        return encodeStr(this.toBytes(), encoding);
+      }
+    };
   }
-};
-var SERIALIZED_BCS_BRAND = Symbol.for("@mysten/serialized-bcs");
+});
+
+// packages/node_modules/.pnpm/@mysten+bcs@2.0.2/node_modules/@mysten/bcs/dist/bcs-type.mjs
 function isSerializedBcs(obj) {
   return !!obj && typeof obj === "object" && obj[SERIALIZED_BCS_BRAND] === true;
 }
-var SerializedBcs = class {
-  #schema;
-  #bytes;
-  get [SERIALIZED_BCS_BRAND]() {
-    return true;
-  }
-  constructor(schema, bytes) {
-    this.#schema = schema;
-    this.#bytes = bytes;
-  }
-  toBytes() {
-    return this.#bytes;
-  }
-  toHex() {
-    return toHex(this.#bytes);
-  }
-  toBase64() {
-    return toBase64(this.#bytes);
-  }
-  toBase58() {
-    return toBase58(this.#bytes);
-  }
-  parse() {
-    return this.#schema.parse(this.#bytes);
-  }
-};
 function fixedSizeBcsType({ size, ...options }) {
   return new BcsType({
     ...options,
@@ -882,105 +879,195 @@ function lazyBcsType(cb) {
     serialize: (value, options) => getType().serialize(value, options).toBytes()
   });
 }
-var BcsStruct = class extends BcsType {
-  constructor({ name, fields: fields2, ...options }) {
-    const canonicalOrder = Object.entries(fields2);
-    super({
-      name,
-      serializedSize: (values) => {
-        let total = 0;
-        for (const [field, type] of canonicalOrder) {
-          const size = type.serializedSize(values[field]);
-          if (size == null) return null;
-          total += size;
-        }
-        return total;
-      },
-      read: (reader) => {
-        const result = {};
-        for (const [field, type] of canonicalOrder) result[field] = type.read(reader);
-        return result;
-      },
-      write: (value, writer) => {
-        for (const [field, type] of canonicalOrder) type.write(value[field], writer);
-      },
-      ...options,
-      validate: (value) => {
-        options?.validate?.(value);
-        if (typeof value !== "object" || value == null) throw new TypeError(`Expected object, found ${typeof value}`);
+var BcsType, SERIALIZED_BCS_BRAND, SerializedBcs, BcsStruct, BcsEnum, BcsTuple;
+var init_bcs_type = __esm({
+  "packages/node_modules/.pnpm/@mysten+bcs@2.0.2/node_modules/@mysten/bcs/dist/bcs-type.mjs"() {
+    init_uleb();
+    init_reader();
+    init_writer();
+    init_dist();
+    BcsType = class BcsType2 {
+      #write;
+      #serialize;
+      constructor(options) {
+        this.name = options.name;
+        this.read = options.read;
+        this.serializedSize = options.serializedSize ?? (() => null);
+        this.#write = options.write;
+        this.#serialize = options.serialize ?? ((value, options$1) => {
+          const writer = new BcsWriter({
+            initialSize: this.serializedSize(value) ?? void 0,
+            ...options$1
+          });
+          this.#write(value, writer);
+          return writer.toBytes();
+        });
+        this.validate = options.validate ?? (() => {
+        });
       }
-    });
-  }
-};
-var BcsEnum = class extends BcsType {
-  constructor({ fields: fields2, ...options }) {
-    const canonicalOrder = Object.entries(fields2);
-    super({
-      read: (reader) => {
-        const index = reader.readULEB();
-        const enumEntry = canonicalOrder[index];
-        if (!enumEntry) throw new TypeError(`Unknown value ${index} for enum ${options.name}`);
-        const [kind, type] = enumEntry;
-        return {
-          [kind]: type?.read(reader) ?? true,
-          $kind: kind
-        };
-      },
-      write: (value, writer) => {
-        const [name, val] = Object.entries(value).filter(([name$1]) => Object.hasOwn(fields2, name$1))[0];
-        for (let i = 0; i < canonicalOrder.length; i++) {
-          const [optionName, optionType] = canonicalOrder[i];
-          if (optionName === name) {
-            writer.writeULEB(i);
-            optionType?.write(val, writer);
-            return;
+      write(value, writer) {
+        this.validate(value);
+        this.#write(value, writer);
+      }
+      serialize(value, options) {
+        this.validate(value);
+        return new SerializedBcs(this, this.#serialize(value, options));
+      }
+      parse(bytes) {
+        const reader = new BcsReader(bytes);
+        return this.read(reader);
+      }
+      fromHex(hex) {
+        return this.parse(fromHex(hex));
+      }
+      fromBase58(b64) {
+        return this.parse(fromBase58(b64));
+      }
+      fromBase64(b64) {
+        return this.parse(fromBase64(b64));
+      }
+      transform({ name, input, output, validate: validate2 }) {
+        return new BcsType2({
+          name: name ?? this.name,
+          read: (reader) => output ? output(this.read(reader)) : this.read(reader),
+          write: (value, writer) => this.#write(input ? input(value) : value, writer),
+          serializedSize: (value) => this.serializedSize(input ? input(value) : value),
+          serialize: (value, options) => this.#serialize(input ? input(value) : value, options),
+          validate: (value) => {
+            validate2?.(value);
+            this.validate(input ? input(value) : value);
           }
-        }
-      },
-      ...options,
-      validate: (value) => {
-        options?.validate?.(value);
-        if (typeof value !== "object" || value == null) throw new TypeError(`Expected object, found ${typeof value}`);
-        const keys = Object.keys(value).filter((k) => value[k] !== void 0 && Object.hasOwn(fields2, k));
-        if (keys.length !== 1) throw new TypeError(`Expected object with one key, but found ${keys.length} for type ${options.name}}`);
-        const [variant] = keys;
-        if (!Object.hasOwn(fields2, variant)) throw new TypeError(`Invalid enum variant ${variant}`);
+        });
       }
-    });
-  }
-};
-var BcsTuple = class extends BcsType {
-  constructor({ fields: fields2, name, ...options }) {
-    super({
-      name: name ?? `(${fields2.map((t) => t.name).join(", ")})`,
-      serializedSize: (values) => {
-        let total = 0;
-        for (let i = 0; i < fields2.length; i++) {
-          const size = fields2[i].serializedSize(values[i]);
-          if (size == null) return null;
-          total += size;
-        }
-        return total;
-      },
-      read: (reader) => {
-        const result = [];
-        for (const field of fields2) result.push(field.read(reader));
-        return result;
-      },
-      write: (value, writer) => {
-        for (let i = 0; i < fields2.length; i++) fields2[i].write(value[i], writer);
-      },
-      ...options,
-      validate: (value) => {
-        options?.validate?.(value);
-        if (!Array.isArray(value)) throw new TypeError(`Expected array, found ${typeof value}`);
-        if (value.length !== fields2.length) throw new TypeError(`Expected array of length ${fields2.length}, found ${value.length}`);
+    };
+    SERIALIZED_BCS_BRAND = /* @__PURE__ */ Symbol.for("@mysten/serialized-bcs");
+    SerializedBcs = class {
+      #schema;
+      #bytes;
+      get [SERIALIZED_BCS_BRAND]() {
+        return true;
       }
-    });
+      constructor(schema, bytes) {
+        this.#schema = schema;
+        this.#bytes = bytes;
+      }
+      toBytes() {
+        return this.#bytes;
+      }
+      toHex() {
+        return toHex(this.#bytes);
+      }
+      toBase64() {
+        return toBase64(this.#bytes);
+      }
+      toBase58() {
+        return toBase58(this.#bytes);
+      }
+      parse() {
+        return this.#schema.parse(this.#bytes);
+      }
+    };
+    BcsStruct = class extends BcsType {
+      constructor({ name, fields: fields2, ...options }) {
+        const canonicalOrder = Object.entries(fields2);
+        super({
+          name,
+          serializedSize: (values) => {
+            let total = 0;
+            for (const [field, type] of canonicalOrder) {
+              const size = type.serializedSize(values[field]);
+              if (size == null) return null;
+              total += size;
+            }
+            return total;
+          },
+          read: (reader) => {
+            const result = {};
+            for (const [field, type] of canonicalOrder) result[field] = type.read(reader);
+            return result;
+          },
+          write: (value, writer) => {
+            for (const [field, type] of canonicalOrder) type.write(value[field], writer);
+          },
+          ...options,
+          validate: (value) => {
+            options?.validate?.(value);
+            if (typeof value !== "object" || value == null) throw new TypeError(`Expected object, found ${typeof value}`);
+          }
+        });
+      }
+    };
+    BcsEnum = class extends BcsType {
+      constructor({ fields: fields2, ...options }) {
+        const canonicalOrder = Object.entries(fields2);
+        super({
+          read: (reader) => {
+            const index = reader.readULEB();
+            const enumEntry = canonicalOrder[index];
+            if (!enumEntry) throw new TypeError(`Unknown value ${index} for enum ${options.name}`);
+            const [kind, type] = enumEntry;
+            return {
+              [kind]: type?.read(reader) ?? true,
+              $kind: kind
+            };
+          },
+          write: (value, writer) => {
+            const [name, val] = Object.entries(value).filter(([name$1]) => Object.hasOwn(fields2, name$1))[0];
+            for (let i = 0; i < canonicalOrder.length; i++) {
+              const [optionName, optionType] = canonicalOrder[i];
+              if (optionName === name) {
+                writer.writeULEB(i);
+                optionType?.write(val, writer);
+                return;
+              }
+            }
+          },
+          ...options,
+          validate: (value) => {
+            options?.validate?.(value);
+            if (typeof value !== "object" || value == null) throw new TypeError(`Expected object, found ${typeof value}`);
+            const keys = Object.keys(value).filter((k) => value[k] !== void 0 && Object.hasOwn(fields2, k));
+            if (keys.length !== 1) throw new TypeError(`Expected object with one key, but found ${keys.length} for type ${options.name}}`);
+            const [variant] = keys;
+            if (!Object.hasOwn(fields2, variant)) throw new TypeError(`Invalid enum variant ${variant}`);
+          }
+        });
+      }
+    };
+    BcsTuple = class extends BcsType {
+      constructor({ fields: fields2, name, ...options }) {
+        super({
+          name: name ?? `(${fields2.map((t) => t.name).join(", ")})`,
+          serializedSize: (values) => {
+            let total = 0;
+            for (let i = 0; i < fields2.length; i++) {
+              const size = fields2[i].serializedSize(values[i]);
+              if (size == null) return null;
+              total += size;
+            }
+            return total;
+          },
+          read: (reader) => {
+            const result = [];
+            for (const field of fields2) result.push(field.read(reader));
+            return result;
+          },
+          write: (value, writer) => {
+            for (let i = 0; i < fields2.length; i++) fields2[i].write(value[i], writer);
+          },
+          ...options,
+          validate: (value) => {
+            options?.validate?.(value);
+            if (!Array.isArray(value)) throw new TypeError(`Expected array, found ${typeof value}`);
+            if (value.length !== fields2.length) throw new TypeError(`Expected array of length ${fields2.length}, found ${value.length}`);
+          }
+        });
+      }
+    };
   }
-};
+});
 
-// node_modules/.pnpm/@mysten+bcs@2.0.2/node_modules/@mysten/bcs/dist/bcs.mjs
+// packages/node_modules/.pnpm/@mysten+bcs@2.0.2/node_modules/@mysten/bcs/dist/bcs.mjs
 function fixedArray(size, type, options) {
   return new BcsType({
     read: (reader) => {
@@ -1059,190 +1146,193 @@ function map(keyType, valueType) {
     }
   });
 }
-var bcs = {
-  u8(options) {
-    return uIntBcsType({
-      readMethod: "read8",
-      writeMethod: "write8",
-      size: 1,
-      maxValue: 2 ** 8 - 1,
-      ...options,
-      name: options?.name ?? "u8"
-    });
-  },
-  u16(options) {
-    return uIntBcsType({
-      readMethod: "read16",
-      writeMethod: "write16",
-      size: 2,
-      maxValue: 2 ** 16 - 1,
-      ...options,
-      name: options?.name ?? "u16"
-    });
-  },
-  u32(options) {
-    return uIntBcsType({
-      readMethod: "read32",
-      writeMethod: "write32",
-      size: 4,
-      maxValue: 2 ** 32 - 1,
-      ...options,
-      name: options?.name ?? "u32"
-    });
-  },
-  u64(options) {
-    return bigUIntBcsType({
-      readMethod: "read64",
-      writeMethod: "write64",
-      size: 8,
-      maxValue: 2n ** 64n - 1n,
-      ...options,
-      name: options?.name ?? "u64"
-    });
-  },
-  u128(options) {
-    return bigUIntBcsType({
-      readMethod: "read128",
-      writeMethod: "write128",
-      size: 16,
-      maxValue: 2n ** 128n - 1n,
-      ...options,
-      name: options?.name ?? "u128"
-    });
-  },
-  u256(options) {
-    return bigUIntBcsType({
-      readMethod: "read256",
-      writeMethod: "write256",
-      size: 32,
-      maxValue: 2n ** 256n - 1n,
-      ...options,
-      name: options?.name ?? "u256"
-    });
-  },
-  bool(options) {
-    return fixedSizeBcsType({
-      size: 1,
-      read: (reader) => reader.read8() === 1,
-      write: (value, writer) => writer.write8(value ? 1 : 0),
-      ...options,
-      name: options?.name ?? "bool",
-      validate: (value) => {
-        options?.validate?.(value);
-        if (typeof value !== "boolean") throw new TypeError(`Expected boolean, found ${typeof value}`);
+var bcs;
+var init_bcs = __esm({
+  "packages/node_modules/.pnpm/@mysten+bcs@2.0.2/node_modules/@mysten/bcs/dist/bcs.mjs"() {
+    init_uleb();
+    init_bcs_type();
+    bcs = {
+      u8(options) {
+        return uIntBcsType({
+          readMethod: "read8",
+          writeMethod: "write8",
+          size: 1,
+          maxValue: 2 ** 8 - 1,
+          ...options,
+          name: options?.name ?? "u8"
+        });
+      },
+      u16(options) {
+        return uIntBcsType({
+          readMethod: "read16",
+          writeMethod: "write16",
+          size: 2,
+          maxValue: 2 ** 16 - 1,
+          ...options,
+          name: options?.name ?? "u16"
+        });
+      },
+      u32(options) {
+        return uIntBcsType({
+          readMethod: "read32",
+          writeMethod: "write32",
+          size: 4,
+          maxValue: 2 ** 32 - 1,
+          ...options,
+          name: options?.name ?? "u32"
+        });
+      },
+      u64(options) {
+        return bigUIntBcsType({
+          readMethod: "read64",
+          writeMethod: "write64",
+          size: 8,
+          maxValue: 2n ** 64n - 1n,
+          ...options,
+          name: options?.name ?? "u64"
+        });
+      },
+      u128(options) {
+        return bigUIntBcsType({
+          readMethod: "read128",
+          writeMethod: "write128",
+          size: 16,
+          maxValue: 2n ** 128n - 1n,
+          ...options,
+          name: options?.name ?? "u128"
+        });
+      },
+      u256(options) {
+        return bigUIntBcsType({
+          readMethod: "read256",
+          writeMethod: "write256",
+          size: 32,
+          maxValue: 2n ** 256n - 1n,
+          ...options,
+          name: options?.name ?? "u256"
+        });
+      },
+      bool(options) {
+        return fixedSizeBcsType({
+          size: 1,
+          read: (reader) => reader.read8() === 1,
+          write: (value, writer) => writer.write8(value ? 1 : 0),
+          ...options,
+          name: options?.name ?? "bool",
+          validate: (value) => {
+            options?.validate?.(value);
+            if (typeof value !== "boolean") throw new TypeError(`Expected boolean, found ${typeof value}`);
+          }
+        });
+      },
+      uleb128(options) {
+        return dynamicSizeBcsType({
+          read: (reader) => reader.readULEB(),
+          serialize: (value) => {
+            return Uint8Array.from(ulebEncode(value));
+          },
+          ...options,
+          name: options?.name ?? "uleb128"
+        });
+      },
+      bytes(size, options) {
+        return fixedSizeBcsType({
+          size,
+          read: (reader) => reader.readBytes(size),
+          write: (value, writer) => {
+            writer.writeBytes(new Uint8Array(value));
+          },
+          ...options,
+          name: options?.name ?? `bytes[${size}]`,
+          validate: (value) => {
+            options?.validate?.(value);
+            if (!value || typeof value !== "object" || !("length" in value)) throw new TypeError(`Expected array, found ${typeof value}`);
+            if (value.length !== size) throw new TypeError(`Expected array of length ${size}, found ${value.length}`);
+          }
+        });
+      },
+      byteVector(options) {
+        return new BcsType({
+          read: (reader) => {
+            const length = reader.readULEB();
+            return reader.readBytes(length);
+          },
+          write: (value, writer) => {
+            const array2 = new Uint8Array(value);
+            writer.writeULEB(array2.length);
+            writer.writeBytes(array2);
+          },
+          ...options,
+          name: options?.name ?? "vector<u8>",
+          serializedSize: (value) => {
+            const length = "length" in value ? value.length : null;
+            return length == null ? null : ulebEncode(length).length + length;
+          },
+          validate: (value) => {
+            options?.validate?.(value);
+            if (!value || typeof value !== "object" || !("length" in value)) throw new TypeError(`Expected array, found ${typeof value}`);
+          }
+        });
+      },
+      string(options) {
+        return stringLikeBcsType({
+          toBytes: (value) => new TextEncoder().encode(value),
+          fromBytes: (bytes) => new TextDecoder().decode(bytes),
+          ...options,
+          name: options?.name ?? "string"
+        });
+      },
+      fixedArray,
+      option,
+      vector,
+      tuple(fields2, options) {
+        return new BcsTuple({
+          fields: fields2,
+          ...options
+        });
+      },
+      struct(name, fields2, options) {
+        return new BcsStruct({
+          name,
+          fields: fields2,
+          ...options
+        });
+      },
+      enum(name, fields2, options) {
+        return new BcsEnum({
+          name,
+          fields: fields2,
+          ...options
+        });
+      },
+      map,
+      lazy(cb) {
+        return lazyBcsType(cb);
       }
-    });
-  },
-  uleb128(options) {
-    return dynamicSizeBcsType({
-      read: (reader) => reader.readULEB(),
-      serialize: (value) => {
-        return Uint8Array.from(ulebEncode(value));
-      },
-      ...options,
-      name: options?.name ?? "uleb128"
-    });
-  },
-  bytes(size, options) {
-    return fixedSizeBcsType({
-      size,
-      read: (reader) => reader.readBytes(size),
-      write: (value, writer) => {
-        writer.writeBytes(new Uint8Array(value));
-      },
-      ...options,
-      name: options?.name ?? `bytes[${size}]`,
-      validate: (value) => {
-        options?.validate?.(value);
-        if (!value || typeof value !== "object" || !("length" in value)) throw new TypeError(`Expected array, found ${typeof value}`);
-        if (value.length !== size) throw new TypeError(`Expected array of length ${size}, found ${value.length}`);
-      }
-    });
-  },
-  byteVector(options) {
-    return new BcsType({
-      read: (reader) => {
-        const length = reader.readULEB();
-        return reader.readBytes(length);
-      },
-      write: (value, writer) => {
-        const array2 = new Uint8Array(value);
-        writer.writeULEB(array2.length);
-        writer.writeBytes(array2);
-      },
-      ...options,
-      name: options?.name ?? "vector<u8>",
-      serializedSize: (value) => {
-        const length = "length" in value ? value.length : null;
-        return length == null ? null : ulebEncode(length).length + length;
-      },
-      validate: (value) => {
-        options?.validate?.(value);
-        if (!value || typeof value !== "object" || !("length" in value)) throw new TypeError(`Expected array, found ${typeof value}`);
-      }
-    });
-  },
-  string(options) {
-    return stringLikeBcsType({
-      toBytes: (value) => new TextEncoder().encode(value),
-      fromBytes: (bytes) => new TextDecoder().decode(bytes),
-      ...options,
-      name: options?.name ?? "string"
-    });
-  },
-  fixedArray,
-  option,
-  vector,
-  tuple(fields2, options) {
-    return new BcsTuple({
-      fields: fields2,
-      ...options
-    });
-  },
-  struct(name, fields2, options) {
-    return new BcsStruct({
-      name,
-      fields: fields2,
-      ...options
-    });
-  },
-  enum(name, fields2, options) {
-    return new BcsEnum({
-      name,
-      fields: fields2,
-      ...options
-    });
-  },
-  map,
-  lazy(cb) {
-    return lazyBcsType(cb);
+    };
   }
-};
+});
 
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/utils/sui-types.mjs
-var SUI_ADDRESS_LENGTH = 32;
+// packages/node_modules/.pnpm/@mysten+bcs@2.0.2/node_modules/@mysten/bcs/dist/index.mjs
+var init_dist2 = __esm({
+  "packages/node_modules/.pnpm/@mysten+bcs@2.0.2/node_modules/@mysten/bcs/dist/index.mjs"() {
+    init_utils();
+    init_bcs_type();
+    init_bcs();
+    init_dist();
+  }
+});
+
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/utils/sui-types.mjs
 function isValidSuiAddress(value) {
   return isHex(value) && getHexByteLength(value) === SUI_ADDRESS_LENGTH;
 }
 function isValidSuiObjectId(value) {
   return isValidSuiAddress(value);
 }
-var MOVE_IDENTIFIER_REGEX = /^[a-zA-Z][a-zA-Z0-9_]*$/;
 function isValidMoveIdentifier(name) {
   return MOVE_IDENTIFIER_REGEX.test(name);
 }
-var PRIMITIVE_TYPE_TAGS = [
-  "bool",
-  "u8",
-  "u16",
-  "u32",
-  "u64",
-  "u128",
-  "u256",
-  "address",
-  "signer"
-];
-var VECTOR_TYPE_REGEX = /^vector<(.+)>$/;
 function isValidTypeTag(type) {
   if (PRIMITIVE_TYPE_TAGS.includes(type)) return true;
   const vectorMatch = type.match(VECTOR_TYPE_REGEX);
@@ -1302,9 +1392,29 @@ function isHex(value) {
 function getHexByteLength(value) {
   return /^(0x|0X)/.test(value) ? (value.length - 2) / 2 : value.length / 2;
 }
+var SUI_ADDRESS_LENGTH, MOVE_IDENTIFIER_REGEX, PRIMITIVE_TYPE_TAGS, VECTOR_TYPE_REGEX;
+var init_sui_types = __esm({
+  "packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/utils/sui-types.mjs"() {
+    init_move_registry();
+    init_dist2();
+    SUI_ADDRESS_LENGTH = 32;
+    MOVE_IDENTIFIER_REGEX = /^[a-zA-Z][a-zA-Z0-9_]*$/;
+    PRIMITIVE_TYPE_TAGS = [
+      "bool",
+      "u8",
+      "u16",
+      "u32",
+      "u64",
+      "u128",
+      "u256",
+      "address",
+      "signer"
+    ];
+    VECTOR_TYPE_REGEX = /^vector<(.+)>$/;
+  }
+});
 
-// node_modules/.pnpm/valibot@1.2.0_typescript@5.9.3/node_modules/valibot/dist/index.mjs
-var store$4;
+// packages/node_modules/.pnpm/valibot@1.2.0_typescript@5.9.3/node_modules/valibot/dist/index.mjs
 // @__NO_SIDE_EFFECTS__
 function getGlobalConfig(config$1) {
   return {
@@ -1314,17 +1424,14 @@ function getGlobalConfig(config$1) {
     abortPipeEarly: config$1?.abortPipeEarly ?? store$4?.abortPipeEarly
   };
 }
-var store$3;
 // @__NO_SIDE_EFFECTS__
 function getGlobalMessage(lang) {
   return store$3?.get(lang);
 }
-var store$2;
 // @__NO_SIDE_EFFECTS__
 function getSchemaMessage(lang) {
   return store$2?.get(lang);
 }
-var store$1;
 // @__NO_SIDE_EFFECTS__
 function getSpecificMessage(reference, lang) {
   return store$1?.get(reference)?.get(lang);
@@ -1382,18 +1489,6 @@ function _joinExpects(values$1, separator) {
   if (list.length > 1) return `(${list.join(` ${separator} `)})`;
   return list[0] ?? "never";
 }
-var ValiError = class extends Error {
-  /**
-  * Creates a Valibot error with useful information.
-  *
-  * @param issues The error issues.
-  */
-  constructor(issues) {
-    super(issues[0].message);
-    this.name = "ValiError";
-    this.issues = issues;
-  }
-};
 // @__NO_SIDE_EFFECTS__
 function check(requirement, message$1) {
   return {
@@ -1957,8 +2052,25 @@ function pipe(...pipe$1) {
     }
   };
 }
+var store$4, store$3, store$2, store$1, ValiError;
+var init_dist3 = __esm({
+  "packages/node_modules/.pnpm/valibot@1.2.0_typescript@5.9.3/node_modules/valibot/dist/index.mjs"() {
+    ValiError = class extends Error {
+      /**
+      * Creates a Valibot error with useful information.
+      *
+      * @param issues The error issues.
+      */
+      constructor(issues) {
+        super(issues[0].message);
+        this.name = "ValiError";
+        this.issues = issues;
+      }
+    };
+  }
+});
 
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/data/internal.mjs
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/data/internal.mjs
 function safeEnum(options) {
   return union(Object.keys(options).map((key) => withKind(key, object({ [key]: options[key] }))));
 }
@@ -1971,185 +2083,192 @@ function withKind(key, schema) {
     $kind: key
   })));
 }
-var SuiAddress = pipe(string(), transform((value) => normalizeSuiAddress(value)), check(isValidSuiAddress));
-var ObjectID = SuiAddress;
-var BCSBytes = string();
-var JsonU64 = pipe(union([string(), pipe(number(), integer())]), check((val) => {
-  try {
-    BigInt(val);
-    return BigInt(val) >= 0 && BigInt(val) <= 18446744073709551615n;
-  } catch {
-    return false;
+var SuiAddress, ObjectID, BCSBytes, JsonU64, U32, ObjectRefSchema, ArgumentSchema, GasDataSchema, StructTagSchema, OpenSignatureBodySchema, OpenSignatureSchema, ProgrammableMoveCallSchema, $Intent, CommandSchema, ObjectArgSchema, ReservationSchema, WithdrawalTypeArgSchema, WithdrawFromSchema, FundsWithdrawalArgSchema, CallArgSchema, NormalizedCallArg, ValidDuringSchema, TransactionExpiration, TransactionDataSchema;
+var init_internal = __esm({
+  "packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/data/internal.mjs"() {
+    init_sui_types();
+    init_dist3();
+    SuiAddress = pipe(string(), transform((value) => normalizeSuiAddress(value)), check(isValidSuiAddress));
+    ObjectID = SuiAddress;
+    BCSBytes = string();
+    JsonU64 = pipe(union([string(), pipe(number(), integer())]), check((val) => {
+      try {
+        BigInt(val);
+        return BigInt(val) >= 0 && BigInt(val) <= 18446744073709551615n;
+      } catch {
+        return false;
+      }
+    }, "Invalid u64"));
+    U32 = pipe(number(), integer(), check((val) => val >= 0 && val < 2 ** 32, "Invalid u32"));
+    ObjectRefSchema = object({
+      objectId: SuiAddress,
+      version: JsonU64,
+      digest: string()
+    });
+    ArgumentSchema = union([
+      withKind("GasCoin", object({ GasCoin: literal(true) })),
+      withKind("Input", object({
+        Input: pipe(number(), integer()),
+        type: optional(union([
+          literal("pure"),
+          literal("object"),
+          literal("withdrawal")
+        ]))
+      })),
+      withKind("Result", object({ Result: pipe(number(), integer()) })),
+      withKind("NestedResult", object({ NestedResult: tuple([pipe(number(), integer()), pipe(number(), integer())]) }))
+    ]);
+    GasDataSchema = object({
+      budget: nullable(JsonU64),
+      price: nullable(JsonU64),
+      owner: nullable(SuiAddress),
+      payment: nullable(array(ObjectRefSchema))
+    });
+    StructTagSchema = object({
+      address: string(),
+      module: string(),
+      name: string(),
+      typeParams: array(string())
+    });
+    OpenSignatureBodySchema = union([
+      object({ $kind: literal("address") }),
+      object({ $kind: literal("bool") }),
+      object({ $kind: literal("u8") }),
+      object({ $kind: literal("u16") }),
+      object({ $kind: literal("u32") }),
+      object({ $kind: literal("u64") }),
+      object({ $kind: literal("u128") }),
+      object({ $kind: literal("u256") }),
+      object({ $kind: literal("unknown") }),
+      object({
+        $kind: literal("vector"),
+        vector: lazy(() => OpenSignatureBodySchema)
+      }),
+      object({
+        $kind: literal("datatype"),
+        datatype: object({
+          typeName: string(),
+          typeParameters: array(lazy(() => OpenSignatureBodySchema))
+        })
+      }),
+      object({
+        $kind: literal("typeParameter"),
+        index: pipe(number(), integer())
+      })
+    ]);
+    OpenSignatureSchema = object({
+      reference: nullable(union([
+        literal("mutable"),
+        literal("immutable"),
+        literal("unknown")
+      ])),
+      body: OpenSignatureBodySchema
+    });
+    ProgrammableMoveCallSchema = object({
+      package: ObjectID,
+      module: string(),
+      function: string(),
+      typeArguments: array(string()),
+      arguments: array(ArgumentSchema),
+      _argumentTypes: optional(nullable(array(OpenSignatureSchema)))
+    });
+    $Intent = object({
+      name: string(),
+      inputs: record(string(), union([ArgumentSchema, array(ArgumentSchema)])),
+      data: record(string(), unknown())
+    });
+    CommandSchema = safeEnum({
+      MoveCall: ProgrammableMoveCallSchema,
+      TransferObjects: object({
+        objects: array(ArgumentSchema),
+        address: ArgumentSchema
+      }),
+      SplitCoins: object({
+        coin: ArgumentSchema,
+        amounts: array(ArgumentSchema)
+      }),
+      MergeCoins: object({
+        destination: ArgumentSchema,
+        sources: array(ArgumentSchema)
+      }),
+      Publish: object({
+        modules: array(BCSBytes),
+        dependencies: array(ObjectID)
+      }),
+      MakeMoveVec: object({
+        type: nullable(string()),
+        elements: array(ArgumentSchema)
+      }),
+      Upgrade: object({
+        modules: array(BCSBytes),
+        dependencies: array(ObjectID),
+        package: ObjectID,
+        ticket: ArgumentSchema
+      }),
+      $Intent
+    });
+    ObjectArgSchema = safeEnum({
+      ImmOrOwnedObject: ObjectRefSchema,
+      SharedObject: object({
+        objectId: ObjectID,
+        initialSharedVersion: JsonU64,
+        mutable: boolean()
+      }),
+      Receiving: ObjectRefSchema
+    });
+    ReservationSchema = safeEnum({ MaxAmountU64: JsonU64 });
+    WithdrawalTypeArgSchema = safeEnum({ Balance: string() });
+    WithdrawFromSchema = safeEnum({
+      Sender: literal(true),
+      Sponsor: literal(true)
+    });
+    FundsWithdrawalArgSchema = object({
+      reservation: ReservationSchema,
+      typeArg: WithdrawalTypeArgSchema,
+      withdrawFrom: WithdrawFromSchema
+    });
+    CallArgSchema = safeEnum({
+      Object: ObjectArgSchema,
+      Pure: object({ bytes: BCSBytes }),
+      UnresolvedPure: object({ value: unknown() }),
+      UnresolvedObject: object({
+        objectId: ObjectID,
+        version: optional(nullable(JsonU64)),
+        digest: optional(nullable(string())),
+        initialSharedVersion: optional(nullable(JsonU64)),
+        mutable: optional(nullable(boolean()))
+      }),
+      FundsWithdrawal: FundsWithdrawalArgSchema
+    });
+    NormalizedCallArg = safeEnum({
+      Object: ObjectArgSchema,
+      Pure: object({ bytes: BCSBytes })
+    });
+    ValidDuringSchema = object({
+      minEpoch: nullable(JsonU64),
+      maxEpoch: nullable(JsonU64),
+      minTimestamp: nullable(JsonU64),
+      maxTimestamp: nullable(JsonU64),
+      chain: string(),
+      nonce: U32
+    });
+    TransactionExpiration = safeEnum({
+      None: literal(true),
+      Epoch: JsonU64,
+      ValidDuring: ValidDuringSchema
+    });
+    TransactionDataSchema = object({
+      version: literal(2),
+      sender: nullish(SuiAddress),
+      expiration: nullish(TransactionExpiration),
+      gasData: GasDataSchema,
+      inputs: array(CallArgSchema),
+      commands: array(CommandSchema)
+    });
   }
-}, "Invalid u64"));
-var U32 = pipe(number(), integer(), check((val) => val >= 0 && val < 2 ** 32, "Invalid u32"));
-var ObjectRefSchema = object({
-  objectId: SuiAddress,
-  version: JsonU64,
-  digest: string()
-});
-var ArgumentSchema = union([
-  withKind("GasCoin", object({ GasCoin: literal(true) })),
-  withKind("Input", object({
-    Input: pipe(number(), integer()),
-    type: optional(union([
-      literal("pure"),
-      literal("object"),
-      literal("withdrawal")
-    ]))
-  })),
-  withKind("Result", object({ Result: pipe(number(), integer()) })),
-  withKind("NestedResult", object({ NestedResult: tuple([pipe(number(), integer()), pipe(number(), integer())]) }))
-]);
-var GasDataSchema = object({
-  budget: nullable(JsonU64),
-  price: nullable(JsonU64),
-  owner: nullable(SuiAddress),
-  payment: nullable(array(ObjectRefSchema))
-});
-var StructTagSchema = object({
-  address: string(),
-  module: string(),
-  name: string(),
-  typeParams: array(string())
-});
-var OpenSignatureBodySchema = union([
-  object({ $kind: literal("address") }),
-  object({ $kind: literal("bool") }),
-  object({ $kind: literal("u8") }),
-  object({ $kind: literal("u16") }),
-  object({ $kind: literal("u32") }),
-  object({ $kind: literal("u64") }),
-  object({ $kind: literal("u128") }),
-  object({ $kind: literal("u256") }),
-  object({ $kind: literal("unknown") }),
-  object({
-    $kind: literal("vector"),
-    vector: lazy(() => OpenSignatureBodySchema)
-  }),
-  object({
-    $kind: literal("datatype"),
-    datatype: object({
-      typeName: string(),
-      typeParameters: array(lazy(() => OpenSignatureBodySchema))
-    })
-  }),
-  object({
-    $kind: literal("typeParameter"),
-    index: pipe(number(), integer())
-  })
-]);
-var OpenSignatureSchema = object({
-  reference: nullable(union([
-    literal("mutable"),
-    literal("immutable"),
-    literal("unknown")
-  ])),
-  body: OpenSignatureBodySchema
-});
-var ProgrammableMoveCallSchema = object({
-  package: ObjectID,
-  module: string(),
-  function: string(),
-  typeArguments: array(string()),
-  arguments: array(ArgumentSchema),
-  _argumentTypes: optional(nullable(array(OpenSignatureSchema)))
-});
-var $Intent = object({
-  name: string(),
-  inputs: record(string(), union([ArgumentSchema, array(ArgumentSchema)])),
-  data: record(string(), unknown())
-});
-var CommandSchema = safeEnum({
-  MoveCall: ProgrammableMoveCallSchema,
-  TransferObjects: object({
-    objects: array(ArgumentSchema),
-    address: ArgumentSchema
-  }),
-  SplitCoins: object({
-    coin: ArgumentSchema,
-    amounts: array(ArgumentSchema)
-  }),
-  MergeCoins: object({
-    destination: ArgumentSchema,
-    sources: array(ArgumentSchema)
-  }),
-  Publish: object({
-    modules: array(BCSBytes),
-    dependencies: array(ObjectID)
-  }),
-  MakeMoveVec: object({
-    type: nullable(string()),
-    elements: array(ArgumentSchema)
-  }),
-  Upgrade: object({
-    modules: array(BCSBytes),
-    dependencies: array(ObjectID),
-    package: ObjectID,
-    ticket: ArgumentSchema
-  }),
-  $Intent
-});
-var ObjectArgSchema = safeEnum({
-  ImmOrOwnedObject: ObjectRefSchema,
-  SharedObject: object({
-    objectId: ObjectID,
-    initialSharedVersion: JsonU64,
-    mutable: boolean()
-  }),
-  Receiving: ObjectRefSchema
-});
-var ReservationSchema = safeEnum({ MaxAmountU64: JsonU64 });
-var WithdrawalTypeArgSchema = safeEnum({ Balance: string() });
-var WithdrawFromSchema = safeEnum({
-  Sender: literal(true),
-  Sponsor: literal(true)
-});
-var FundsWithdrawalArgSchema = object({
-  reservation: ReservationSchema,
-  typeArg: WithdrawalTypeArgSchema,
-  withdrawFrom: WithdrawFromSchema
-});
-var CallArgSchema = safeEnum({
-  Object: ObjectArgSchema,
-  Pure: object({ bytes: BCSBytes }),
-  UnresolvedPure: object({ value: unknown() }),
-  UnresolvedObject: object({
-    objectId: ObjectID,
-    version: optional(nullable(JsonU64)),
-    digest: optional(nullable(string())),
-    initialSharedVersion: optional(nullable(JsonU64)),
-    mutable: optional(nullable(boolean()))
-  }),
-  FundsWithdrawal: FundsWithdrawalArgSchema
-});
-var NormalizedCallArg = safeEnum({
-  Object: ObjectArgSchema,
-  Pure: object({ bytes: BCSBytes })
-});
-var ValidDuringSchema = object({
-  minEpoch: nullable(JsonU64),
-  maxEpoch: nullable(JsonU64),
-  minTimestamp: nullable(JsonU64),
-  maxTimestamp: nullable(JsonU64),
-  chain: string(),
-  nonce: U32
-});
-var TransactionExpiration = safeEnum({
-  None: literal(true),
-  Epoch: JsonU64,
-  ValidDuring: ValidDuringSchema
-});
-var TransactionDataSchema = object({
-  version: literal(2),
-  sender: nullish(SuiAddress),
-  expiration: nullish(TransactionExpiration),
-  gasData: GasDataSchema,
-  inputs: array(CallArgSchema),
-  commands: array(CommandSchema)
 });
 
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/utils.mjs
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/utils.mjs
 function getIdFromCallArg(arg) {
   if (typeof arg === "string") return normalizeSuiAddress(arg);
   if (arg.Object) {
@@ -2225,56 +2344,70 @@ function remapCommandArguments(command, inputMapping, commandMapping) {
       break;
   }
 }
+var init_utils2 = __esm({
+  "packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/utils.mjs"() {
+    init_sui_types();
+    init_internal();
+    init_dist3();
+  }
+});
 
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/bcs/type-tag-serializer.mjs
-var VECTOR_REGEX = /^vector<(.+)>$/;
-var STRUCT_REGEX = /^([^:]+)::([^:]+)::([^<]+)(<(.+)>)?/;
-var TypeTagSerializer = class TypeTagSerializer2 {
-  static parseFromStr(str, normalizeAddress = false) {
-    if (str === "address") return { address: null };
-    else if (str === "bool") return { bool: null };
-    else if (str === "u8") return { u8: null };
-    else if (str === "u16") return { u16: null };
-    else if (str === "u32") return { u32: null };
-    else if (str === "u64") return { u64: null };
-    else if (str === "u128") return { u128: null };
-    else if (str === "u256") return { u256: null };
-    else if (str === "signer") return { signer: null };
-    const vectorMatch = str.match(VECTOR_REGEX);
-    if (vectorMatch) return { vector: TypeTagSerializer2.parseFromStr(vectorMatch[1], normalizeAddress) };
-    const structMatch = str.match(STRUCT_REGEX);
-    if (structMatch) return { struct: {
-      address: normalizeAddress ? normalizeSuiAddress(structMatch[1]) : structMatch[1],
-      module: structMatch[2],
-      name: structMatch[3],
-      typeParams: structMatch[5] === void 0 ? [] : TypeTagSerializer2.parseStructTypeArgs(structMatch[5], normalizeAddress)
-    } };
-    throw new Error(`Encountered unexpected token when parsing type args for ${str}`);
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/bcs/type-tag-serializer.mjs
+var VECTOR_REGEX, STRUCT_REGEX, TypeTagSerializer;
+var init_type_tag_serializer = __esm({
+  "packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/bcs/type-tag-serializer.mjs"() {
+    init_sui_types();
+    init_dist2();
+    VECTOR_REGEX = /^vector<(.+)>$/;
+    STRUCT_REGEX = /^([^:]+)::([^:]+)::([^<]+)(<(.+)>)?/;
+    TypeTagSerializer = class TypeTagSerializer2 {
+      static parseFromStr(str, normalizeAddress = false) {
+        if (str === "address") return { address: null };
+        else if (str === "bool") return { bool: null };
+        else if (str === "u8") return { u8: null };
+        else if (str === "u16") return { u16: null };
+        else if (str === "u32") return { u32: null };
+        else if (str === "u64") return { u64: null };
+        else if (str === "u128") return { u128: null };
+        else if (str === "u256") return { u256: null };
+        else if (str === "signer") return { signer: null };
+        const vectorMatch = str.match(VECTOR_REGEX);
+        if (vectorMatch) return { vector: TypeTagSerializer2.parseFromStr(vectorMatch[1], normalizeAddress) };
+        const structMatch = str.match(STRUCT_REGEX);
+        if (structMatch) return { struct: {
+          address: normalizeAddress ? normalizeSuiAddress(structMatch[1]) : structMatch[1],
+          module: structMatch[2],
+          name: structMatch[3],
+          typeParams: structMatch[5] === void 0 ? [] : TypeTagSerializer2.parseStructTypeArgs(structMatch[5], normalizeAddress)
+        } };
+        throw new Error(`Encountered unexpected token when parsing type args for ${str}`);
+      }
+      static parseStructTypeArgs(str, normalizeAddress = false) {
+        return splitGenericParameters(str).map((tok) => TypeTagSerializer2.parseFromStr(tok, normalizeAddress));
+      }
+      static tagToString(tag2) {
+        if ("bool" in tag2) return "bool";
+        if ("u8" in tag2) return "u8";
+        if ("u16" in tag2) return "u16";
+        if ("u32" in tag2) return "u32";
+        if ("u64" in tag2) return "u64";
+        if ("u128" in tag2) return "u128";
+        if ("u256" in tag2) return "u256";
+        if ("address" in tag2) return "address";
+        if ("signer" in tag2) return "signer";
+        if ("vector" in tag2) return `vector<${TypeTagSerializer2.tagToString(tag2.vector)}>`;
+        if ("struct" in tag2) {
+          const struct = tag2.struct;
+          const typeParams = struct.typeParams.map(TypeTagSerializer2.tagToString).join(", ");
+          return `${struct.address}::${struct.module}::${struct.name}${typeParams ? `<${typeParams}>` : ""}`;
+        }
+        throw new Error("Invalid TypeTag");
+      }
+    };
   }
-  static parseStructTypeArgs(str, normalizeAddress = false) {
-    return splitGenericParameters(str).map((tok) => TypeTagSerializer2.parseFromStr(tok, normalizeAddress));
-  }
-  static tagToString(tag2) {
-    if ("bool" in tag2) return "bool";
-    if ("u8" in tag2) return "u8";
-    if ("u16" in tag2) return "u16";
-    if ("u32" in tag2) return "u32";
-    if ("u64" in tag2) return "u64";
-    if ("u128" in tag2) return "u128";
-    if ("u256" in tag2) return "u256";
-    if ("address" in tag2) return "address";
-    if ("signer" in tag2) return "signer";
-    if ("vector" in tag2) return `vector<${TypeTagSerializer2.tagToString(tag2.vector)}>`;
-    if ("struct" in tag2) {
-      const struct = tag2.struct;
-      const typeParams = struct.typeParams.map(TypeTagSerializer2.tagToString).join(", ");
-      return `${struct.address}::${struct.module}::${struct.name}${typeParams ? `<${typeParams}>` : ""}`;
-    }
-    throw new Error("Invalid TypeTag");
-  }
-};
+});
 
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/bcs/bcs.mjs
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/bcs/bcs.mjs
 function unsafe_u64(options) {
   return bcs.u64({
     name: "unsafe_u64",
@@ -2290,495 +2423,510 @@ function optionEnum(type) {
     Some: type
   });
 }
-var Address = bcs.bytes(SUI_ADDRESS_LENGTH).transform({
-  validate: (val) => {
-    const address = typeof val === "string" ? val : toHex(val);
-    if (!address || !isValidSuiAddress(normalizeSuiAddress(address))) throw new Error(`Invalid Sui address ${address}`);
-  },
-  input: (val) => typeof val === "string" ? fromHex(normalizeSuiAddress(val)) : val,
-  output: (val) => normalizeSuiAddress(toHex(val))
-});
-var ObjectDigest = bcs.byteVector().transform({
-  name: "ObjectDigest",
-  input: (value) => fromBase58(value),
-  output: (value) => toBase58(new Uint8Array(value)),
-  validate: (value) => {
-    if (fromBase58(value).length !== 32) throw new Error("ObjectDigest must be 32 bytes");
-  }
-});
-var SuiObjectRef = bcs.struct("SuiObjectRef", {
-  objectId: Address,
-  version: bcs.u64(),
-  digest: ObjectDigest
-});
-var SharedObjectRef = bcs.struct("SharedObjectRef", {
-  objectId: Address,
-  initialSharedVersion: bcs.u64(),
-  mutable: bcs.bool()
-});
-var ObjectArg = bcs.enum("ObjectArg", {
-  ImmOrOwnedObject: SuiObjectRef,
-  SharedObject: SharedObjectRef,
-  Receiving: SuiObjectRef
-});
-var Owner = bcs.enum("Owner", {
-  AddressOwner: Address,
-  ObjectOwner: Address,
-  Shared: bcs.struct("Shared", { initialSharedVersion: bcs.u64() }),
-  Immutable: null,
-  ConsensusAddressOwner: bcs.struct("ConsensusAddressOwner", {
-    startVersion: bcs.u64(),
-    owner: Address
-  })
-});
-var Reservation = bcs.enum("Reservation", { MaxAmountU64: bcs.u64() });
-var WithdrawalType = bcs.enum("WithdrawalType", { Balance: bcs.lazy(() => TypeTag) });
-var WithdrawFrom = bcs.enum("WithdrawFrom", {
-  Sender: null,
-  Sponsor: null
-});
-var FundsWithdrawal = bcs.struct("FundsWithdrawal", {
-  reservation: Reservation,
-  typeArg: WithdrawalType,
-  withdrawFrom: WithdrawFrom
-});
-var CallArg = bcs.enum("CallArg", {
-  Pure: bcs.struct("Pure", { bytes: bcs.byteVector().transform({
-    input: (val) => typeof val === "string" ? fromBase64(val) : val,
-    output: (val) => toBase64(new Uint8Array(val))
-  }) }),
-  Object: ObjectArg,
-  FundsWithdrawal
-});
-var InnerTypeTag = bcs.enum("TypeTag", {
-  bool: null,
-  u8: null,
-  u64: null,
-  u128: null,
-  address: null,
-  signer: null,
-  vector: bcs.lazy(() => InnerTypeTag),
-  struct: bcs.lazy(() => StructTag),
-  u16: null,
-  u32: null,
-  u256: null
-});
-var TypeTag = InnerTypeTag.transform({
-  input: (typeTag) => typeof typeTag === "string" ? TypeTagSerializer.parseFromStr(typeTag, true) : typeTag,
-  output: (typeTag) => TypeTagSerializer.tagToString(typeTag)
-});
-var Argument = bcs.enum("Argument", {
-  GasCoin: null,
-  Input: bcs.u16(),
-  Result: bcs.u16(),
-  NestedResult: bcs.tuple([bcs.u16(), bcs.u16()])
-});
-var ProgrammableMoveCall = bcs.struct("ProgrammableMoveCall", {
-  package: Address,
-  module: bcs.string(),
-  function: bcs.string(),
-  typeArguments: bcs.vector(TypeTag),
-  arguments: bcs.vector(Argument)
-});
-var Command = bcs.enum("Command", {
-  MoveCall: ProgrammableMoveCall,
-  TransferObjects: bcs.struct("TransferObjects", {
-    objects: bcs.vector(Argument),
-    address: Argument
-  }),
-  SplitCoins: bcs.struct("SplitCoins", {
-    coin: Argument,
-    amounts: bcs.vector(Argument)
-  }),
-  MergeCoins: bcs.struct("MergeCoins", {
-    destination: Argument,
-    sources: bcs.vector(Argument)
-  }),
-  Publish: bcs.struct("Publish", {
-    modules: bcs.vector(bcs.byteVector().transform({
-      input: (val) => typeof val === "string" ? fromBase64(val) : val,
-      output: (val) => toBase64(new Uint8Array(val))
-    })),
-    dependencies: bcs.vector(Address)
-  }),
-  MakeMoveVec: bcs.struct("MakeMoveVec", {
-    type: optionEnum(TypeTag).transform({
-      input: (val) => val === null ? { None: true } : { Some: val },
-      output: (val) => val.Some ?? null
-    }),
-    elements: bcs.vector(Argument)
-  }),
-  Upgrade: bcs.struct("Upgrade", {
-    modules: bcs.vector(bcs.byteVector().transform({
-      input: (val) => typeof val === "string" ? fromBase64(val) : val,
-      output: (val) => toBase64(new Uint8Array(val))
-    })),
-    dependencies: bcs.vector(Address),
-    package: Address,
-    ticket: Argument
-  })
-});
-var ProgrammableTransaction = bcs.struct("ProgrammableTransaction", {
-  inputs: bcs.vector(CallArg),
-  commands: bcs.vector(Command)
-});
-var TransactionKind = bcs.enum("TransactionKind", {
-  ProgrammableTransaction,
-  ChangeEpoch: null,
-  Genesis: null,
-  ConsensusCommitPrologue: null
-});
-var ValidDuring = bcs.struct("ValidDuring", {
-  minEpoch: bcs.option(bcs.u64()),
-  maxEpoch: bcs.option(bcs.u64()),
-  minTimestamp: bcs.option(bcs.u64()),
-  maxTimestamp: bcs.option(bcs.u64()),
-  chain: ObjectDigest,
-  nonce: bcs.u32()
-});
-var TransactionExpiration2 = bcs.enum("TransactionExpiration", {
-  None: null,
-  Epoch: unsafe_u64(),
-  ValidDuring
-});
-var StructTag = bcs.struct("StructTag", {
-  address: Address,
-  module: bcs.string(),
-  name: bcs.string(),
-  typeParams: bcs.vector(InnerTypeTag)
-});
-var GasData = bcs.struct("GasData", {
-  payment: bcs.vector(SuiObjectRef),
-  owner: Address,
-  price: bcs.u64(),
-  budget: bcs.u64()
-});
-var TransactionDataV1 = bcs.struct("TransactionDataV1", {
-  kind: TransactionKind,
-  sender: Address,
-  gasData: GasData,
-  expiration: TransactionExpiration2
-});
-var TransactionData = bcs.enum("TransactionData", { V1: TransactionDataV1 });
-var IntentScope = bcs.enum("IntentScope", {
-  TransactionData: null,
-  TransactionEffects: null,
-  CheckpointSummary: null,
-  PersonalMessage: null
-});
-var IntentVersion = bcs.enum("IntentVersion", { V0: null });
-var AppId = bcs.enum("AppId", { Sui: null });
-var Intent = bcs.struct("Intent", {
-  scope: IntentScope,
-  version: IntentVersion,
-  appId: AppId
-});
 function IntentMessage(T) {
   return bcs.struct(`IntentMessage<${T.name}>`, {
     intent: Intent,
     value: T
   });
 }
-var CompressedSignature = bcs.enum("CompressedSignature", {
-  ED25519: bcs.bytes(64),
-  Secp256k1: bcs.bytes(64),
-  Secp256r1: bcs.bytes(64),
-  ZkLogin: bcs.byteVector(),
-  Passkey: bcs.byteVector()
-});
-var PublicKey = bcs.enum("PublicKey", {
-  ED25519: bcs.bytes(32),
-  Secp256k1: bcs.bytes(33),
-  Secp256r1: bcs.bytes(33),
-  ZkLogin: bcs.byteVector(),
-  Passkey: bcs.bytes(33)
-});
-var MultiSigPkMap = bcs.struct("MultiSigPkMap", {
-  pubKey: PublicKey,
-  weight: bcs.u8()
-});
-var MultiSigPublicKey = bcs.struct("MultiSigPublicKey", {
-  pk_map: bcs.vector(MultiSigPkMap),
-  threshold: bcs.u16()
-});
-var MultiSig = bcs.struct("MultiSig", {
-  sigs: bcs.vector(CompressedSignature),
-  bitmap: bcs.u16(),
-  multisig_pk: MultiSigPublicKey
-});
-var base64String = bcs.byteVector().transform({
-  input: (val) => typeof val === "string" ? fromBase64(val) : val,
-  output: (val) => toBase64(new Uint8Array(val))
-});
-var SenderSignedTransaction = bcs.struct("SenderSignedTransaction", {
-  intentMessage: IntentMessage(TransactionData),
-  txSignatures: bcs.vector(base64String)
-});
-var SenderSignedData = bcs.vector(SenderSignedTransaction, { name: "SenderSignedData" });
-var PasskeyAuthenticator = bcs.struct("PasskeyAuthenticator", {
-  authenticatorData: bcs.byteVector(),
-  clientDataJson: bcs.string(),
-  userSignature: bcs.byteVector()
-});
-var MoveObjectType = bcs.enum("MoveObjectType", {
-  Other: StructTag,
-  GasCoin: null,
-  StakedSui: null,
-  Coin: TypeTag,
-  AccumulatorBalanceWrapper: null
-});
-var TypeOrigin = bcs.struct("TypeOrigin", {
-  moduleName: bcs.string(),
-  datatypeName: bcs.string(),
-  package: Address
-});
-var UpgradeInfo = bcs.struct("UpgradeInfo", {
-  upgradedId: Address,
-  upgradedVersion: bcs.u64()
-});
-var MovePackage = bcs.struct("MovePackage", {
-  id: Address,
-  version: bcs.u64(),
-  moduleMap: bcs.map(bcs.string(), bcs.byteVector()),
-  typeOriginTable: bcs.vector(TypeOrigin),
-  linkageTable: bcs.map(Address, UpgradeInfo)
-});
-var MoveObject = bcs.struct("MoveObject", {
-  type: MoveObjectType,
-  hasPublicTransfer: bcs.bool(),
-  version: bcs.u64(),
-  contents: bcs.byteVector()
-});
-var Data = bcs.enum("Data", {
-  Move: MoveObject,
-  Package: MovePackage
-});
-var ObjectInner = bcs.struct("ObjectInner", {
-  data: Data,
-  owner: Owner,
-  previousTransaction: ObjectDigest,
-  storageRebate: bcs.u64()
-});
-
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/bcs/effects.mjs
-var PackageUpgradeError = bcs.enum("PackageUpgradeError", {
-  UnableToFetchPackage: bcs.struct("UnableToFetchPackage", { packageId: Address }),
-  NotAPackage: bcs.struct("NotAPackage", { objectId: Address }),
-  IncompatibleUpgrade: null,
-  DigestDoesNotMatch: bcs.struct("DigestDoesNotMatch", { digest: bcs.byteVector() }),
-  UnknownUpgradePolicy: bcs.struct("UnknownUpgradePolicy", { policy: bcs.u8() }),
-  PackageIDDoesNotMatch: bcs.struct("PackageIDDoesNotMatch", {
-    packageId: Address,
-    ticketId: Address
-  })
-});
-var ModuleId = bcs.struct("ModuleId", {
-  address: Address,
-  name: bcs.string()
-});
-var MoveLocation = bcs.struct("MoveLocation", {
-  module: ModuleId,
-  function: bcs.u16(),
-  instruction: bcs.u16(),
-  functionName: bcs.option(bcs.string())
-});
-var CommandArgumentError = bcs.enum("CommandArgumentError", {
-  TypeMismatch: null,
-  InvalidBCSBytes: null,
-  InvalidUsageOfPureArg: null,
-  InvalidArgumentToPrivateEntryFunction: null,
-  IndexOutOfBounds: bcs.struct("IndexOutOfBounds", { idx: bcs.u16() }),
-  SecondaryIndexOutOfBounds: bcs.struct("SecondaryIndexOutOfBounds", {
-    resultIdx: bcs.u16(),
-    secondaryIdx: bcs.u16()
-  }),
-  InvalidResultArity: bcs.struct("InvalidResultArity", { resultIdx: bcs.u16() }),
-  InvalidGasCoinUsage: null,
-  InvalidValueUsage: null,
-  InvalidObjectByValue: null,
-  InvalidObjectByMutRef: null,
-  SharedObjectOperationNotAllowed: null,
-  InvalidArgumentArity: null,
-  InvalidTransferObject: null,
-  InvalidMakeMoveVecNonObjectArgument: null,
-  ArgumentWithoutValue: null,
-  CannotMoveBorrowedValue: null,
-  CannotWriteToExtendedReference: null,
-  InvalidReferenceArgument: null
-});
-var TypeArgumentError = bcs.enum("TypeArgumentError", {
-  TypeNotFound: null,
-  ConstraintNotSatisfied: null
-});
-var ExecutionFailureStatus = bcs.enum("ExecutionFailureStatus", {
-  InsufficientGas: null,
-  InvalidGasObject: null,
-  InvariantViolation: null,
-  FeatureNotYetSupported: null,
-  MoveObjectTooBig: bcs.struct("MoveObjectTooBig", {
-    objectSize: bcs.u64(),
-    maxObjectSize: bcs.u64()
-  }),
-  MovePackageTooBig: bcs.struct("MovePackageTooBig", {
-    objectSize: bcs.u64(),
-    maxObjectSize: bcs.u64()
-  }),
-  CircularObjectOwnership: bcs.struct("CircularObjectOwnership", { object: Address }),
-  InsufficientCoinBalance: null,
-  CoinBalanceOverflow: null,
-  PublishErrorNonZeroAddress: null,
-  SuiMoveVerificationError: null,
-  MovePrimitiveRuntimeError: bcs.option(MoveLocation),
-  MoveAbort: bcs.tuple([MoveLocation, bcs.u64()]),
-  VMVerificationOrDeserializationError: null,
-  VMInvariantViolation: null,
-  FunctionNotFound: null,
-  ArityMismatch: null,
-  TypeArityMismatch: null,
-  NonEntryFunctionInvoked: null,
-  CommandArgumentError: bcs.struct("CommandArgumentError", {
-    argIdx: bcs.u16(),
-    kind: CommandArgumentError
-  }),
-  TypeArgumentError: bcs.struct("TypeArgumentError", {
-    argumentIdx: bcs.u16(),
-    kind: TypeArgumentError
-  }),
-  UnusedValueWithoutDrop: bcs.struct("UnusedValueWithoutDrop", {
-    resultIdx: bcs.u16(),
-    secondaryIdx: bcs.u16()
-  }),
-  InvalidPublicFunctionReturnType: bcs.struct("InvalidPublicFunctionReturnType", { idx: bcs.u16() }),
-  InvalidTransferObject: null,
-  EffectsTooLarge: bcs.struct("EffectsTooLarge", {
-    currentSize: bcs.u64(),
-    maxSize: bcs.u64()
-  }),
-  PublishUpgradeMissingDependency: null,
-  PublishUpgradeDependencyDowngrade: null,
-  PackageUpgradeError: bcs.struct("PackageUpgradeError", { upgradeError: PackageUpgradeError }),
-  WrittenObjectsTooLarge: bcs.struct("WrittenObjectsTooLarge", {
-    currentSize: bcs.u64(),
-    maxSize: bcs.u64()
-  }),
-  CertificateDenied: null,
-  SuiMoveVerificationTimedout: null,
-  SharedObjectOperationNotAllowed: null,
-  InputObjectDeleted: null,
-  ExecutionCancelledDueToSharedObjectCongestion: bcs.struct("ExecutionCancelledDueToSharedObjectCongestion", { congested_objects: bcs.vector(Address) }),
-  AddressDeniedForCoin: bcs.struct("AddressDeniedForCoin", {
-    address: Address,
-    coinType: bcs.string()
-  }),
-  CoinTypeGlobalPause: bcs.struct("CoinTypeGlobalPause", { coinType: bcs.string() }),
-  ExecutionCancelledDueToRandomnessUnavailable: null,
-  MoveVectorElemTooBig: bcs.struct("MoveVectorElemTooBig", {
-    valueSize: bcs.u64(),
-    maxScaledSize: bcs.u64()
-  }),
-  MoveRawValueTooBig: bcs.struct("MoveRawValueTooBig", {
-    valueSize: bcs.u64(),
-    maxScaledSize: bcs.u64()
-  }),
-  InvalidLinkage: null,
-  InsufficientBalanceForWithdraw: null,
-  NonExclusiveWriteInputObjectModified: bcs.struct("NonExclusiveWriteInputObjectModified", { id: Address })
-});
-var ExecutionStatus = bcs.enum("ExecutionStatus", {
-  Success: null,
-  Failure: bcs.struct("Failure", {
-    error: ExecutionFailureStatus,
-    command: bcs.option(bcs.u64())
-  })
-});
-var GasCostSummary = bcs.struct("GasCostSummary", {
-  computationCost: bcs.u64(),
-  storageCost: bcs.u64(),
-  storageRebate: bcs.u64(),
-  nonRefundableStorageFee: bcs.u64()
-});
-var TransactionEffectsV1 = bcs.struct("TransactionEffectsV1", {
-  status: ExecutionStatus,
-  executedEpoch: bcs.u64(),
-  gasUsed: GasCostSummary,
-  modifiedAtVersions: bcs.vector(bcs.tuple([Address, bcs.u64()])),
-  sharedObjects: bcs.vector(SuiObjectRef),
-  transactionDigest: ObjectDigest,
-  created: bcs.vector(bcs.tuple([SuiObjectRef, Owner])),
-  mutated: bcs.vector(bcs.tuple([SuiObjectRef, Owner])),
-  unwrapped: bcs.vector(bcs.tuple([SuiObjectRef, Owner])),
-  deleted: bcs.vector(SuiObjectRef),
-  unwrappedThenDeleted: bcs.vector(SuiObjectRef),
-  wrapped: bcs.vector(SuiObjectRef),
-  gasObject: bcs.tuple([SuiObjectRef, Owner]),
-  eventsDigest: bcs.option(ObjectDigest),
-  dependencies: bcs.vector(ObjectDigest)
-});
-var VersionDigest = bcs.tuple([bcs.u64(), ObjectDigest]);
-var ObjectIn = bcs.enum("ObjectIn", {
-  NotExist: null,
-  Exist: bcs.tuple([VersionDigest, Owner])
-});
-var AccumulatorAddress = bcs.struct("AccumulatorAddress", {
-  address: Address,
-  ty: TypeTag
-});
-var AccumulatorOperation = bcs.enum("AccumulatorOperation", {
-  Merge: null,
-  Split: null
-});
-var AccumulatorValue = bcs.enum("AccumulatorValue", {
-  Integer: bcs.u64(),
-  IntegerTuple: bcs.tuple([bcs.u64(), bcs.u64()]),
-  EventDigest: bcs.vector(bcs.tuple([bcs.u64(), ObjectDigest]))
-});
-var AccumulatorWriteV1 = bcs.struct("AccumulatorWriteV1", {
-  address: AccumulatorAddress,
-  operation: AccumulatorOperation,
-  value: AccumulatorValue
-});
-var ObjectOut = bcs.enum("ObjectOut", {
-  NotExist: null,
-  ObjectWrite: bcs.tuple([ObjectDigest, Owner]),
-  PackageWrite: VersionDigest,
-  AccumulatorWriteV1
-});
-var IDOperation = bcs.enum("IDOperation", {
-  None: null,
-  Created: null,
-  Deleted: null
-});
-var EffectsObjectChange = bcs.struct("EffectsObjectChange", {
-  inputState: ObjectIn,
-  outputState: ObjectOut,
-  idOperation: IDOperation
-});
-var UnchangedConsensusKind = bcs.enum("UnchangedConsensusKind", {
-  ReadOnlyRoot: VersionDigest,
-  MutateConsensusStreamEnded: bcs.u64(),
-  ReadConsensusStreamEnded: bcs.u64(),
-  Cancelled: bcs.u64(),
-  PerEpochConfig: null
-});
-var TransactionEffectsV2 = bcs.struct("TransactionEffectsV2", {
-  status: ExecutionStatus,
-  executedEpoch: bcs.u64(),
-  gasUsed: GasCostSummary,
-  transactionDigest: ObjectDigest,
-  gasObjectIndex: bcs.option(bcs.u32()),
-  eventsDigest: bcs.option(ObjectDigest),
-  dependencies: bcs.vector(ObjectDigest),
-  lamportVersion: bcs.u64(),
-  changedObjects: bcs.vector(bcs.tuple([Address, EffectsObjectChange])),
-  unchangedConsensusObjects: bcs.vector(bcs.tuple([Address, UnchangedConsensusKind])),
-  auxDataDigest: bcs.option(ObjectDigest)
-});
-var TransactionEffects = bcs.enum("TransactionEffects", {
-  V1: TransactionEffectsV1,
-  V2: TransactionEffectsV2
+var Address, ObjectDigest, SuiObjectRef, SharedObjectRef, ObjectArg, Owner, Reservation, WithdrawalType, WithdrawFrom, FundsWithdrawal, CallArg, InnerTypeTag, TypeTag, Argument, ProgrammableMoveCall, Command, ProgrammableTransaction, TransactionKind, ValidDuring, TransactionExpiration2, StructTag, GasData, TransactionDataV1, TransactionData, IntentScope, IntentVersion, AppId, Intent, CompressedSignature, PublicKey, MultiSigPkMap, MultiSigPublicKey, MultiSig, base64String, SenderSignedTransaction, SenderSignedData, PasskeyAuthenticator, MoveObjectType, TypeOrigin, UpgradeInfo, MovePackage, MoveObject, Data, ObjectInner;
+var init_bcs2 = __esm({
+  "packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/bcs/bcs.mjs"() {
+    init_sui_types();
+    init_type_tag_serializer();
+    init_dist2();
+    Address = bcs.bytes(SUI_ADDRESS_LENGTH).transform({
+      validate: (val) => {
+        const address = typeof val === "string" ? val : toHex(val);
+        if (!address || !isValidSuiAddress(normalizeSuiAddress(address))) throw new Error(`Invalid Sui address ${address}`);
+      },
+      input: (val) => typeof val === "string" ? fromHex(normalizeSuiAddress(val)) : val,
+      output: (val) => normalizeSuiAddress(toHex(val))
+    });
+    ObjectDigest = bcs.byteVector().transform({
+      name: "ObjectDigest",
+      input: (value) => fromBase58(value),
+      output: (value) => toBase58(new Uint8Array(value)),
+      validate: (value) => {
+        if (fromBase58(value).length !== 32) throw new Error("ObjectDigest must be 32 bytes");
+      }
+    });
+    SuiObjectRef = bcs.struct("SuiObjectRef", {
+      objectId: Address,
+      version: bcs.u64(),
+      digest: ObjectDigest
+    });
+    SharedObjectRef = bcs.struct("SharedObjectRef", {
+      objectId: Address,
+      initialSharedVersion: bcs.u64(),
+      mutable: bcs.bool()
+    });
+    ObjectArg = bcs.enum("ObjectArg", {
+      ImmOrOwnedObject: SuiObjectRef,
+      SharedObject: SharedObjectRef,
+      Receiving: SuiObjectRef
+    });
+    Owner = bcs.enum("Owner", {
+      AddressOwner: Address,
+      ObjectOwner: Address,
+      Shared: bcs.struct("Shared", { initialSharedVersion: bcs.u64() }),
+      Immutable: null,
+      ConsensusAddressOwner: bcs.struct("ConsensusAddressOwner", {
+        startVersion: bcs.u64(),
+        owner: Address
+      })
+    });
+    Reservation = bcs.enum("Reservation", { MaxAmountU64: bcs.u64() });
+    WithdrawalType = bcs.enum("WithdrawalType", { Balance: bcs.lazy(() => TypeTag) });
+    WithdrawFrom = bcs.enum("WithdrawFrom", {
+      Sender: null,
+      Sponsor: null
+    });
+    FundsWithdrawal = bcs.struct("FundsWithdrawal", {
+      reservation: Reservation,
+      typeArg: WithdrawalType,
+      withdrawFrom: WithdrawFrom
+    });
+    CallArg = bcs.enum("CallArg", {
+      Pure: bcs.struct("Pure", { bytes: bcs.byteVector().transform({
+        input: (val) => typeof val === "string" ? fromBase64(val) : val,
+        output: (val) => toBase64(new Uint8Array(val))
+      }) }),
+      Object: ObjectArg,
+      FundsWithdrawal
+    });
+    InnerTypeTag = bcs.enum("TypeTag", {
+      bool: null,
+      u8: null,
+      u64: null,
+      u128: null,
+      address: null,
+      signer: null,
+      vector: bcs.lazy(() => InnerTypeTag),
+      struct: bcs.lazy(() => StructTag),
+      u16: null,
+      u32: null,
+      u256: null
+    });
+    TypeTag = InnerTypeTag.transform({
+      input: (typeTag) => typeof typeTag === "string" ? TypeTagSerializer.parseFromStr(typeTag, true) : typeTag,
+      output: (typeTag) => TypeTagSerializer.tagToString(typeTag)
+    });
+    Argument = bcs.enum("Argument", {
+      GasCoin: null,
+      Input: bcs.u16(),
+      Result: bcs.u16(),
+      NestedResult: bcs.tuple([bcs.u16(), bcs.u16()])
+    });
+    ProgrammableMoveCall = bcs.struct("ProgrammableMoveCall", {
+      package: Address,
+      module: bcs.string(),
+      function: bcs.string(),
+      typeArguments: bcs.vector(TypeTag),
+      arguments: bcs.vector(Argument)
+    });
+    Command = bcs.enum("Command", {
+      MoveCall: ProgrammableMoveCall,
+      TransferObjects: bcs.struct("TransferObjects", {
+        objects: bcs.vector(Argument),
+        address: Argument
+      }),
+      SplitCoins: bcs.struct("SplitCoins", {
+        coin: Argument,
+        amounts: bcs.vector(Argument)
+      }),
+      MergeCoins: bcs.struct("MergeCoins", {
+        destination: Argument,
+        sources: bcs.vector(Argument)
+      }),
+      Publish: bcs.struct("Publish", {
+        modules: bcs.vector(bcs.byteVector().transform({
+          input: (val) => typeof val === "string" ? fromBase64(val) : val,
+          output: (val) => toBase64(new Uint8Array(val))
+        })),
+        dependencies: bcs.vector(Address)
+      }),
+      MakeMoveVec: bcs.struct("MakeMoveVec", {
+        type: optionEnum(TypeTag).transform({
+          input: (val) => val === null ? { None: true } : { Some: val },
+          output: (val) => val.Some ?? null
+        }),
+        elements: bcs.vector(Argument)
+      }),
+      Upgrade: bcs.struct("Upgrade", {
+        modules: bcs.vector(bcs.byteVector().transform({
+          input: (val) => typeof val === "string" ? fromBase64(val) : val,
+          output: (val) => toBase64(new Uint8Array(val))
+        })),
+        dependencies: bcs.vector(Address),
+        package: Address,
+        ticket: Argument
+      })
+    });
+    ProgrammableTransaction = bcs.struct("ProgrammableTransaction", {
+      inputs: bcs.vector(CallArg),
+      commands: bcs.vector(Command)
+    });
+    TransactionKind = bcs.enum("TransactionKind", {
+      ProgrammableTransaction,
+      ChangeEpoch: null,
+      Genesis: null,
+      ConsensusCommitPrologue: null
+    });
+    ValidDuring = bcs.struct("ValidDuring", {
+      minEpoch: bcs.option(bcs.u64()),
+      maxEpoch: bcs.option(bcs.u64()),
+      minTimestamp: bcs.option(bcs.u64()),
+      maxTimestamp: bcs.option(bcs.u64()),
+      chain: ObjectDigest,
+      nonce: bcs.u32()
+    });
+    TransactionExpiration2 = bcs.enum("TransactionExpiration", {
+      None: null,
+      Epoch: unsafe_u64(),
+      ValidDuring
+    });
+    StructTag = bcs.struct("StructTag", {
+      address: Address,
+      module: bcs.string(),
+      name: bcs.string(),
+      typeParams: bcs.vector(InnerTypeTag)
+    });
+    GasData = bcs.struct("GasData", {
+      payment: bcs.vector(SuiObjectRef),
+      owner: Address,
+      price: bcs.u64(),
+      budget: bcs.u64()
+    });
+    TransactionDataV1 = bcs.struct("TransactionDataV1", {
+      kind: TransactionKind,
+      sender: Address,
+      gasData: GasData,
+      expiration: TransactionExpiration2
+    });
+    TransactionData = bcs.enum("TransactionData", { V1: TransactionDataV1 });
+    IntentScope = bcs.enum("IntentScope", {
+      TransactionData: null,
+      TransactionEffects: null,
+      CheckpointSummary: null,
+      PersonalMessage: null
+    });
+    IntentVersion = bcs.enum("IntentVersion", { V0: null });
+    AppId = bcs.enum("AppId", { Sui: null });
+    Intent = bcs.struct("Intent", {
+      scope: IntentScope,
+      version: IntentVersion,
+      appId: AppId
+    });
+    CompressedSignature = bcs.enum("CompressedSignature", {
+      ED25519: bcs.bytes(64),
+      Secp256k1: bcs.bytes(64),
+      Secp256r1: bcs.bytes(64),
+      ZkLogin: bcs.byteVector(),
+      Passkey: bcs.byteVector()
+    });
+    PublicKey = bcs.enum("PublicKey", {
+      ED25519: bcs.bytes(32),
+      Secp256k1: bcs.bytes(33),
+      Secp256r1: bcs.bytes(33),
+      ZkLogin: bcs.byteVector(),
+      Passkey: bcs.bytes(33)
+    });
+    MultiSigPkMap = bcs.struct("MultiSigPkMap", {
+      pubKey: PublicKey,
+      weight: bcs.u8()
+    });
+    MultiSigPublicKey = bcs.struct("MultiSigPublicKey", {
+      pk_map: bcs.vector(MultiSigPkMap),
+      threshold: bcs.u16()
+    });
+    MultiSig = bcs.struct("MultiSig", {
+      sigs: bcs.vector(CompressedSignature),
+      bitmap: bcs.u16(),
+      multisig_pk: MultiSigPublicKey
+    });
+    base64String = bcs.byteVector().transform({
+      input: (val) => typeof val === "string" ? fromBase64(val) : val,
+      output: (val) => toBase64(new Uint8Array(val))
+    });
+    SenderSignedTransaction = bcs.struct("SenderSignedTransaction", {
+      intentMessage: IntentMessage(TransactionData),
+      txSignatures: bcs.vector(base64String)
+    });
+    SenderSignedData = bcs.vector(SenderSignedTransaction, { name: "SenderSignedData" });
+    PasskeyAuthenticator = bcs.struct("PasskeyAuthenticator", {
+      authenticatorData: bcs.byteVector(),
+      clientDataJson: bcs.string(),
+      userSignature: bcs.byteVector()
+    });
+    MoveObjectType = bcs.enum("MoveObjectType", {
+      Other: StructTag,
+      GasCoin: null,
+      StakedSui: null,
+      Coin: TypeTag,
+      AccumulatorBalanceWrapper: null
+    });
+    TypeOrigin = bcs.struct("TypeOrigin", {
+      moduleName: bcs.string(),
+      datatypeName: bcs.string(),
+      package: Address
+    });
+    UpgradeInfo = bcs.struct("UpgradeInfo", {
+      upgradedId: Address,
+      upgradedVersion: bcs.u64()
+    });
+    MovePackage = bcs.struct("MovePackage", {
+      id: Address,
+      version: bcs.u64(),
+      moduleMap: bcs.map(bcs.string(), bcs.byteVector()),
+      typeOriginTable: bcs.vector(TypeOrigin),
+      linkageTable: bcs.map(Address, UpgradeInfo)
+    });
+    MoveObject = bcs.struct("MoveObject", {
+      type: MoveObjectType,
+      hasPublicTransfer: bcs.bool(),
+      version: bcs.u64(),
+      contents: bcs.byteVector()
+    });
+    Data = bcs.enum("Data", {
+      Move: MoveObject,
+      Package: MovePackage
+    });
+    ObjectInner = bcs.struct("ObjectInner", {
+      data: Data,
+      owner: Owner,
+      previousTransaction: ObjectDigest,
+      storageRebate: bcs.u64()
+    });
+  }
 });
 
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/bcs/pure.mjs
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/bcs/effects.mjs
+var PackageUpgradeError, ModuleId, MoveLocation, CommandArgumentError, TypeArgumentError, ExecutionFailureStatus, ExecutionStatus, GasCostSummary, TransactionEffectsV1, VersionDigest, ObjectIn, AccumulatorAddress, AccumulatorOperation, AccumulatorValue, AccumulatorWriteV1, ObjectOut, IDOperation, EffectsObjectChange, UnchangedConsensusKind, TransactionEffectsV2, TransactionEffects;
+var init_effects = __esm({
+  "packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/bcs/effects.mjs"() {
+    init_bcs2();
+    init_dist2();
+    PackageUpgradeError = bcs.enum("PackageUpgradeError", {
+      UnableToFetchPackage: bcs.struct("UnableToFetchPackage", { packageId: Address }),
+      NotAPackage: bcs.struct("NotAPackage", { objectId: Address }),
+      IncompatibleUpgrade: null,
+      DigestDoesNotMatch: bcs.struct("DigestDoesNotMatch", { digest: bcs.byteVector() }),
+      UnknownUpgradePolicy: bcs.struct("UnknownUpgradePolicy", { policy: bcs.u8() }),
+      PackageIDDoesNotMatch: bcs.struct("PackageIDDoesNotMatch", {
+        packageId: Address,
+        ticketId: Address
+      })
+    });
+    ModuleId = bcs.struct("ModuleId", {
+      address: Address,
+      name: bcs.string()
+    });
+    MoveLocation = bcs.struct("MoveLocation", {
+      module: ModuleId,
+      function: bcs.u16(),
+      instruction: bcs.u16(),
+      functionName: bcs.option(bcs.string())
+    });
+    CommandArgumentError = bcs.enum("CommandArgumentError", {
+      TypeMismatch: null,
+      InvalidBCSBytes: null,
+      InvalidUsageOfPureArg: null,
+      InvalidArgumentToPrivateEntryFunction: null,
+      IndexOutOfBounds: bcs.struct("IndexOutOfBounds", { idx: bcs.u16() }),
+      SecondaryIndexOutOfBounds: bcs.struct("SecondaryIndexOutOfBounds", {
+        resultIdx: bcs.u16(),
+        secondaryIdx: bcs.u16()
+      }),
+      InvalidResultArity: bcs.struct("InvalidResultArity", { resultIdx: bcs.u16() }),
+      InvalidGasCoinUsage: null,
+      InvalidValueUsage: null,
+      InvalidObjectByValue: null,
+      InvalidObjectByMutRef: null,
+      SharedObjectOperationNotAllowed: null,
+      InvalidArgumentArity: null,
+      InvalidTransferObject: null,
+      InvalidMakeMoveVecNonObjectArgument: null,
+      ArgumentWithoutValue: null,
+      CannotMoveBorrowedValue: null,
+      CannotWriteToExtendedReference: null,
+      InvalidReferenceArgument: null
+    });
+    TypeArgumentError = bcs.enum("TypeArgumentError", {
+      TypeNotFound: null,
+      ConstraintNotSatisfied: null
+    });
+    ExecutionFailureStatus = bcs.enum("ExecutionFailureStatus", {
+      InsufficientGas: null,
+      InvalidGasObject: null,
+      InvariantViolation: null,
+      FeatureNotYetSupported: null,
+      MoveObjectTooBig: bcs.struct("MoveObjectTooBig", {
+        objectSize: bcs.u64(),
+        maxObjectSize: bcs.u64()
+      }),
+      MovePackageTooBig: bcs.struct("MovePackageTooBig", {
+        objectSize: bcs.u64(),
+        maxObjectSize: bcs.u64()
+      }),
+      CircularObjectOwnership: bcs.struct("CircularObjectOwnership", { object: Address }),
+      InsufficientCoinBalance: null,
+      CoinBalanceOverflow: null,
+      PublishErrorNonZeroAddress: null,
+      SuiMoveVerificationError: null,
+      MovePrimitiveRuntimeError: bcs.option(MoveLocation),
+      MoveAbort: bcs.tuple([MoveLocation, bcs.u64()]),
+      VMVerificationOrDeserializationError: null,
+      VMInvariantViolation: null,
+      FunctionNotFound: null,
+      ArityMismatch: null,
+      TypeArityMismatch: null,
+      NonEntryFunctionInvoked: null,
+      CommandArgumentError: bcs.struct("CommandArgumentError", {
+        argIdx: bcs.u16(),
+        kind: CommandArgumentError
+      }),
+      TypeArgumentError: bcs.struct("TypeArgumentError", {
+        argumentIdx: bcs.u16(),
+        kind: TypeArgumentError
+      }),
+      UnusedValueWithoutDrop: bcs.struct("UnusedValueWithoutDrop", {
+        resultIdx: bcs.u16(),
+        secondaryIdx: bcs.u16()
+      }),
+      InvalidPublicFunctionReturnType: bcs.struct("InvalidPublicFunctionReturnType", { idx: bcs.u16() }),
+      InvalidTransferObject: null,
+      EffectsTooLarge: bcs.struct("EffectsTooLarge", {
+        currentSize: bcs.u64(),
+        maxSize: bcs.u64()
+      }),
+      PublishUpgradeMissingDependency: null,
+      PublishUpgradeDependencyDowngrade: null,
+      PackageUpgradeError: bcs.struct("PackageUpgradeError", { upgradeError: PackageUpgradeError }),
+      WrittenObjectsTooLarge: bcs.struct("WrittenObjectsTooLarge", {
+        currentSize: bcs.u64(),
+        maxSize: bcs.u64()
+      }),
+      CertificateDenied: null,
+      SuiMoveVerificationTimedout: null,
+      SharedObjectOperationNotAllowed: null,
+      InputObjectDeleted: null,
+      ExecutionCancelledDueToSharedObjectCongestion: bcs.struct("ExecutionCancelledDueToSharedObjectCongestion", { congested_objects: bcs.vector(Address) }),
+      AddressDeniedForCoin: bcs.struct("AddressDeniedForCoin", {
+        address: Address,
+        coinType: bcs.string()
+      }),
+      CoinTypeGlobalPause: bcs.struct("CoinTypeGlobalPause", { coinType: bcs.string() }),
+      ExecutionCancelledDueToRandomnessUnavailable: null,
+      MoveVectorElemTooBig: bcs.struct("MoveVectorElemTooBig", {
+        valueSize: bcs.u64(),
+        maxScaledSize: bcs.u64()
+      }),
+      MoveRawValueTooBig: bcs.struct("MoveRawValueTooBig", {
+        valueSize: bcs.u64(),
+        maxScaledSize: bcs.u64()
+      }),
+      InvalidLinkage: null,
+      InsufficientBalanceForWithdraw: null,
+      NonExclusiveWriteInputObjectModified: bcs.struct("NonExclusiveWriteInputObjectModified", { id: Address })
+    });
+    ExecutionStatus = bcs.enum("ExecutionStatus", {
+      Success: null,
+      Failure: bcs.struct("Failure", {
+        error: ExecutionFailureStatus,
+        command: bcs.option(bcs.u64())
+      })
+    });
+    GasCostSummary = bcs.struct("GasCostSummary", {
+      computationCost: bcs.u64(),
+      storageCost: bcs.u64(),
+      storageRebate: bcs.u64(),
+      nonRefundableStorageFee: bcs.u64()
+    });
+    TransactionEffectsV1 = bcs.struct("TransactionEffectsV1", {
+      status: ExecutionStatus,
+      executedEpoch: bcs.u64(),
+      gasUsed: GasCostSummary,
+      modifiedAtVersions: bcs.vector(bcs.tuple([Address, bcs.u64()])),
+      sharedObjects: bcs.vector(SuiObjectRef),
+      transactionDigest: ObjectDigest,
+      created: bcs.vector(bcs.tuple([SuiObjectRef, Owner])),
+      mutated: bcs.vector(bcs.tuple([SuiObjectRef, Owner])),
+      unwrapped: bcs.vector(bcs.tuple([SuiObjectRef, Owner])),
+      deleted: bcs.vector(SuiObjectRef),
+      unwrappedThenDeleted: bcs.vector(SuiObjectRef),
+      wrapped: bcs.vector(SuiObjectRef),
+      gasObject: bcs.tuple([SuiObjectRef, Owner]),
+      eventsDigest: bcs.option(ObjectDigest),
+      dependencies: bcs.vector(ObjectDigest)
+    });
+    VersionDigest = bcs.tuple([bcs.u64(), ObjectDigest]);
+    ObjectIn = bcs.enum("ObjectIn", {
+      NotExist: null,
+      Exist: bcs.tuple([VersionDigest, Owner])
+    });
+    AccumulatorAddress = bcs.struct("AccumulatorAddress", {
+      address: Address,
+      ty: TypeTag
+    });
+    AccumulatorOperation = bcs.enum("AccumulatorOperation", {
+      Merge: null,
+      Split: null
+    });
+    AccumulatorValue = bcs.enum("AccumulatorValue", {
+      Integer: bcs.u64(),
+      IntegerTuple: bcs.tuple([bcs.u64(), bcs.u64()]),
+      EventDigest: bcs.vector(bcs.tuple([bcs.u64(), ObjectDigest]))
+    });
+    AccumulatorWriteV1 = bcs.struct("AccumulatorWriteV1", {
+      address: AccumulatorAddress,
+      operation: AccumulatorOperation,
+      value: AccumulatorValue
+    });
+    ObjectOut = bcs.enum("ObjectOut", {
+      NotExist: null,
+      ObjectWrite: bcs.tuple([ObjectDigest, Owner]),
+      PackageWrite: VersionDigest,
+      AccumulatorWriteV1
+    });
+    IDOperation = bcs.enum("IDOperation", {
+      None: null,
+      Created: null,
+      Deleted: null
+    });
+    EffectsObjectChange = bcs.struct("EffectsObjectChange", {
+      inputState: ObjectIn,
+      outputState: ObjectOut,
+      idOperation: IDOperation
+    });
+    UnchangedConsensusKind = bcs.enum("UnchangedConsensusKind", {
+      ReadOnlyRoot: VersionDigest,
+      MutateConsensusStreamEnded: bcs.u64(),
+      ReadConsensusStreamEnded: bcs.u64(),
+      Cancelled: bcs.u64(),
+      PerEpochConfig: null
+    });
+    TransactionEffectsV2 = bcs.struct("TransactionEffectsV2", {
+      status: ExecutionStatus,
+      executedEpoch: bcs.u64(),
+      gasUsed: GasCostSummary,
+      transactionDigest: ObjectDigest,
+      gasObjectIndex: bcs.option(bcs.u32()),
+      eventsDigest: bcs.option(ObjectDigest),
+      dependencies: bcs.vector(ObjectDigest),
+      lamportVersion: bcs.u64(),
+      changedObjects: bcs.vector(bcs.tuple([Address, EffectsObjectChange])),
+      unchangedConsensusObjects: bcs.vector(bcs.tuple([Address, UnchangedConsensusKind])),
+      auxDataDigest: bcs.option(ObjectDigest)
+    });
+    TransactionEffects = bcs.enum("TransactionEffects", {
+      V1: TransactionEffectsV1,
+      V2: TransactionEffectsV2
+    });
+  }
+});
+
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/bcs/pure.mjs
 function pureBcsSchemaFromTypeName(name) {
   switch (name) {
     case "u8":
@@ -2809,204 +2957,76 @@ function pureBcsSchemaFromTypeName(name) {
   }
   throw new Error(`Invalid Pure type name: ${name}`);
 }
-
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/bcs/index.mjs
-var suiBcs = {
-  ...bcs,
-  U8: bcs.u8(),
-  U16: bcs.u16(),
-  U32: bcs.u32(),
-  U64: bcs.u64(),
-  U128: bcs.u128(),
-  U256: bcs.u256(),
-  ULEB128: bcs.uleb128(),
-  Bool: bcs.bool(),
-  String: bcs.string(),
-  Address,
-  AppId,
-  Argument,
-  CallArg,
-  Command,
-  CompressedSignature,
-  Data,
-  GasData,
-  Intent,
-  IntentMessage,
-  IntentScope,
-  IntentVersion,
-  MoveObject,
-  MoveObjectType,
-  MovePackage,
-  MultiSig,
-  MultiSigPkMap,
-  MultiSigPublicKey,
-  Object: ObjectInner,
-  ObjectArg,
-  ObjectDigest,
-  Owner,
-  PasskeyAuthenticator,
-  ProgrammableMoveCall,
-  ProgrammableTransaction,
-  PublicKey,
-  SenderSignedData,
-  SenderSignedTransaction,
-  SharedObjectRef,
-  StructTag,
-  SuiObjectRef,
-  TransactionData,
-  TransactionDataV1,
-  TransactionEffects,
-  TransactionExpiration: TransactionExpiration2,
-  TransactionKind,
-  TypeOrigin,
-  TypeTag,
-  UpgradeInfo
-};
-
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/data/v1.mjs
-var ObjectRef = object({
-  digest: string(),
-  objectId: string(),
-  version: union([
-    pipe(number(), integer()),
-    string(),
-    bigint()
-  ])
-});
-var ObjectArg2 = safeEnum({
-  ImmOrOwned: ObjectRef,
-  Shared: object({
-    objectId: ObjectID,
-    initialSharedVersion: JsonU64,
-    mutable: boolean()
-  }),
-  Receiving: ObjectRef
-});
-var NormalizedCallArg2 = safeEnum({
-  Object: ObjectArg2,
-  Pure: array(pipe(number(), integer()))
-});
-var TransactionInput = union([object({
-  kind: literal("Input"),
-  index: pipe(number(), integer()),
-  value: unknown(),
-  type: optional(literal("object"))
-}), object({
-  kind: literal("Input"),
-  index: pipe(number(), integer()),
-  value: unknown(),
-  type: literal("pure")
-})]);
-var TransactionExpiration3 = union([object({ Epoch: pipe(number(), integer()) }), object({ None: nullable(literal(true)) })]);
-var StringEncodedBigint = pipe(union([
-  number(),
-  string(),
-  bigint()
-]), check((val) => {
-  if (![
-    "string",
-    "number",
-    "bigint"
-  ].includes(typeof val)) return false;
-  try {
-    BigInt(val);
-    return true;
-  } catch {
-    return false;
+var init_pure = __esm({
+  "packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/bcs/pure.mjs"() {
+    init_bcs2();
+    init_dist2();
   }
-}));
-var TypeTag2 = union([
-  object({ bool: nullable(literal(true)) }),
-  object({ u8: nullable(literal(true)) }),
-  object({ u64: nullable(literal(true)) }),
-  object({ u128: nullable(literal(true)) }),
-  object({ address: nullable(literal(true)) }),
-  object({ signer: nullable(literal(true)) }),
-  object({ vector: lazy(() => TypeTag2) }),
-  object({ struct: lazy(() => StructTag2) }),
-  object({ u16: nullable(literal(true)) }),
-  object({ u32: nullable(literal(true)) }),
-  object({ u256: nullable(literal(true)) })
-]);
-var StructTag2 = object({
-  address: string(),
-  module: string(),
-  name: string(),
-  typeParams: array(TypeTag2)
 });
-var GasConfig = object({
-  budget: optional(StringEncodedBigint),
-  price: optional(StringEncodedBigint),
-  payment: optional(array(ObjectRef)),
-  owner: optional(string())
+
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/bcs/index.mjs
+var suiBcs;
+var init_bcs3 = __esm({
+  "packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/bcs/index.mjs"() {
+    init_type_tag_serializer();
+    init_bcs2();
+    init_effects();
+    init_dist2();
+    suiBcs = {
+      ...bcs,
+      U8: bcs.u8(),
+      U16: bcs.u16(),
+      U32: bcs.u32(),
+      U64: bcs.u64(),
+      U128: bcs.u128(),
+      U256: bcs.u256(),
+      ULEB128: bcs.uleb128(),
+      Bool: bcs.bool(),
+      String: bcs.string(),
+      Address,
+      AppId,
+      Argument,
+      CallArg,
+      Command,
+      CompressedSignature,
+      Data,
+      GasData,
+      Intent,
+      IntentMessage,
+      IntentScope,
+      IntentVersion,
+      MoveObject,
+      MoveObjectType,
+      MovePackage,
+      MultiSig,
+      MultiSigPkMap,
+      MultiSigPublicKey,
+      Object: ObjectInner,
+      ObjectArg,
+      ObjectDigest,
+      Owner,
+      PasskeyAuthenticator,
+      ProgrammableMoveCall,
+      ProgrammableTransaction,
+      PublicKey,
+      SenderSignedData,
+      SenderSignedTransaction,
+      SharedObjectRef,
+      StructTag,
+      SuiObjectRef,
+      TransactionData,
+      TransactionDataV1,
+      TransactionEffects,
+      TransactionExpiration: TransactionExpiration2,
+      TransactionKind,
+      TypeOrigin,
+      TypeTag,
+      UpgradeInfo
+    };
+  }
 });
-var TransactionArgumentTypes = [
-  TransactionInput,
-  object({ kind: literal("GasCoin") }),
-  object({
-    kind: literal("Result"),
-    index: pipe(number(), integer())
-  }),
-  object({
-    kind: literal("NestedResult"),
-    index: pipe(number(), integer()),
-    resultIndex: pipe(number(), integer())
-  })
-];
-var TransactionArgument = union([...TransactionArgumentTypes]);
-var MoveCallTransaction = object({
-  kind: literal("MoveCall"),
-  target: pipe(string(), check((target) => target.split("::").length === 3)),
-  typeArguments: array(string()),
-  arguments: array(TransactionArgument)
-});
-var TransferObjectsTransaction = object({
-  kind: literal("TransferObjects"),
-  objects: array(TransactionArgument),
-  address: TransactionArgument
-});
-var SplitCoinsTransaction = object({
-  kind: literal("SplitCoins"),
-  coin: TransactionArgument,
-  amounts: array(TransactionArgument)
-});
-var MergeCoinsTransaction = object({
-  kind: literal("MergeCoins"),
-  destination: TransactionArgument,
-  sources: array(TransactionArgument)
-});
-var MakeMoveVecTransaction = object({
-  kind: literal("MakeMoveVec"),
-  type: union([object({ Some: TypeTag2 }), object({ None: nullable(literal(true)) })]),
-  objects: array(TransactionArgument)
-});
-var TransactionType = union([...[
-  MoveCallTransaction,
-  TransferObjectsTransaction,
-  SplitCoinsTransaction,
-  MergeCoinsTransaction,
-  object({
-    kind: literal("Publish"),
-    modules: array(array(pipe(number(), integer()))),
-    dependencies: array(string())
-  }),
-  object({
-    kind: literal("Upgrade"),
-    modules: array(array(pipe(number(), integer()))),
-    dependencies: array(string()),
-    packageId: string(),
-    ticket: TransactionArgument
-  }),
-  MakeMoveVecTransaction
-]]);
-var SerializedTransactionDataV1 = object({
-  version: literal(1),
-  sender: optional(string()),
-  expiration: nullish(TransactionExpiration3),
-  gasConfig: GasConfig,
-  inputs: array(TransactionInput),
-  transactions: array(TransactionType)
-});
+
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/data/v1.mjs
 function serializeV1TransactionData(transactionData) {
   const inputs = transactionData.inputs.map((input, index) => {
     if (input.Object) return {
@@ -3216,8 +3236,160 @@ function parseV1TransactionArgument(arg) {
       return { Input: arg.index };
   }
 }
+var ObjectRef, ObjectArg2, NormalizedCallArg2, TransactionInput, TransactionExpiration3, StringEncodedBigint, TypeTag2, StructTag2, GasConfig, TransactionArgumentTypes, TransactionArgument, MoveCallTransaction, TransferObjectsTransaction, SplitCoinsTransaction, MergeCoinsTransaction, MakeMoveVecTransaction, TransactionType, SerializedTransactionDataV1;
+var init_v1 = __esm({
+  "packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/data/v1.mjs"() {
+    init_type_tag_serializer();
+    init_internal();
+    init_dist2();
+    init_dist3();
+    ObjectRef = object({
+      digest: string(),
+      objectId: string(),
+      version: union([
+        pipe(number(), integer()),
+        string(),
+        bigint()
+      ])
+    });
+    ObjectArg2 = safeEnum({
+      ImmOrOwned: ObjectRef,
+      Shared: object({
+        objectId: ObjectID,
+        initialSharedVersion: JsonU64,
+        mutable: boolean()
+      }),
+      Receiving: ObjectRef
+    });
+    NormalizedCallArg2 = safeEnum({
+      Object: ObjectArg2,
+      Pure: array(pipe(number(), integer()))
+    });
+    TransactionInput = union([object({
+      kind: literal("Input"),
+      index: pipe(number(), integer()),
+      value: unknown(),
+      type: optional(literal("object"))
+    }), object({
+      kind: literal("Input"),
+      index: pipe(number(), integer()),
+      value: unknown(),
+      type: literal("pure")
+    })]);
+    TransactionExpiration3 = union([object({ Epoch: pipe(number(), integer()) }), object({ None: nullable(literal(true)) })]);
+    StringEncodedBigint = pipe(union([
+      number(),
+      string(),
+      bigint()
+    ]), check((val) => {
+      if (![
+        "string",
+        "number",
+        "bigint"
+      ].includes(typeof val)) return false;
+      try {
+        BigInt(val);
+        return true;
+      } catch {
+        return false;
+      }
+    }));
+    TypeTag2 = union([
+      object({ bool: nullable(literal(true)) }),
+      object({ u8: nullable(literal(true)) }),
+      object({ u64: nullable(literal(true)) }),
+      object({ u128: nullable(literal(true)) }),
+      object({ address: nullable(literal(true)) }),
+      object({ signer: nullable(literal(true)) }),
+      object({ vector: lazy(() => TypeTag2) }),
+      object({ struct: lazy(() => StructTag2) }),
+      object({ u16: nullable(literal(true)) }),
+      object({ u32: nullable(literal(true)) }),
+      object({ u256: nullable(literal(true)) })
+    ]);
+    StructTag2 = object({
+      address: string(),
+      module: string(),
+      name: string(),
+      typeParams: array(TypeTag2)
+    });
+    GasConfig = object({
+      budget: optional(StringEncodedBigint),
+      price: optional(StringEncodedBigint),
+      payment: optional(array(ObjectRef)),
+      owner: optional(string())
+    });
+    TransactionArgumentTypes = [
+      TransactionInput,
+      object({ kind: literal("GasCoin") }),
+      object({
+        kind: literal("Result"),
+        index: pipe(number(), integer())
+      }),
+      object({
+        kind: literal("NestedResult"),
+        index: pipe(number(), integer()),
+        resultIndex: pipe(number(), integer())
+      })
+    ];
+    TransactionArgument = union([...TransactionArgumentTypes]);
+    MoveCallTransaction = object({
+      kind: literal("MoveCall"),
+      target: pipe(string(), check((target) => target.split("::").length === 3)),
+      typeArguments: array(string()),
+      arguments: array(TransactionArgument)
+    });
+    TransferObjectsTransaction = object({
+      kind: literal("TransferObjects"),
+      objects: array(TransactionArgument),
+      address: TransactionArgument
+    });
+    SplitCoinsTransaction = object({
+      kind: literal("SplitCoins"),
+      coin: TransactionArgument,
+      amounts: array(TransactionArgument)
+    });
+    MergeCoinsTransaction = object({
+      kind: literal("MergeCoins"),
+      destination: TransactionArgument,
+      sources: array(TransactionArgument)
+    });
+    MakeMoveVecTransaction = object({
+      kind: literal("MakeMoveVec"),
+      type: union([object({ Some: TypeTag2 }), object({ None: nullable(literal(true)) })]),
+      objects: array(TransactionArgument)
+    });
+    TransactionType = union([...[
+      MoveCallTransaction,
+      TransferObjectsTransaction,
+      SplitCoinsTransaction,
+      MergeCoinsTransaction,
+      object({
+        kind: literal("Publish"),
+        modules: array(array(pipe(number(), integer()))),
+        dependencies: array(string())
+      }),
+      object({
+        kind: literal("Upgrade"),
+        modules: array(array(pipe(number(), integer()))),
+        dependencies: array(string()),
+        packageId: string(),
+        ticket: TransactionArgument
+      }),
+      MakeMoveVecTransaction
+    ]]);
+    SerializedTransactionDataV1 = object({
+      version: literal(1),
+      sender: optional(string()),
+      expiration: nullish(TransactionExpiration3),
+      gasConfig: GasConfig,
+      inputs: array(TransactionInput),
+      transactions: array(TransactionType)
+    });
+  }
+});
 
-// node_modules/.pnpm/@noble+hashes@2.0.1/node_modules/@noble/hashes/utils.js
+// packages/node_modules/.pnpm/@noble+hashes@2.0.1/node_modules/@noble/hashes/utils.js
 function isBytes2(a) {
   return a instanceof Uint8Array || ArrayBuffer.isView(a) && a.constructor.name === "Uint8Array";
 }
@@ -3272,23 +3444,15 @@ function createView(arr) {
 function rotr(word, shift) {
   return word << 32 - shift | word >>> shift;
 }
-var isLE = /* @__PURE__ */ (() => new Uint8Array(new Uint32Array([287454020]).buffer)[0] === 68)();
 function byteSwap(word) {
   return word << 24 & 4278190080 | word << 8 & 16711680 | word >>> 8 & 65280 | word >>> 24 & 255;
 }
-var swap8IfBE = isLE ? (n) => n : (n) => byteSwap(n);
 function byteSwap32(arr) {
   for (let i = 0; i < arr.length; i++) {
     arr[i] = byteSwap(arr[i]);
   }
   return arr;
 }
-var swap32IfBE = isLE ? (u) => u : byteSwap32;
-var hasHexBuiltin = /* @__PURE__ */ (() => (
-  // @ts-ignore
-  typeof Uint8Array.from([]).toHex === "function" && typeof Uint8Array.fromHex === "function"
-))();
-var hexes = /* @__PURE__ */ Array.from({ length: 256 }, (_, i) => i.toString(16).padStart(2, "0"));
 function bytesToHex(bytes) {
   abytes(bytes);
   if (hasHexBuiltin)
@@ -3299,7 +3463,6 @@ function bytesToHex(bytes) {
   }
   return hex;
 }
-var asciis = { _0: 48, _9: 57, A: 65, F: 70, a: 97, f: 102 };
 function asciiToBase16(ch) {
   if (ch >= asciis._0 && ch <= asciis._9)
     return ch - asciis._0;
@@ -3376,405 +3539,428 @@ function randomBytes(bytesLength = 32) {
     throw new Error("crypto.getRandomValues must be defined");
   return cr.getRandomValues(new Uint8Array(bytesLength));
 }
-var oidNist = (suffix) => ({
-  oid: Uint8Array.from([6, 9, 96, 134, 72, 1, 101, 3, 4, 2, suffix])
+var isLE, swap8IfBE, swap32IfBE, hasHexBuiltin, hexes, asciis, oidNist;
+var init_utils3 = __esm({
+  "packages/node_modules/.pnpm/@noble+hashes@2.0.1/node_modules/@noble/hashes/utils.js"() {
+    isLE = /* @__PURE__ */ (() => new Uint8Array(new Uint32Array([287454020]).buffer)[0] === 68)();
+    swap8IfBE = isLE ? (n) => n : (n) => byteSwap(n);
+    swap32IfBE = isLE ? (u) => u : byteSwap32;
+    hasHexBuiltin = /* @__PURE__ */ (() => (
+      // @ts-ignore
+      typeof Uint8Array.from([]).toHex === "function" && typeof Uint8Array.fromHex === "function"
+    ))();
+    hexes = /* @__PURE__ */ Array.from({ length: 256 }, (_, i) => i.toString(16).padStart(2, "0"));
+    asciis = { _0: 48, _9: 57, A: 65, F: 70, a: 97, f: 102 };
+    oidNist = (suffix) => ({
+      oid: Uint8Array.from([6, 9, 96, 134, 72, 1, 101, 3, 4, 2, suffix])
+    });
+  }
 });
 
-// node_modules/.pnpm/@noble+hashes@2.0.1/node_modules/@noble/hashes/_blake.js
-var BSIGMA = /* @__PURE__ */ Uint8Array.from([
-  0,
-  1,
-  2,
-  3,
-  4,
-  5,
-  6,
-  7,
-  8,
-  9,
-  10,
-  11,
-  12,
-  13,
-  14,
-  15,
-  14,
-  10,
-  4,
-  8,
-  9,
-  15,
-  13,
-  6,
-  1,
-  12,
-  0,
-  2,
-  11,
-  7,
-  5,
-  3,
-  11,
-  8,
-  12,
-  0,
-  5,
-  2,
-  15,
-  13,
-  10,
-  14,
-  3,
-  6,
-  7,
-  1,
-  9,
-  4,
-  7,
-  9,
-  3,
-  1,
-  13,
-  12,
-  11,
-  14,
-  2,
-  6,
-  5,
-  10,
-  4,
-  0,
-  15,
-  8,
-  9,
-  0,
-  5,
-  7,
-  2,
-  4,
-  10,
-  15,
-  14,
-  1,
-  11,
-  12,
-  6,
-  8,
-  3,
-  13,
-  2,
-  12,
-  6,
-  10,
-  0,
-  11,
-  8,
-  3,
-  4,
-  13,
-  7,
-  5,
-  15,
-  14,
-  1,
-  9,
-  12,
-  5,
-  1,
-  15,
-  14,
-  13,
-  4,
-  10,
-  0,
-  7,
-  6,
-  3,
-  9,
-  2,
-  8,
-  11,
-  13,
-  11,
-  7,
-  14,
-  12,
-  1,
-  3,
-  9,
-  5,
-  0,
-  15,
-  4,
-  8,
-  6,
-  2,
-  10,
-  6,
-  15,
-  14,
-  9,
-  11,
-  3,
-  0,
-  8,
-  12,
-  2,
-  13,
-  7,
-  1,
-  4,
-  10,
-  5,
-  10,
-  2,
-  8,
-  4,
-  7,
-  6,
-  1,
-  5,
-  15,
-  11,
-  9,
-  14,
-  3,
-  12,
-  13,
-  0,
-  0,
-  1,
-  2,
-  3,
-  4,
-  5,
-  6,
-  7,
-  8,
-  9,
-  10,
-  11,
-  12,
-  13,
-  14,
-  15,
-  14,
-  10,
-  4,
-  8,
-  9,
-  15,
-  13,
-  6,
-  1,
-  12,
-  0,
-  2,
-  11,
-  7,
-  5,
-  3,
-  // Blake1, unused in others
-  11,
-  8,
-  12,
-  0,
-  5,
-  2,
-  15,
-  13,
-  10,
-  14,
-  3,
-  6,
-  7,
-  1,
-  9,
-  4,
-  7,
-  9,
-  3,
-  1,
-  13,
-  12,
-  11,
-  14,
-  2,
-  6,
-  5,
-  10,
-  4,
-  0,
-  15,
-  8,
-  9,
-  0,
-  5,
-  7,
-  2,
-  4,
-  10,
-  15,
-  14,
-  1,
-  11,
-  12,
-  6,
-  8,
-  3,
-  13,
-  2,
-  12,
-  6,
-  10,
-  0,
-  11,
-  8,
-  3,
-  4,
-  13,
-  7,
-  5,
-  15,
-  14,
-  1,
-  9
-]);
+// packages/node_modules/.pnpm/@noble+hashes@2.0.1/node_modules/@noble/hashes/_blake.js
+var BSIGMA;
+var init_blake = __esm({
+  "packages/node_modules/.pnpm/@noble+hashes@2.0.1/node_modules/@noble/hashes/_blake.js"() {
+    BSIGMA = /* @__PURE__ */ Uint8Array.from([
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      14,
+      10,
+      4,
+      8,
+      9,
+      15,
+      13,
+      6,
+      1,
+      12,
+      0,
+      2,
+      11,
+      7,
+      5,
+      3,
+      11,
+      8,
+      12,
+      0,
+      5,
+      2,
+      15,
+      13,
+      10,
+      14,
+      3,
+      6,
+      7,
+      1,
+      9,
+      4,
+      7,
+      9,
+      3,
+      1,
+      13,
+      12,
+      11,
+      14,
+      2,
+      6,
+      5,
+      10,
+      4,
+      0,
+      15,
+      8,
+      9,
+      0,
+      5,
+      7,
+      2,
+      4,
+      10,
+      15,
+      14,
+      1,
+      11,
+      12,
+      6,
+      8,
+      3,
+      13,
+      2,
+      12,
+      6,
+      10,
+      0,
+      11,
+      8,
+      3,
+      4,
+      13,
+      7,
+      5,
+      15,
+      14,
+      1,
+      9,
+      12,
+      5,
+      1,
+      15,
+      14,
+      13,
+      4,
+      10,
+      0,
+      7,
+      6,
+      3,
+      9,
+      2,
+      8,
+      11,
+      13,
+      11,
+      7,
+      14,
+      12,
+      1,
+      3,
+      9,
+      5,
+      0,
+      15,
+      4,
+      8,
+      6,
+      2,
+      10,
+      6,
+      15,
+      14,
+      9,
+      11,
+      3,
+      0,
+      8,
+      12,
+      2,
+      13,
+      7,
+      1,
+      4,
+      10,
+      5,
+      10,
+      2,
+      8,
+      4,
+      7,
+      6,
+      1,
+      5,
+      15,
+      11,
+      9,
+      14,
+      3,
+      12,
+      13,
+      0,
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      14,
+      10,
+      4,
+      8,
+      9,
+      15,
+      13,
+      6,
+      1,
+      12,
+      0,
+      2,
+      11,
+      7,
+      5,
+      3,
+      // Blake1, unused in others
+      11,
+      8,
+      12,
+      0,
+      5,
+      2,
+      15,
+      13,
+      10,
+      14,
+      3,
+      6,
+      7,
+      1,
+      9,
+      4,
+      7,
+      9,
+      3,
+      1,
+      13,
+      12,
+      11,
+      14,
+      2,
+      6,
+      5,
+      10,
+      4,
+      0,
+      15,
+      8,
+      9,
+      0,
+      5,
+      7,
+      2,
+      4,
+      10,
+      15,
+      14,
+      1,
+      11,
+      12,
+      6,
+      8,
+      3,
+      13,
+      2,
+      12,
+      6,
+      10,
+      0,
+      11,
+      8,
+      3,
+      4,
+      13,
+      7,
+      5,
+      15,
+      14,
+      1,
+      9
+    ]);
+  }
+});
 
-// node_modules/.pnpm/@noble+hashes@2.0.1/node_modules/@noble/hashes/_md.js
+// packages/node_modules/.pnpm/@noble+hashes@2.0.1/node_modules/@noble/hashes/_md.js
 function Chi(a, b, c) {
   return a & b ^ ~a & c;
 }
 function Maj(a, b, c) {
   return a & b ^ a & c ^ b & c;
 }
-var HashMD = class {
-  blockLen;
-  outputLen;
-  padOffset;
-  isLE;
-  // For partial updates less than block size
-  buffer;
-  view;
-  finished = false;
-  length = 0;
-  pos = 0;
-  destroyed = false;
-  constructor(blockLen, outputLen, padOffset, isLE2) {
-    this.blockLen = blockLen;
-    this.outputLen = outputLen;
-    this.padOffset = padOffset;
-    this.isLE = isLE2;
-    this.buffer = new Uint8Array(blockLen);
-    this.view = createView(this.buffer);
-  }
-  update(data) {
-    aexists(this);
-    abytes(data);
-    const { view, buffer, blockLen } = this;
-    const len = data.length;
-    for (let pos = 0; pos < len; ) {
-      const take = Math.min(blockLen - this.pos, len - pos);
-      if (take === blockLen) {
-        const dataView = createView(data);
-        for (; blockLen <= len - pos; pos += blockLen)
-          this.process(dataView, pos);
-        continue;
-      }
-      buffer.set(data.subarray(pos, pos + take), this.pos);
-      this.pos += take;
-      pos += take;
-      if (this.pos === blockLen) {
-        this.process(view, 0);
-        this.pos = 0;
-      }
-    }
-    this.length += data.length;
-    this.roundClean();
-    return this;
-  }
-  digestInto(out) {
-    aexists(this);
-    aoutput(out, this);
-    this.finished = true;
-    const { buffer, view, blockLen, isLE: isLE2 } = this;
-    let { pos } = this;
-    buffer[pos++] = 128;
-    clean(this.buffer.subarray(pos));
-    if (this.padOffset > blockLen - pos) {
-      this.process(view, 0);
+var HashMD, SHA256_IV, SHA512_IV;
+var init_md = __esm({
+  "packages/node_modules/.pnpm/@noble+hashes@2.0.1/node_modules/@noble/hashes/_md.js"() {
+    init_utils3();
+    HashMD = class {
+      blockLen;
+      outputLen;
+      padOffset;
+      isLE;
+      // For partial updates less than block size
+      buffer;
+      view;
+      finished = false;
+      length = 0;
       pos = 0;
-    }
-    for (let i = pos; i < blockLen; i++)
-      buffer[i] = 0;
-    view.setBigUint64(blockLen - 8, BigInt(this.length * 8), isLE2);
-    this.process(view, 0);
-    const oview = createView(out);
-    const len = this.outputLen;
-    if (len % 4)
-      throw new Error("_sha2: outputLen must be aligned to 32bit");
-    const outLen = len / 4;
-    const state = this.get();
-    if (outLen > state.length)
-      throw new Error("_sha2: outputLen bigger than state");
-    for (let i = 0; i < outLen; i++)
-      oview.setUint32(4 * i, state[i], isLE2);
+      destroyed = false;
+      constructor(blockLen, outputLen, padOffset, isLE2) {
+        this.blockLen = blockLen;
+        this.outputLen = outputLen;
+        this.padOffset = padOffset;
+        this.isLE = isLE2;
+        this.buffer = new Uint8Array(blockLen);
+        this.view = createView(this.buffer);
+      }
+      update(data) {
+        aexists(this);
+        abytes(data);
+        const { view, buffer, blockLen } = this;
+        const len = data.length;
+        for (let pos = 0; pos < len; ) {
+          const take = Math.min(blockLen - this.pos, len - pos);
+          if (take === blockLen) {
+            const dataView = createView(data);
+            for (; blockLen <= len - pos; pos += blockLen)
+              this.process(dataView, pos);
+            continue;
+          }
+          buffer.set(data.subarray(pos, pos + take), this.pos);
+          this.pos += take;
+          pos += take;
+          if (this.pos === blockLen) {
+            this.process(view, 0);
+            this.pos = 0;
+          }
+        }
+        this.length += data.length;
+        this.roundClean();
+        return this;
+      }
+      digestInto(out) {
+        aexists(this);
+        aoutput(out, this);
+        this.finished = true;
+        const { buffer, view, blockLen, isLE: isLE2 } = this;
+        let { pos } = this;
+        buffer[pos++] = 128;
+        clean(this.buffer.subarray(pos));
+        if (this.padOffset > blockLen - pos) {
+          this.process(view, 0);
+          pos = 0;
+        }
+        for (let i = pos; i < blockLen; i++)
+          buffer[i] = 0;
+        view.setBigUint64(blockLen - 8, BigInt(this.length * 8), isLE2);
+        this.process(view, 0);
+        const oview = createView(out);
+        const len = this.outputLen;
+        if (len % 4)
+          throw new Error("_sha2: outputLen must be aligned to 32bit");
+        const outLen = len / 4;
+        const state = this.get();
+        if (outLen > state.length)
+          throw new Error("_sha2: outputLen bigger than state");
+        for (let i = 0; i < outLen; i++)
+          oview.setUint32(4 * i, state[i], isLE2);
+      }
+      digest() {
+        const { buffer, outputLen } = this;
+        this.digestInto(buffer);
+        const res = buffer.slice(0, outputLen);
+        this.destroy();
+        return res;
+      }
+      _cloneInto(to) {
+        to ||= new this.constructor();
+        to.set(...this.get());
+        const { blockLen, buffer, length, finished, destroyed, pos } = this;
+        to.destroyed = destroyed;
+        to.finished = finished;
+        to.length = length;
+        to.pos = pos;
+        if (length % blockLen)
+          to.buffer.set(buffer);
+        return to;
+      }
+      clone() {
+        return this._cloneInto();
+      }
+    };
+    SHA256_IV = /* @__PURE__ */ Uint32Array.from([
+      1779033703,
+      3144134277,
+      1013904242,
+      2773480762,
+      1359893119,
+      2600822924,
+      528734635,
+      1541459225
+    ]);
+    SHA512_IV = /* @__PURE__ */ Uint32Array.from([
+      1779033703,
+      4089235720,
+      3144134277,
+      2227873595,
+      1013904242,
+      4271175723,
+      2773480762,
+      1595750129,
+      1359893119,
+      2917565137,
+      2600822924,
+      725511199,
+      528734635,
+      4215389547,
+      1541459225,
+      327033209
+    ]);
   }
-  digest() {
-    const { buffer, outputLen } = this;
-    this.digestInto(buffer);
-    const res = buffer.slice(0, outputLen);
-    this.destroy();
-    return res;
-  }
-  _cloneInto(to) {
-    to ||= new this.constructor();
-    to.set(...this.get());
-    const { blockLen, buffer, length, finished, destroyed, pos } = this;
-    to.destroyed = destroyed;
-    to.finished = finished;
-    to.length = length;
-    to.pos = pos;
-    if (length % blockLen)
-      to.buffer.set(buffer);
-    return to;
-  }
-  clone() {
-    return this._cloneInto();
-  }
-};
-var SHA256_IV = /* @__PURE__ */ Uint32Array.from([
-  1779033703,
-  3144134277,
-  1013904242,
-  2773480762,
-  1359893119,
-  2600822924,
-  528734635,
-  1541459225
-]);
-var SHA512_IV = /* @__PURE__ */ Uint32Array.from([
-  1779033703,
-  4089235720,
-  3144134277,
-  2227873595,
-  1013904242,
-  4271175723,
-  2773480762,
-  1595750129,
-  1359893119,
-  2917565137,
-  2600822924,
-  725511199,
-  528734635,
-  4215389547,
-  1541459225,
-  327033209
-]);
+});
 
-// node_modules/.pnpm/@noble+hashes@2.0.1/node_modules/@noble/hashes/_u64.js
-var U32_MASK64 = /* @__PURE__ */ BigInt(2 ** 32 - 1);
-var _32n = /* @__PURE__ */ BigInt(32);
+// packages/node_modules/.pnpm/@noble+hashes@2.0.1/node_modules/@noble/hashes/_u64.js
 function fromBig(n, le = false) {
   if (le)
     return { h: Number(n & U32_MASK64), l: Number(n >> _32n & U32_MASK64) };
@@ -3790,49 +3976,37 @@ function split(lst, le = false) {
   }
   return [Ah, Al];
 }
-var shrSH = (h, _l, s) => h >>> s;
-var shrSL = (h, l, s) => h << 32 - s | l >>> s;
-var rotrSH = (h, l, s) => h >>> s | l << 32 - s;
-var rotrSL = (h, l, s) => h << 32 - s | l >>> s;
-var rotrBH = (h, l, s) => h << 64 - s | l >>> s - 32;
-var rotrBL = (h, l, s) => h >>> s - 32 | l << 64 - s;
-var rotr32H = (_h, l) => l;
-var rotr32L = (h, _l) => h;
-var rotlSH = (h, l, s) => h << s | l >>> 32 - s;
-var rotlSL = (h, l, s) => l << s | h >>> 32 - s;
-var rotlBH = (h, l, s) => l << s - 32 | h >>> 64 - s;
-var rotlBL = (h, l, s) => h << s - 32 | l >>> 64 - s;
 function add(Ah, Al, Bh, Bl) {
   const l = (Al >>> 0) + (Bl >>> 0);
   return { h: Ah + Bh + (l / 2 ** 32 | 0) | 0, l: l | 0 };
 }
-var add3L = (Al, Bl, Cl) => (Al >>> 0) + (Bl >>> 0) + (Cl >>> 0);
-var add3H = (low, Ah, Bh, Ch) => Ah + Bh + Ch + (low / 2 ** 32 | 0) | 0;
-var add4L = (Al, Bl, Cl, Dl) => (Al >>> 0) + (Bl >>> 0) + (Cl >>> 0) + (Dl >>> 0);
-var add4H = (low, Ah, Bh, Ch, Dh) => Ah + Bh + Ch + Dh + (low / 2 ** 32 | 0) | 0;
-var add5L = (Al, Bl, Cl, Dl, El) => (Al >>> 0) + (Bl >>> 0) + (Cl >>> 0) + (Dl >>> 0) + (El >>> 0);
-var add5H = (low, Ah, Bh, Ch, Dh, Eh) => Ah + Bh + Ch + Dh + Eh + (low / 2 ** 32 | 0) | 0;
+var U32_MASK64, _32n, shrSH, shrSL, rotrSH, rotrSL, rotrBH, rotrBL, rotr32H, rotr32L, rotlSH, rotlSL, rotlBH, rotlBL, add3L, add3H, add4L, add4H, add5L, add5H;
+var init_u64 = __esm({
+  "packages/node_modules/.pnpm/@noble+hashes@2.0.1/node_modules/@noble/hashes/_u64.js"() {
+    U32_MASK64 = /* @__PURE__ */ BigInt(2 ** 32 - 1);
+    _32n = /* @__PURE__ */ BigInt(32);
+    shrSH = (h, _l, s) => h >>> s;
+    shrSL = (h, l, s) => h << 32 - s | l >>> s;
+    rotrSH = (h, l, s) => h >>> s | l << 32 - s;
+    rotrSL = (h, l, s) => h << 32 - s | l >>> s;
+    rotrBH = (h, l, s) => h << 64 - s | l >>> s - 32;
+    rotrBL = (h, l, s) => h >>> s - 32 | l << 64 - s;
+    rotr32H = (_h, l) => l;
+    rotr32L = (h, _l) => h;
+    rotlSH = (h, l, s) => h << s | l >>> 32 - s;
+    rotlSL = (h, l, s) => l << s | h >>> 32 - s;
+    rotlBH = (h, l, s) => l << s - 32 | h >>> 64 - s;
+    rotlBL = (h, l, s) => h << s - 32 | l >>> 64 - s;
+    add3L = (Al, Bl, Cl) => (Al >>> 0) + (Bl >>> 0) + (Cl >>> 0);
+    add3H = (low, Ah, Bh, Ch) => Ah + Bh + Ch + (low / 2 ** 32 | 0) | 0;
+    add4L = (Al, Bl, Cl, Dl) => (Al >>> 0) + (Bl >>> 0) + (Cl >>> 0) + (Dl >>> 0);
+    add4H = (low, Ah, Bh, Ch, Dh) => Ah + Bh + Ch + Dh + (low / 2 ** 32 | 0) | 0;
+    add5L = (Al, Bl, Cl, Dl, El) => (Al >>> 0) + (Bl >>> 0) + (Cl >>> 0) + (Dl >>> 0) + (El >>> 0);
+    add5H = (low, Ah, Bh, Ch, Dh, Eh) => Ah + Bh + Ch + Dh + Eh + (low / 2 ** 32 | 0) | 0;
+  }
+});
 
-// node_modules/.pnpm/@noble+hashes@2.0.1/node_modules/@noble/hashes/blake2.js
-var B2B_IV = /* @__PURE__ */ Uint32Array.from([
-  4089235720,
-  1779033703,
-  2227873595,
-  3144134277,
-  4271175723,
-  1013904242,
-  1595750129,
-  2773480762,
-  2917565137,
-  1359893119,
-  725511199,
-  2600822924,
-  4215389547,
-  528734635,
-  327033209,
-  1541459225
-]);
-var BBUF = /* @__PURE__ */ new Uint32Array(32);
+// packages/node_modules/.pnpm/@noble+hashes@2.0.1/node_modules/@noble/hashes/blake2.js
 function G1b(a, b, c, d, msg, x) {
   const Xl = msg[x], Xh = msg[x + 1];
   let Al = BBUF[2 * a], Ah = BBUF[2 * a + 1];
@@ -3883,223 +4057,250 @@ function checkBlake2Opts(outputLen, opts = {}, keyLen, saltLen, persLen) {
   if (personalization !== void 0)
     abytes(personalization, persLen, "personalization");
 }
-var _BLAKE2 = class {
-  buffer;
-  buffer32;
-  finished = false;
-  destroyed = false;
-  length = 0;
-  pos = 0;
-  blockLen;
-  outputLen;
-  constructor(blockLen, outputLen) {
-    anumber2(blockLen);
-    anumber2(outputLen);
-    this.blockLen = blockLen;
-    this.outputLen = outputLen;
-    this.buffer = new Uint8Array(blockLen);
-    this.buffer32 = u32(this.buffer);
-  }
-  update(data) {
-    aexists(this);
-    abytes(data);
-    const { blockLen, buffer, buffer32 } = this;
-    const len = data.length;
-    const offset = data.byteOffset;
-    const buf = data.buffer;
-    for (let pos = 0; pos < len; ) {
-      if (this.pos === blockLen) {
-        swap32IfBE(buffer32);
-        this.compress(buffer32, 0, false);
-        swap32IfBE(buffer32);
-        this.pos = 0;
+var B2B_IV, BBUF, _BLAKE2, _BLAKE2b, blake2b;
+var init_blake2 = __esm({
+  "packages/node_modules/.pnpm/@noble+hashes@2.0.1/node_modules/@noble/hashes/blake2.js"() {
+    init_blake();
+    init_u64();
+    init_utils3();
+    B2B_IV = /* @__PURE__ */ Uint32Array.from([
+      4089235720,
+      1779033703,
+      2227873595,
+      3144134277,
+      4271175723,
+      1013904242,
+      1595750129,
+      2773480762,
+      2917565137,
+      1359893119,
+      725511199,
+      2600822924,
+      4215389547,
+      528734635,
+      327033209,
+      1541459225
+    ]);
+    BBUF = /* @__PURE__ */ new Uint32Array(32);
+    _BLAKE2 = class {
+      buffer;
+      buffer32;
+      finished = false;
+      destroyed = false;
+      length = 0;
+      pos = 0;
+      blockLen;
+      outputLen;
+      constructor(blockLen, outputLen) {
+        anumber2(blockLen);
+        anumber2(outputLen);
+        this.blockLen = blockLen;
+        this.outputLen = outputLen;
+        this.buffer = new Uint8Array(blockLen);
+        this.buffer32 = u32(this.buffer);
       }
-      const take = Math.min(blockLen - this.pos, len - pos);
-      const dataOffset = offset + pos;
-      if (take === blockLen && !(dataOffset % 4) && pos + take < len) {
-        const data32 = new Uint32Array(buf, dataOffset, Math.floor((len - pos) / 4));
-        swap32IfBE(data32);
-        for (let pos32 = 0; pos + blockLen < len; pos32 += buffer32.length, pos += blockLen) {
-          this.length += blockLen;
-          this.compress(data32, pos32, false);
+      update(data) {
+        aexists(this);
+        abytes(data);
+        const { blockLen, buffer, buffer32 } = this;
+        const len = data.length;
+        const offset = data.byteOffset;
+        const buf = data.buffer;
+        for (let pos = 0; pos < len; ) {
+          if (this.pos === blockLen) {
+            swap32IfBE(buffer32);
+            this.compress(buffer32, 0, false);
+            swap32IfBE(buffer32);
+            this.pos = 0;
+          }
+          const take = Math.min(blockLen - this.pos, len - pos);
+          const dataOffset = offset + pos;
+          if (take === blockLen && !(dataOffset % 4) && pos + take < len) {
+            const data32 = new Uint32Array(buf, dataOffset, Math.floor((len - pos) / 4));
+            swap32IfBE(data32);
+            for (let pos32 = 0; pos + blockLen < len; pos32 += buffer32.length, pos += blockLen) {
+              this.length += blockLen;
+              this.compress(data32, pos32, false);
+            }
+            swap32IfBE(data32);
+            continue;
+          }
+          buffer.set(data.subarray(pos, pos + take), this.pos);
+          this.pos += take;
+          this.length += take;
+          pos += take;
         }
-        swap32IfBE(data32);
-        continue;
+        return this;
       }
-      buffer.set(data.subarray(pos, pos + take), this.pos);
-      this.pos += take;
-      this.length += take;
-      pos += take;
-    }
-    return this;
+      digestInto(out) {
+        aexists(this);
+        aoutput(out, this);
+        const { pos, buffer32 } = this;
+        this.finished = true;
+        clean(this.buffer.subarray(pos));
+        swap32IfBE(buffer32);
+        this.compress(buffer32, 0, true);
+        swap32IfBE(buffer32);
+        const out32 = u32(out);
+        this.get().forEach((v, i) => out32[i] = swap8IfBE(v));
+      }
+      digest() {
+        const { buffer, outputLen } = this;
+        this.digestInto(buffer);
+        const res = buffer.slice(0, outputLen);
+        this.destroy();
+        return res;
+      }
+      _cloneInto(to) {
+        const { buffer, length, finished, destroyed, outputLen, pos } = this;
+        to ||= new this.constructor({ dkLen: outputLen });
+        to.set(...this.get());
+        to.buffer.set(buffer);
+        to.destroyed = destroyed;
+        to.finished = finished;
+        to.length = length;
+        to.pos = pos;
+        to.outputLen = outputLen;
+        return to;
+      }
+      clone() {
+        return this._cloneInto();
+      }
+    };
+    _BLAKE2b = class extends _BLAKE2 {
+      // Same as SHA-512, but LE
+      v0l = B2B_IV[0] | 0;
+      v0h = B2B_IV[1] | 0;
+      v1l = B2B_IV[2] | 0;
+      v1h = B2B_IV[3] | 0;
+      v2l = B2B_IV[4] | 0;
+      v2h = B2B_IV[5] | 0;
+      v3l = B2B_IV[6] | 0;
+      v3h = B2B_IV[7] | 0;
+      v4l = B2B_IV[8] | 0;
+      v4h = B2B_IV[9] | 0;
+      v5l = B2B_IV[10] | 0;
+      v5h = B2B_IV[11] | 0;
+      v6l = B2B_IV[12] | 0;
+      v6h = B2B_IV[13] | 0;
+      v7l = B2B_IV[14] | 0;
+      v7h = B2B_IV[15] | 0;
+      constructor(opts = {}) {
+        const olen = opts.dkLen === void 0 ? 64 : opts.dkLen;
+        super(128, olen);
+        checkBlake2Opts(olen, opts, 64, 16, 16);
+        let { key, personalization, salt } = opts;
+        let keyLength = 0;
+        if (key !== void 0) {
+          abytes(key, void 0, "key");
+          keyLength = key.length;
+        }
+        this.v0l ^= this.outputLen | keyLength << 8 | 1 << 16 | 1 << 24;
+        if (salt !== void 0) {
+          abytes(salt, void 0, "salt");
+          const slt = u32(salt);
+          this.v4l ^= swap8IfBE(slt[0]);
+          this.v4h ^= swap8IfBE(slt[1]);
+          this.v5l ^= swap8IfBE(slt[2]);
+          this.v5h ^= swap8IfBE(slt[3]);
+        }
+        if (personalization !== void 0) {
+          abytes(personalization, void 0, "personalization");
+          const pers = u32(personalization);
+          this.v6l ^= swap8IfBE(pers[0]);
+          this.v6h ^= swap8IfBE(pers[1]);
+          this.v7l ^= swap8IfBE(pers[2]);
+          this.v7h ^= swap8IfBE(pers[3]);
+        }
+        if (key !== void 0) {
+          const tmp = new Uint8Array(this.blockLen);
+          tmp.set(key);
+          this.update(tmp);
+        }
+      }
+      // prettier-ignore
+      get() {
+        let { v0l, v0h, v1l, v1h, v2l, v2h, v3l, v3h, v4l, v4h, v5l, v5h, v6l, v6h, v7l, v7h } = this;
+        return [v0l, v0h, v1l, v1h, v2l, v2h, v3l, v3h, v4l, v4h, v5l, v5h, v6l, v6h, v7l, v7h];
+      }
+      // prettier-ignore
+      set(v0l, v0h, v1l, v1h, v2l, v2h, v3l, v3h, v4l, v4h, v5l, v5h, v6l, v6h, v7l, v7h) {
+        this.v0l = v0l | 0;
+        this.v0h = v0h | 0;
+        this.v1l = v1l | 0;
+        this.v1h = v1h | 0;
+        this.v2l = v2l | 0;
+        this.v2h = v2h | 0;
+        this.v3l = v3l | 0;
+        this.v3h = v3h | 0;
+        this.v4l = v4l | 0;
+        this.v4h = v4h | 0;
+        this.v5l = v5l | 0;
+        this.v5h = v5h | 0;
+        this.v6l = v6l | 0;
+        this.v6h = v6h | 0;
+        this.v7l = v7l | 0;
+        this.v7h = v7h | 0;
+      }
+      compress(msg, offset, isLast) {
+        this.get().forEach((v, i) => BBUF[i] = v);
+        BBUF.set(B2B_IV, 16);
+        let { h, l } = fromBig(BigInt(this.length));
+        BBUF[24] = B2B_IV[8] ^ l;
+        BBUF[25] = B2B_IV[9] ^ h;
+        if (isLast) {
+          BBUF[28] = ~BBUF[28];
+          BBUF[29] = ~BBUF[29];
+        }
+        let j = 0;
+        const s = BSIGMA;
+        for (let i = 0; i < 12; i++) {
+          G1b(0, 4, 8, 12, msg, offset + 2 * s[j++]);
+          G2b(0, 4, 8, 12, msg, offset + 2 * s[j++]);
+          G1b(1, 5, 9, 13, msg, offset + 2 * s[j++]);
+          G2b(1, 5, 9, 13, msg, offset + 2 * s[j++]);
+          G1b(2, 6, 10, 14, msg, offset + 2 * s[j++]);
+          G2b(2, 6, 10, 14, msg, offset + 2 * s[j++]);
+          G1b(3, 7, 11, 15, msg, offset + 2 * s[j++]);
+          G2b(3, 7, 11, 15, msg, offset + 2 * s[j++]);
+          G1b(0, 5, 10, 15, msg, offset + 2 * s[j++]);
+          G2b(0, 5, 10, 15, msg, offset + 2 * s[j++]);
+          G1b(1, 6, 11, 12, msg, offset + 2 * s[j++]);
+          G2b(1, 6, 11, 12, msg, offset + 2 * s[j++]);
+          G1b(2, 7, 8, 13, msg, offset + 2 * s[j++]);
+          G2b(2, 7, 8, 13, msg, offset + 2 * s[j++]);
+          G1b(3, 4, 9, 14, msg, offset + 2 * s[j++]);
+          G2b(3, 4, 9, 14, msg, offset + 2 * s[j++]);
+        }
+        this.v0l ^= BBUF[0] ^ BBUF[16];
+        this.v0h ^= BBUF[1] ^ BBUF[17];
+        this.v1l ^= BBUF[2] ^ BBUF[18];
+        this.v1h ^= BBUF[3] ^ BBUF[19];
+        this.v2l ^= BBUF[4] ^ BBUF[20];
+        this.v2h ^= BBUF[5] ^ BBUF[21];
+        this.v3l ^= BBUF[6] ^ BBUF[22];
+        this.v3h ^= BBUF[7] ^ BBUF[23];
+        this.v4l ^= BBUF[8] ^ BBUF[24];
+        this.v4h ^= BBUF[9] ^ BBUF[25];
+        this.v5l ^= BBUF[10] ^ BBUF[26];
+        this.v5h ^= BBUF[11] ^ BBUF[27];
+        this.v6l ^= BBUF[12] ^ BBUF[28];
+        this.v6h ^= BBUF[13] ^ BBUF[29];
+        this.v7l ^= BBUF[14] ^ BBUF[30];
+        this.v7h ^= BBUF[15] ^ BBUF[31];
+        clean(BBUF);
+      }
+      destroy() {
+        this.destroyed = true;
+        clean(this.buffer32);
+        this.set(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+      }
+    };
+    blake2b = /* @__PURE__ */ createHasher((opts) => new _BLAKE2b(opts));
   }
-  digestInto(out) {
-    aexists(this);
-    aoutput(out, this);
-    const { pos, buffer32 } = this;
-    this.finished = true;
-    clean(this.buffer.subarray(pos));
-    swap32IfBE(buffer32);
-    this.compress(buffer32, 0, true);
-    swap32IfBE(buffer32);
-    const out32 = u32(out);
-    this.get().forEach((v, i) => out32[i] = swap8IfBE(v));
-  }
-  digest() {
-    const { buffer, outputLen } = this;
-    this.digestInto(buffer);
-    const res = buffer.slice(0, outputLen);
-    this.destroy();
-    return res;
-  }
-  _cloneInto(to) {
-    const { buffer, length, finished, destroyed, outputLen, pos } = this;
-    to ||= new this.constructor({ dkLen: outputLen });
-    to.set(...this.get());
-    to.buffer.set(buffer);
-    to.destroyed = destroyed;
-    to.finished = finished;
-    to.length = length;
-    to.pos = pos;
-    to.outputLen = outputLen;
-    return to;
-  }
-  clone() {
-    return this._cloneInto();
-  }
-};
-var _BLAKE2b = class extends _BLAKE2 {
-  // Same as SHA-512, but LE
-  v0l = B2B_IV[0] | 0;
-  v0h = B2B_IV[1] | 0;
-  v1l = B2B_IV[2] | 0;
-  v1h = B2B_IV[3] | 0;
-  v2l = B2B_IV[4] | 0;
-  v2h = B2B_IV[5] | 0;
-  v3l = B2B_IV[6] | 0;
-  v3h = B2B_IV[7] | 0;
-  v4l = B2B_IV[8] | 0;
-  v4h = B2B_IV[9] | 0;
-  v5l = B2B_IV[10] | 0;
-  v5h = B2B_IV[11] | 0;
-  v6l = B2B_IV[12] | 0;
-  v6h = B2B_IV[13] | 0;
-  v7l = B2B_IV[14] | 0;
-  v7h = B2B_IV[15] | 0;
-  constructor(opts = {}) {
-    const olen = opts.dkLen === void 0 ? 64 : opts.dkLen;
-    super(128, olen);
-    checkBlake2Opts(olen, opts, 64, 16, 16);
-    let { key, personalization, salt } = opts;
-    let keyLength = 0;
-    if (key !== void 0) {
-      abytes(key, void 0, "key");
-      keyLength = key.length;
-    }
-    this.v0l ^= this.outputLen | keyLength << 8 | 1 << 16 | 1 << 24;
-    if (salt !== void 0) {
-      abytes(salt, void 0, "salt");
-      const slt = u32(salt);
-      this.v4l ^= swap8IfBE(slt[0]);
-      this.v4h ^= swap8IfBE(slt[1]);
-      this.v5l ^= swap8IfBE(slt[2]);
-      this.v5h ^= swap8IfBE(slt[3]);
-    }
-    if (personalization !== void 0) {
-      abytes(personalization, void 0, "personalization");
-      const pers = u32(personalization);
-      this.v6l ^= swap8IfBE(pers[0]);
-      this.v6h ^= swap8IfBE(pers[1]);
-      this.v7l ^= swap8IfBE(pers[2]);
-      this.v7h ^= swap8IfBE(pers[3]);
-    }
-    if (key !== void 0) {
-      const tmp = new Uint8Array(this.blockLen);
-      tmp.set(key);
-      this.update(tmp);
-    }
-  }
-  // prettier-ignore
-  get() {
-    let { v0l, v0h, v1l, v1h, v2l, v2h, v3l, v3h, v4l, v4h, v5l, v5h, v6l, v6h, v7l, v7h } = this;
-    return [v0l, v0h, v1l, v1h, v2l, v2h, v3l, v3h, v4l, v4h, v5l, v5h, v6l, v6h, v7l, v7h];
-  }
-  // prettier-ignore
-  set(v0l, v0h, v1l, v1h, v2l, v2h, v3l, v3h, v4l, v4h, v5l, v5h, v6l, v6h, v7l, v7h) {
-    this.v0l = v0l | 0;
-    this.v0h = v0h | 0;
-    this.v1l = v1l | 0;
-    this.v1h = v1h | 0;
-    this.v2l = v2l | 0;
-    this.v2h = v2h | 0;
-    this.v3l = v3l | 0;
-    this.v3h = v3h | 0;
-    this.v4l = v4l | 0;
-    this.v4h = v4h | 0;
-    this.v5l = v5l | 0;
-    this.v5h = v5h | 0;
-    this.v6l = v6l | 0;
-    this.v6h = v6h | 0;
-    this.v7l = v7l | 0;
-    this.v7h = v7h | 0;
-  }
-  compress(msg, offset, isLast) {
-    this.get().forEach((v, i) => BBUF[i] = v);
-    BBUF.set(B2B_IV, 16);
-    let { h, l } = fromBig(BigInt(this.length));
-    BBUF[24] = B2B_IV[8] ^ l;
-    BBUF[25] = B2B_IV[9] ^ h;
-    if (isLast) {
-      BBUF[28] = ~BBUF[28];
-      BBUF[29] = ~BBUF[29];
-    }
-    let j = 0;
-    const s = BSIGMA;
-    for (let i = 0; i < 12; i++) {
-      G1b(0, 4, 8, 12, msg, offset + 2 * s[j++]);
-      G2b(0, 4, 8, 12, msg, offset + 2 * s[j++]);
-      G1b(1, 5, 9, 13, msg, offset + 2 * s[j++]);
-      G2b(1, 5, 9, 13, msg, offset + 2 * s[j++]);
-      G1b(2, 6, 10, 14, msg, offset + 2 * s[j++]);
-      G2b(2, 6, 10, 14, msg, offset + 2 * s[j++]);
-      G1b(3, 7, 11, 15, msg, offset + 2 * s[j++]);
-      G2b(3, 7, 11, 15, msg, offset + 2 * s[j++]);
-      G1b(0, 5, 10, 15, msg, offset + 2 * s[j++]);
-      G2b(0, 5, 10, 15, msg, offset + 2 * s[j++]);
-      G1b(1, 6, 11, 12, msg, offset + 2 * s[j++]);
-      G2b(1, 6, 11, 12, msg, offset + 2 * s[j++]);
-      G1b(2, 7, 8, 13, msg, offset + 2 * s[j++]);
-      G2b(2, 7, 8, 13, msg, offset + 2 * s[j++]);
-      G1b(3, 4, 9, 14, msg, offset + 2 * s[j++]);
-      G2b(3, 4, 9, 14, msg, offset + 2 * s[j++]);
-    }
-    this.v0l ^= BBUF[0] ^ BBUF[16];
-    this.v0h ^= BBUF[1] ^ BBUF[17];
-    this.v1l ^= BBUF[2] ^ BBUF[18];
-    this.v1h ^= BBUF[3] ^ BBUF[19];
-    this.v2l ^= BBUF[4] ^ BBUF[20];
-    this.v2h ^= BBUF[5] ^ BBUF[21];
-    this.v3l ^= BBUF[6] ^ BBUF[22];
-    this.v3h ^= BBUF[7] ^ BBUF[23];
-    this.v4l ^= BBUF[8] ^ BBUF[24];
-    this.v4h ^= BBUF[9] ^ BBUF[25];
-    this.v5l ^= BBUF[10] ^ BBUF[26];
-    this.v5h ^= BBUF[11] ^ BBUF[27];
-    this.v6l ^= BBUF[12] ^ BBUF[28];
-    this.v6h ^= BBUF[13] ^ BBUF[29];
-    this.v7l ^= BBUF[14] ^ BBUF[30];
-    this.v7h ^= BBUF[15] ^ BBUF[31];
-    clean(BBUF);
-  }
-  destroy() {
-    this.destroyed = true;
-    clean(this.buffer32);
-    this.set(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-  }
-};
-var blake2b = /* @__PURE__ */ createHasher((opts) => new _BLAKE2b(opts));
+});
 
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/hash.mjs
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/hash.mjs
 function hashTypedData(typeTag, data) {
   const typeTagBytes = Array.from(`${typeTag}::`).map((e) => e.charCodeAt(0));
   const dataWithTag = new Uint8Array(typeTagBytes.length + data.length);
@@ -4107,437 +4308,476 @@ function hashTypedData(typeTag, data) {
   dataWithTag.set(data, typeTagBytes.length);
   return blake2b(dataWithTag, { dkLen: 32 });
 }
+var init_hash = __esm({
+  "packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/hash.mjs"() {
+    init_blake2();
+  }
+});
 
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/TransactionData.mjs
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/TransactionData.mjs
 function prepareSuiAddress(address) {
   return normalizeSuiAddress(address).replace("0x", "");
 }
-var TransactionDataBuilder = class TransactionDataBuilder2 {
-  static fromKindBytes(bytes) {
-    const programmableTx = suiBcs.TransactionKind.parse(bytes).ProgrammableTransaction;
-    if (!programmableTx) throw new Error("Unable to deserialize from bytes.");
-    return TransactionDataBuilder2.restore({
-      version: 2,
-      sender: null,
-      expiration: null,
-      gasData: {
-        budget: null,
-        owner: null,
-        payment: null,
-        price: null
-      },
-      inputs: programmableTx.inputs,
-      commands: programmableTx.commands
-    });
-  }
-  static fromBytes(bytes) {
-    const data = suiBcs.TransactionData.parse(bytes)?.V1;
-    const programmableTx = data.kind.ProgrammableTransaction;
-    if (!data || !programmableTx) throw new Error("Unable to deserialize from bytes.");
-    return TransactionDataBuilder2.restore({
-      version: 2,
-      sender: data.sender,
-      expiration: data.expiration,
-      gasData: data.gasData,
-      inputs: programmableTx.inputs,
-      commands: programmableTx.commands
-    });
-  }
-  static restore(data) {
-    if (data.version === 2) return new TransactionDataBuilder2(parse(TransactionDataSchema, data));
-    else return new TransactionDataBuilder2(parse(TransactionDataSchema, transactionDataFromV1(data)));
-  }
-  /**
-  * Generate transaction digest.
-  *
-  * @param bytes BCS serialized transaction data
-  * @returns transaction digest.
-  */
-  static getDigestFromBytes(bytes) {
-    return toBase58(hashTypedData("TransactionData", bytes));
-  }
-  constructor(clone) {
-    this.version = 2;
-    this.sender = clone?.sender ?? null;
-    this.expiration = clone?.expiration ?? null;
-    this.inputs = clone?.inputs ?? [];
-    this.commands = clone?.commands ?? [];
-    this.gasData = clone?.gasData ?? {
-      budget: null,
-      price: null,
-      owner: null,
-      payment: null
+var TransactionDataBuilder;
+var init_TransactionData = __esm({
+  "packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/TransactionData.mjs"() {
+    init_sui_types();
+    init_bcs3();
+    init_internal();
+    init_v1();
+    init_hash();
+    init_utils2();
+    init_dist2();
+    init_dist3();
+    TransactionDataBuilder = class TransactionDataBuilder2 {
+      static fromKindBytes(bytes) {
+        const programmableTx = suiBcs.TransactionKind.parse(bytes).ProgrammableTransaction;
+        if (!programmableTx) throw new Error("Unable to deserialize from bytes.");
+        return TransactionDataBuilder2.restore({
+          version: 2,
+          sender: null,
+          expiration: null,
+          gasData: {
+            budget: null,
+            owner: null,
+            payment: null,
+            price: null
+          },
+          inputs: programmableTx.inputs,
+          commands: programmableTx.commands
+        });
+      }
+      static fromBytes(bytes) {
+        const data = suiBcs.TransactionData.parse(bytes)?.V1;
+        const programmableTx = data.kind.ProgrammableTransaction;
+        if (!data || !programmableTx) throw new Error("Unable to deserialize from bytes.");
+        return TransactionDataBuilder2.restore({
+          version: 2,
+          sender: data.sender,
+          expiration: data.expiration,
+          gasData: data.gasData,
+          inputs: programmableTx.inputs,
+          commands: programmableTx.commands
+        });
+      }
+      static restore(data) {
+        if (data.version === 2) return new TransactionDataBuilder2(parse(TransactionDataSchema, data));
+        else return new TransactionDataBuilder2(parse(TransactionDataSchema, transactionDataFromV1(data)));
+      }
+      /**
+      * Generate transaction digest.
+      *
+      * @param bytes BCS serialized transaction data
+      * @returns transaction digest.
+      */
+      static getDigestFromBytes(bytes) {
+        return toBase58(hashTypedData("TransactionData", bytes));
+      }
+      constructor(clone) {
+        this.version = 2;
+        this.sender = clone?.sender ?? null;
+        this.expiration = clone?.expiration ?? null;
+        this.inputs = clone?.inputs ?? [];
+        this.commands = clone?.commands ?? [];
+        this.gasData = clone?.gasData ?? {
+          budget: null,
+          price: null,
+          owner: null,
+          payment: null
+        };
+      }
+      build({ maxSizeBytes = Infinity, overrides, onlyTransactionKind } = {}) {
+        const inputs = this.inputs;
+        const commands = this.commands;
+        const kind = { ProgrammableTransaction: {
+          inputs,
+          commands
+        } };
+        if (onlyTransactionKind) return suiBcs.TransactionKind.serialize(kind, { maxSize: maxSizeBytes }).toBytes();
+        const expiration = overrides?.expiration ?? this.expiration;
+        const sender = overrides?.sender ?? this.sender;
+        const gasData = {
+          ...this.gasData,
+          ...overrides?.gasData
+        };
+        if (!sender) throw new Error("Missing transaction sender");
+        if (!gasData.budget) throw new Error("Missing gas budget");
+        if (!gasData.payment) throw new Error("Missing gas payment");
+        if (!gasData.price) throw new Error("Missing gas price");
+        const transactionData = {
+          sender: prepareSuiAddress(sender),
+          expiration: expiration ? expiration : { None: true },
+          gasData: {
+            payment: gasData.payment,
+            owner: prepareSuiAddress(this.gasData.owner ?? sender),
+            price: BigInt(gasData.price),
+            budget: BigInt(gasData.budget)
+          },
+          kind: { ProgrammableTransaction: {
+            inputs,
+            commands
+          } }
+        };
+        return suiBcs.TransactionData.serialize({ V1: transactionData }, { maxSize: maxSizeBytes }).toBytes();
+      }
+      addInput(type, arg) {
+        const index = this.inputs.length;
+        this.inputs.push(arg);
+        return {
+          Input: index,
+          type,
+          $kind: "Input"
+        };
+      }
+      getInputUses(index, fn) {
+        this.mapArguments((arg, command) => {
+          if (arg.$kind === "Input" && arg.Input === index) fn(arg, command);
+          return arg;
+        });
+      }
+      mapCommandArguments(index, fn) {
+        const command = this.commands[index];
+        switch (command.$kind) {
+          case "MoveCall":
+            command.MoveCall.arguments = command.MoveCall.arguments.map((arg) => fn(arg, command, index));
+            break;
+          case "TransferObjects":
+            command.TransferObjects.objects = command.TransferObjects.objects.map((arg) => fn(arg, command, index));
+            command.TransferObjects.address = fn(command.TransferObjects.address, command, index);
+            break;
+          case "SplitCoins":
+            command.SplitCoins.coin = fn(command.SplitCoins.coin, command, index);
+            command.SplitCoins.amounts = command.SplitCoins.amounts.map((arg) => fn(arg, command, index));
+            break;
+          case "MergeCoins":
+            command.MergeCoins.destination = fn(command.MergeCoins.destination, command, index);
+            command.MergeCoins.sources = command.MergeCoins.sources.map((arg) => fn(arg, command, index));
+            break;
+          case "MakeMoveVec":
+            command.MakeMoveVec.elements = command.MakeMoveVec.elements.map((arg) => fn(arg, command, index));
+            break;
+          case "Upgrade":
+            command.Upgrade.ticket = fn(command.Upgrade.ticket, command, index);
+            break;
+          case "$Intent":
+            const inputs = command.$Intent.inputs;
+            command.$Intent.inputs = {};
+            for (const [key, value] of Object.entries(inputs)) command.$Intent.inputs[key] = Array.isArray(value) ? value.map((arg) => fn(arg, command, index)) : fn(value, command, index);
+            break;
+          case "Publish":
+            break;
+          default:
+            throw new Error(`Unexpected transaction kind: ${command.$kind}`);
+        }
+      }
+      mapArguments(fn) {
+        for (const commandIndex of this.commands.keys()) this.mapCommandArguments(commandIndex, fn);
+      }
+      replaceCommand(index, replacement, resultIndex = index) {
+        if (!Array.isArray(replacement)) {
+          this.commands[index] = replacement;
+          return;
+        }
+        const sizeDiff = replacement.length - 1;
+        this.commands.splice(index, 1, ...structuredClone(replacement));
+        this.mapArguments((arg, _command, commandIndex) => {
+          if (commandIndex < index + replacement.length) return arg;
+          if (typeof resultIndex !== "number") {
+            if (arg.$kind === "Result" && arg.Result === index || arg.$kind === "NestedResult" && arg.NestedResult[0] === index) if (!("NestedResult" in arg) || arg.NestedResult[1] === 0) return parse(ArgumentSchema, structuredClone(resultIndex));
+            else throw new Error(`Cannot replace command ${index} with a specific result type: NestedResult[${index}, ${arg.NestedResult[1]}] references a nested element that cannot be mapped to the replacement result`);
+          }
+          switch (arg.$kind) {
+            case "Result":
+              if (arg.Result === index && typeof resultIndex === "number") arg.Result = resultIndex;
+              if (arg.Result > index) arg.Result += sizeDiff;
+              break;
+            case "NestedResult":
+              if (arg.NestedResult[0] === index && typeof resultIndex === "number") return {
+                $kind: "NestedResult",
+                NestedResult: [resultIndex, arg.NestedResult[1]]
+              };
+              if (arg.NestedResult[0] > index) arg.NestedResult[0] += sizeDiff;
+              break;
+          }
+          return arg;
+        });
+      }
+      replaceCommandWithTransaction(index, otherTransaction, result) {
+        if (result.$kind !== "Result" && result.$kind !== "NestedResult") throw new Error("Result must be of kind Result or NestedResult");
+        this.insertTransaction(index, otherTransaction);
+        this.replaceCommand(index + otherTransaction.commands.length, [], "Result" in result ? { NestedResult: [result.Result + index, 0] } : { NestedResult: [result.NestedResult[0] + index, result.NestedResult[1]] });
+      }
+      insertTransaction(atCommandIndex, otherTransaction) {
+        const inputMapping = /* @__PURE__ */ new Map();
+        const commandMapping = /* @__PURE__ */ new Map();
+        for (let i = 0; i < otherTransaction.inputs.length; i++) {
+          const otherInput = otherTransaction.inputs[i];
+          const id = getIdFromCallArg(otherInput);
+          let existingIndex = -1;
+          if (id !== void 0) {
+            existingIndex = this.inputs.findIndex((input) => getIdFromCallArg(input) === id);
+            if (existingIndex !== -1 && this.inputs[existingIndex].Object?.SharedObject && otherInput.Object?.SharedObject) this.inputs[existingIndex].Object.SharedObject.mutable = this.inputs[existingIndex].Object.SharedObject.mutable || otherInput.Object.SharedObject.mutable;
+          }
+          if (existingIndex !== -1) inputMapping.set(i, existingIndex);
+          else {
+            const newIndex = this.inputs.length;
+            this.inputs.push(otherInput);
+            inputMapping.set(i, newIndex);
+          }
+        }
+        for (let i = 0; i < otherTransaction.commands.length; i++) commandMapping.set(i, atCommandIndex + i);
+        const remappedCommands = [];
+        for (let i = 0; i < otherTransaction.commands.length; i++) {
+          const command = structuredClone(otherTransaction.commands[i]);
+          remapCommandArguments(command, inputMapping, commandMapping);
+          remappedCommands.push(command);
+        }
+        this.commands.splice(atCommandIndex, 0, ...remappedCommands);
+        const sizeDiff = remappedCommands.length;
+        if (sizeDiff > 0) this.mapArguments((arg, _command, commandIndex) => {
+          if (commandIndex >= atCommandIndex && commandIndex < atCommandIndex + remappedCommands.length) return arg;
+          switch (arg.$kind) {
+            case "Result":
+              if (arg.Result >= atCommandIndex) arg.Result += sizeDiff;
+              break;
+            case "NestedResult":
+              if (arg.NestedResult[0] >= atCommandIndex) arg.NestedResult[0] += sizeDiff;
+              break;
+          }
+          return arg;
+        });
+      }
+      getDigest() {
+        const bytes = this.build({ onlyTransactionKind: false });
+        return TransactionDataBuilder2.getDigestFromBytes(bytes);
+      }
+      snapshot() {
+        return parse(TransactionDataSchema, this);
+      }
+      shallowClone() {
+        return new TransactionDataBuilder2({
+          version: this.version,
+          sender: this.sender,
+          expiration: this.expiration,
+          gasData: { ...this.gasData },
+          inputs: [...this.inputs],
+          commands: [...this.commands]
+        });
+      }
+      applyResolvedData(resolved) {
+        if (!this.sender) this.sender = resolved.sender ?? null;
+        if (!this.expiration) this.expiration = resolved.expiration ?? null;
+        if (!this.gasData.budget) this.gasData.budget = resolved.gasData.budget;
+        if (!this.gasData.owner) this.gasData.owner = resolved.gasData.owner ?? null;
+        if (!this.gasData.payment) this.gasData.payment = resolved.gasData.payment;
+        if (!this.gasData.price) this.gasData.price = resolved.gasData.price;
+        for (let i = 0; i < this.inputs.length; i++) {
+          const input = this.inputs[i];
+          const resolvedInput = resolved.inputs[i];
+          switch (input.$kind) {
+            case "UnresolvedPure":
+              if (resolvedInput.$kind !== "Pure") throw new Error(`Expected input at index ${i} to resolve to a Pure argument, but got ${JSON.stringify(resolvedInput)}`);
+              this.inputs[i] = resolvedInput;
+              break;
+            case "UnresolvedObject":
+              if (resolvedInput.$kind !== "Object") throw new Error(`Expected input at index ${i} to resolve to an Object argument, but got ${JSON.stringify(resolvedInput)}`);
+              if (resolvedInput.Object.$kind === "ImmOrOwnedObject" || resolvedInput.Object.$kind === "Receiving") {
+                const original = input.UnresolvedObject;
+                const resolved$1 = resolvedInput.Object.ImmOrOwnedObject ?? resolvedInput.Object.Receiving;
+                if (normalizeSuiAddress(original.objectId) !== normalizeSuiAddress(resolved$1.objectId) || original.version != null && original.version !== resolved$1.version || original.digest != null && original.digest !== resolved$1.digest || original.mutable != null || original.initialSharedVersion != null) throw new Error(`Input at index ${i} did not match unresolved object. ${JSON.stringify(original)} is not compatible with ${JSON.stringify(resolved$1)}`);
+              } else if (resolvedInput.Object.$kind === "SharedObject") {
+                const original = input.UnresolvedObject;
+                const resolved$1 = resolvedInput.Object.SharedObject;
+                if (normalizeSuiAddress(original.objectId) !== normalizeSuiAddress(resolved$1.objectId) || original.initialSharedVersion != null && original.initialSharedVersion !== resolved$1.initialSharedVersion || original.mutable != null && original.mutable !== resolved$1.mutable || original.version != null || original.digest != null) throw new Error(`Input at index ${i} did not match unresolved object. ${JSON.stringify(original)} is not compatible with ${JSON.stringify(resolved$1)}`);
+              } else throw new Error(`Input at index ${i} resolved to an unexpected Object kind: ${JSON.stringify(resolvedInput.Object)}`);
+              this.inputs[i] = resolvedInput;
+              break;
+          }
+        }
+      }
     };
   }
-  build({ maxSizeBytes = Infinity, overrides, onlyTransactionKind } = {}) {
-    const inputs = this.inputs;
-    const commands = this.commands;
-    const kind = { ProgrammableTransaction: {
-      inputs,
-      commands
-    } };
-    if (onlyTransactionKind) return suiBcs.TransactionKind.serialize(kind, { maxSize: maxSizeBytes }).toBytes();
-    const expiration = overrides?.expiration ?? this.expiration;
-    const sender = overrides?.sender ?? this.sender;
-    const gasData = {
-      ...this.gasData,
-      ...overrides?.gasData
-    };
-    if (!sender) throw new Error("Missing transaction sender");
-    if (!gasData.budget) throw new Error("Missing gas budget");
-    if (!gasData.payment) throw new Error("Missing gas payment");
-    if (!gasData.price) throw new Error("Missing gas price");
-    const transactionData = {
-      sender: prepareSuiAddress(sender),
-      expiration: expiration ? expiration : { None: true },
-      gasData: {
-        payment: gasData.payment,
-        owner: prepareSuiAddress(this.gasData.owner ?? sender),
-        price: BigInt(gasData.price),
-        budget: BigInt(gasData.budget)
-      },
-      kind: { ProgrammableTransaction: {
-        inputs,
-        commands
-      } }
-    };
-    return suiBcs.TransactionData.serialize({ V1: transactionData }, { maxSize: maxSizeBytes }).toBytes();
-  }
-  addInput(type, arg) {
-    const index = this.inputs.length;
-    this.inputs.push(arg);
-    return {
-      Input: index,
-      type,
-      $kind: "Input"
-    };
-  }
-  getInputUses(index, fn) {
-    this.mapArguments((arg, command) => {
-      if (arg.$kind === "Input" && arg.Input === index) fn(arg, command);
-      return arg;
-    });
-  }
-  mapCommandArguments(index, fn) {
-    const command = this.commands[index];
-    switch (command.$kind) {
-      case "MoveCall":
-        command.MoveCall.arguments = command.MoveCall.arguments.map((arg) => fn(arg, command, index));
-        break;
-      case "TransferObjects":
-        command.TransferObjects.objects = command.TransferObjects.objects.map((arg) => fn(arg, command, index));
-        command.TransferObjects.address = fn(command.TransferObjects.address, command, index);
-        break;
-      case "SplitCoins":
-        command.SplitCoins.coin = fn(command.SplitCoins.coin, command, index);
-        command.SplitCoins.amounts = command.SplitCoins.amounts.map((arg) => fn(arg, command, index));
-        break;
-      case "MergeCoins":
-        command.MergeCoins.destination = fn(command.MergeCoins.destination, command, index);
-        command.MergeCoins.sources = command.MergeCoins.sources.map((arg) => fn(arg, command, index));
-        break;
-      case "MakeMoveVec":
-        command.MakeMoveVec.elements = command.MakeMoveVec.elements.map((arg) => fn(arg, command, index));
-        break;
-      case "Upgrade":
-        command.Upgrade.ticket = fn(command.Upgrade.ticket, command, index);
-        break;
-      case "$Intent":
-        const inputs = command.$Intent.inputs;
-        command.$Intent.inputs = {};
-        for (const [key, value] of Object.entries(inputs)) command.$Intent.inputs[key] = Array.isArray(value) ? value.map((arg) => fn(arg, command, index)) : fn(value, command, index);
-        break;
-      case "Publish":
-        break;
-      default:
-        throw new Error(`Unexpected transaction kind: ${command.$kind}`);
-    }
-  }
-  mapArguments(fn) {
-    for (const commandIndex of this.commands.keys()) this.mapCommandArguments(commandIndex, fn);
-  }
-  replaceCommand(index, replacement, resultIndex = index) {
-    if (!Array.isArray(replacement)) {
-      this.commands[index] = replacement;
-      return;
-    }
-    const sizeDiff = replacement.length - 1;
-    this.commands.splice(index, 1, ...structuredClone(replacement));
-    this.mapArguments((arg, _command, commandIndex) => {
-      if (commandIndex < index + replacement.length) return arg;
-      if (typeof resultIndex !== "number") {
-        if (arg.$kind === "Result" && arg.Result === index || arg.$kind === "NestedResult" && arg.NestedResult[0] === index) if (!("NestedResult" in arg) || arg.NestedResult[1] === 0) return parse(ArgumentSchema, structuredClone(resultIndex));
-        else throw new Error(`Cannot replace command ${index} with a specific result type: NestedResult[${index}, ${arg.NestedResult[1]}] references a nested element that cannot be mapped to the replacement result`);
-      }
-      switch (arg.$kind) {
-        case "Result":
-          if (arg.Result === index && typeof resultIndex === "number") arg.Result = resultIndex;
-          if (arg.Result > index) arg.Result += sizeDiff;
-          break;
-        case "NestedResult":
-          if (arg.NestedResult[0] === index && typeof resultIndex === "number") return {
-            $kind: "NestedResult",
-            NestedResult: [resultIndex, arg.NestedResult[1]]
-          };
-          if (arg.NestedResult[0] > index) arg.NestedResult[0] += sizeDiff;
-          break;
-      }
-      return arg;
-    });
-  }
-  replaceCommandWithTransaction(index, otherTransaction, result) {
-    if (result.$kind !== "Result" && result.$kind !== "NestedResult") throw new Error("Result must be of kind Result or NestedResult");
-    this.insertTransaction(index, otherTransaction);
-    this.replaceCommand(index + otherTransaction.commands.length, [], "Result" in result ? { NestedResult: [result.Result + index, 0] } : { NestedResult: [result.NestedResult[0] + index, result.NestedResult[1]] });
-  }
-  insertTransaction(atCommandIndex, otherTransaction) {
-    const inputMapping = /* @__PURE__ */ new Map();
-    const commandMapping = /* @__PURE__ */ new Map();
-    for (let i = 0; i < otherTransaction.inputs.length; i++) {
-      const otherInput = otherTransaction.inputs[i];
-      const id = getIdFromCallArg(otherInput);
-      let existingIndex = -1;
-      if (id !== void 0) {
-        existingIndex = this.inputs.findIndex((input) => getIdFromCallArg(input) === id);
-        if (existingIndex !== -1 && this.inputs[existingIndex].Object?.SharedObject && otherInput.Object?.SharedObject) this.inputs[existingIndex].Object.SharedObject.mutable = this.inputs[existingIndex].Object.SharedObject.mutable || otherInput.Object.SharedObject.mutable;
-      }
-      if (existingIndex !== -1) inputMapping.set(i, existingIndex);
-      else {
-        const newIndex = this.inputs.length;
-        this.inputs.push(otherInput);
-        inputMapping.set(i, newIndex);
-      }
-    }
-    for (let i = 0; i < otherTransaction.commands.length; i++) commandMapping.set(i, atCommandIndex + i);
-    const remappedCommands = [];
-    for (let i = 0; i < otherTransaction.commands.length; i++) {
-      const command = structuredClone(otherTransaction.commands[i]);
-      remapCommandArguments(command, inputMapping, commandMapping);
-      remappedCommands.push(command);
-    }
-    this.commands.splice(atCommandIndex, 0, ...remappedCommands);
-    const sizeDiff = remappedCommands.length;
-    if (sizeDiff > 0) this.mapArguments((arg, _command, commandIndex) => {
-      if (commandIndex >= atCommandIndex && commandIndex < atCommandIndex + remappedCommands.length) return arg;
-      switch (arg.$kind) {
-        case "Result":
-          if (arg.Result >= atCommandIndex) arg.Result += sizeDiff;
-          break;
-        case "NestedResult":
-          if (arg.NestedResult[0] >= atCommandIndex) arg.NestedResult[0] += sizeDiff;
-          break;
-      }
-      return arg;
-    });
-  }
-  getDigest() {
-    const bytes = this.build({ onlyTransactionKind: false });
-    return TransactionDataBuilder2.getDigestFromBytes(bytes);
-  }
-  snapshot() {
-    return parse(TransactionDataSchema, this);
-  }
-  shallowClone() {
-    return new TransactionDataBuilder2({
-      version: this.version,
-      sender: this.sender,
-      expiration: this.expiration,
-      gasData: { ...this.gasData },
-      inputs: [...this.inputs],
-      commands: [...this.commands]
-    });
-  }
-  applyResolvedData(resolved) {
-    if (!this.sender) this.sender = resolved.sender ?? null;
-    if (!this.expiration) this.expiration = resolved.expiration ?? null;
-    if (!this.gasData.budget) this.gasData.budget = resolved.gasData.budget;
-    if (!this.gasData.owner) this.gasData.owner = resolved.gasData.owner ?? null;
-    if (!this.gasData.payment) this.gasData.payment = resolved.gasData.payment;
-    if (!this.gasData.price) this.gasData.price = resolved.gasData.price;
-    for (let i = 0; i < this.inputs.length; i++) {
-      const input = this.inputs[i];
-      const resolvedInput = resolved.inputs[i];
-      switch (input.$kind) {
-        case "UnresolvedPure":
-          if (resolvedInput.$kind !== "Pure") throw new Error(`Expected input at index ${i} to resolve to a Pure argument, but got ${JSON.stringify(resolvedInput)}`);
-          this.inputs[i] = resolvedInput;
-          break;
-        case "UnresolvedObject":
-          if (resolvedInput.$kind !== "Object") throw new Error(`Expected input at index ${i} to resolve to an Object argument, but got ${JSON.stringify(resolvedInput)}`);
-          if (resolvedInput.Object.$kind === "ImmOrOwnedObject" || resolvedInput.Object.$kind === "Receiving") {
-            const original = input.UnresolvedObject;
-            const resolved$1 = resolvedInput.Object.ImmOrOwnedObject ?? resolvedInput.Object.Receiving;
-            if (normalizeSuiAddress(original.objectId) !== normalizeSuiAddress(resolved$1.objectId) || original.version != null && original.version !== resolved$1.version || original.digest != null && original.digest !== resolved$1.digest || original.mutable != null || original.initialSharedVersion != null) throw new Error(`Input at index ${i} did not match unresolved object. ${JSON.stringify(original)} is not compatible with ${JSON.stringify(resolved$1)}`);
-          } else if (resolvedInput.Object.$kind === "SharedObject") {
-            const original = input.UnresolvedObject;
-            const resolved$1 = resolvedInput.Object.SharedObject;
-            if (normalizeSuiAddress(original.objectId) !== normalizeSuiAddress(resolved$1.objectId) || original.initialSharedVersion != null && original.initialSharedVersion !== resolved$1.initialSharedVersion || original.mutable != null && original.mutable !== resolved$1.mutable || original.version != null || original.digest != null) throw new Error(`Input at index ${i} did not match unresolved object. ${JSON.stringify(original)} is not compatible with ${JSON.stringify(resolved$1)}`);
-          } else throw new Error(`Input at index ${i} resolved to an unexpected Object kind: ${JSON.stringify(resolvedInput.Object)}`);
-          this.inputs[i] = resolvedInput;
-          break;
-      }
-    }
-  }
-};
+});
 
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/Commands.mjs
-var TransactionCommands = {
-  MoveCall(input) {
-    const [pkg, mod2 = "", fn = ""] = "target" in input ? input.target.split("::") : [
-      input.package,
-      input.module,
-      input.function
-    ];
-    return {
-      $kind: "MoveCall",
-      MoveCall: {
-        package: pkg,
-        module: mod2,
-        function: fn,
-        typeArguments: input.typeArguments ?? [],
-        arguments: input.arguments ?? []
-      }
-    };
-  },
-  TransferObjects(objects, address) {
-    return {
-      $kind: "TransferObjects",
-      TransferObjects: {
-        objects: objects.map((o) => parse(ArgumentSchema, o)),
-        address: parse(ArgumentSchema, address)
-      }
-    };
-  },
-  SplitCoins(coin, amounts) {
-    return {
-      $kind: "SplitCoins",
-      SplitCoins: {
-        coin: parse(ArgumentSchema, coin),
-        amounts: amounts.map((o) => parse(ArgumentSchema, o))
-      }
-    };
-  },
-  MergeCoins(destination, sources) {
-    return {
-      $kind: "MergeCoins",
-      MergeCoins: {
-        destination: parse(ArgumentSchema, destination),
-        sources: sources.map((o) => parse(ArgumentSchema, o))
-      }
-    };
-  },
-  Publish({ modules, dependencies }) {
-    return {
-      $kind: "Publish",
-      Publish: {
-        modules: modules.map((module) => typeof module === "string" ? module : toBase64(new Uint8Array(module))),
-        dependencies: dependencies.map((dep) => normalizeSuiObjectId(dep))
-      }
-    };
-  },
-  Upgrade({ modules, dependencies, package: packageId, ticket }) {
-    return {
-      $kind: "Upgrade",
-      Upgrade: {
-        modules: modules.map((module) => typeof module === "string" ? module : toBase64(new Uint8Array(module))),
-        dependencies: dependencies.map((dep) => normalizeSuiObjectId(dep)),
-        package: packageId,
-        ticket: parse(ArgumentSchema, ticket)
-      }
-    };
-  },
-  MakeMoveVec({ type, elements }) {
-    return {
-      $kind: "MakeMoveVec",
-      MakeMoveVec: {
-        type: type ?? null,
-        elements: elements.map((o) => parse(ArgumentSchema, o))
-      }
-    };
-  },
-  Intent({ name, inputs = {}, data = {} }) {
-    return {
-      $kind: "$Intent",
-      $Intent: {
-        name,
-        inputs: Object.fromEntries(Object.entries(inputs).map(([key, value]) => [key, Array.isArray(value) ? value.map((o) => parse(ArgumentSchema, o)) : parse(ArgumentSchema, value)])),
-        data
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/Commands.mjs
+var TransactionCommands;
+var init_Commands = __esm({
+  "packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/Commands.mjs"() {
+    init_sui_types();
+    init_internal();
+    init_dist2();
+    init_dist3();
+    TransactionCommands = {
+      MoveCall(input) {
+        const [pkg, mod2 = "", fn = ""] = "target" in input ? input.target.split("::") : [
+          input.package,
+          input.module,
+          input.function
+        ];
+        return {
+          $kind: "MoveCall",
+          MoveCall: {
+            package: pkg,
+            module: mod2,
+            function: fn,
+            typeArguments: input.typeArguments ?? [],
+            arguments: input.arguments ?? []
+          }
+        };
+      },
+      TransferObjects(objects, address) {
+        return {
+          $kind: "TransferObjects",
+          TransferObjects: {
+            objects: objects.map((o) => parse(ArgumentSchema, o)),
+            address: parse(ArgumentSchema, address)
+          }
+        };
+      },
+      SplitCoins(coin, amounts) {
+        return {
+          $kind: "SplitCoins",
+          SplitCoins: {
+            coin: parse(ArgumentSchema, coin),
+            amounts: amounts.map((o) => parse(ArgumentSchema, o))
+          }
+        };
+      },
+      MergeCoins(destination, sources) {
+        return {
+          $kind: "MergeCoins",
+          MergeCoins: {
+            destination: parse(ArgumentSchema, destination),
+            sources: sources.map((o) => parse(ArgumentSchema, o))
+          }
+        };
+      },
+      Publish({ modules, dependencies }) {
+        return {
+          $kind: "Publish",
+          Publish: {
+            modules: modules.map((module) => typeof module === "string" ? module : toBase64(new Uint8Array(module))),
+            dependencies: dependencies.map((dep) => normalizeSuiObjectId(dep))
+          }
+        };
+      },
+      Upgrade({ modules, dependencies, package: packageId, ticket }) {
+        return {
+          $kind: "Upgrade",
+          Upgrade: {
+            modules: modules.map((module) => typeof module === "string" ? module : toBase64(new Uint8Array(module))),
+            dependencies: dependencies.map((dep) => normalizeSuiObjectId(dep)),
+            package: packageId,
+            ticket: parse(ArgumentSchema, ticket)
+          }
+        };
+      },
+      MakeMoveVec({ type, elements }) {
+        return {
+          $kind: "MakeMoveVec",
+          MakeMoveVec: {
+            type: type ?? null,
+            elements: elements.map((o) => parse(ArgumentSchema, o))
+          }
+        };
+      },
+      Intent({ name, inputs = {}, data = {} }) {
+        return {
+          $kind: "$Intent",
+          $Intent: {
+            name,
+            inputs: Object.fromEntries(Object.entries(inputs).map(([key, value]) => [key, Array.isArray(value) ? value.map((o) => parse(ArgumentSchema, o)) : parse(ArgumentSchema, value)])),
+            data
+          }
+        };
       }
     };
   }
-};
+});
 
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/Inputs.mjs
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/Inputs.mjs
 function Pure(data) {
   return {
     $kind: "Pure",
     Pure: { bytes: data instanceof Uint8Array ? toBase64(data) : data.toBase64() }
   };
 }
-var Inputs = {
-  Pure,
-  ObjectRef({ objectId, digest, version }) {
-    return {
-      $kind: "Object",
-      Object: {
-        $kind: "ImmOrOwnedObject",
-        ImmOrOwnedObject: {
-          digest,
-          version,
-          objectId: normalizeSuiAddress(objectId)
-        }
-      }
-    };
-  },
-  SharedObjectRef({ objectId, mutable, initialSharedVersion }) {
-    return {
-      $kind: "Object",
-      Object: {
-        $kind: "SharedObject",
-        SharedObject: {
-          mutable,
-          initialSharedVersion,
-          objectId: normalizeSuiAddress(objectId)
-        }
-      }
-    };
-  },
-  ReceivingRef({ objectId, digest, version }) {
-    return {
-      $kind: "Object",
-      Object: {
-        $kind: "Receiving",
-        Receiving: {
-          digest,
-          version,
-          objectId: normalizeSuiAddress(objectId)
-        }
-      }
-    };
-  },
-  FundsWithdrawal({ reservation, typeArg, withdrawFrom }) {
-    return {
-      $kind: "FundsWithdrawal",
-      FundsWithdrawal: {
-        reservation,
-        typeArg,
-        withdrawFrom
+var Inputs;
+var init_Inputs = __esm({
+  "packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/Inputs.mjs"() {
+    init_sui_types();
+    init_dist2();
+    Inputs = {
+      Pure,
+      ObjectRef({ objectId, digest, version }) {
+        return {
+          $kind: "Object",
+          Object: {
+            $kind: "ImmOrOwnedObject",
+            ImmOrOwnedObject: {
+              digest,
+              version,
+              objectId: normalizeSuiAddress(objectId)
+            }
+          }
+        };
+      },
+      SharedObjectRef({ objectId, mutable, initialSharedVersion }) {
+        return {
+          $kind: "Object",
+          Object: {
+            $kind: "SharedObject",
+            SharedObject: {
+              mutable,
+              initialSharedVersion,
+              objectId: normalizeSuiAddress(objectId)
+            }
+          }
+        };
+      },
+      ReceivingRef({ objectId, digest, version }) {
+        return {
+          $kind: "Object",
+          Object: {
+            $kind: "Receiving",
+            Receiving: {
+              digest,
+              version,
+              objectId: normalizeSuiAddress(objectId)
+            }
+          }
+        };
+      },
+      FundsWithdrawal({ reservation, typeArg, withdrawFrom }) {
+        return {
+          $kind: "FundsWithdrawal",
+          FundsWithdrawal: {
+            reservation,
+            typeArg,
+            withdrawFrom
+          }
+        };
       }
     };
   }
-};
+});
 
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/utils/constants.mjs
-var MIST_PER_SUI = BigInt(1e9);
-var MOVE_STDLIB_ADDRESS = "0x0000000000000000000000000000000000000000000000000000000000000001";
-var SUI_FRAMEWORK_ADDRESS = "0x0000000000000000000000000000000000000000000000000000000000000002";
-var SUI_CLOCK_OBJECT_ID = "0x0000000000000000000000000000000000000000000000000000000000000006";
-var SUI_TYPE_ARG = `${SUI_FRAMEWORK_ADDRESS}::sui::SUI`;
-var SUI_SYSTEM_STATE_OBJECT_ID = "0x0000000000000000000000000000000000000000000000000000000000000005";
-var SUI_RANDOM_OBJECT_ID = "0x0000000000000000000000000000000000000000000000000000000000000008";
-var SUI_DENY_LIST_OBJECT_ID = "0x0000000000000000000000000000000000000000000000000000000000000403";
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/utils/constants.mjs
+var MIST_PER_SUI, MOVE_STDLIB_ADDRESS, SUI_FRAMEWORK_ADDRESS, SUI_CLOCK_OBJECT_ID, SUI_TYPE_ARG, SUI_SYSTEM_STATE_OBJECT_ID, SUI_RANDOM_OBJECT_ID, SUI_DENY_LIST_OBJECT_ID;
+var init_constants = __esm({
+  "packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/utils/constants.mjs"() {
+    MIST_PER_SUI = BigInt(1e9);
+    MOVE_STDLIB_ADDRESS = "0x0000000000000000000000000000000000000000000000000000000000000001";
+    SUI_FRAMEWORK_ADDRESS = "0x0000000000000000000000000000000000000000000000000000000000000002";
+    SUI_CLOCK_OBJECT_ID = "0x0000000000000000000000000000000000000000000000000000000000000006";
+    SUI_TYPE_ARG = `${SUI_FRAMEWORK_ADDRESS}::sui::SUI`;
+    SUI_SYSTEM_STATE_OBJECT_ID = "0x0000000000000000000000000000000000000000000000000000000000000005";
+    SUI_RANDOM_OBJECT_ID = "0x0000000000000000000000000000000000000000000000000000000000000008";
+    SUI_DENY_LIST_OBJECT_ID = "0x0000000000000000000000000000000000000000000000000000000000000403";
+  }
+});
 
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/serializer.mjs
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/serializer.mjs
 function parseTypeName(typeName) {
   const parts = typeName.split("::");
   if (parts.length !== 3) throw new Error(`Invalid type name format: ${typeName}`);
@@ -4599,14 +4839,15 @@ function getPureBcsSchema(typeSignature) {
       return null;
   }
 }
-
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/intents/CoinWithBalance.mjs
-var COIN_WITH_BALANCE = "CoinWithBalance";
-var SUI_TYPE = normalizeStructTag("0x2::sui::SUI");
-var CoinWithBalanceData = object({
-  type: string(),
-  balance: bigint()
+var init_serializer = __esm({
+  "packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/serializer.mjs"() {
+    init_sui_types();
+    init_bcs3();
+    init_constants();
+  }
 });
+
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/intents/CoinWithBalance.mjs
 async function resolveCoinBalance(transactionData, buildOptions, next) {
   const coinTypes = /* @__PURE__ */ new Set();
   const totalByType = /* @__PURE__ */ new Map();
@@ -4766,115 +5007,140 @@ async function getCoinsAndBalanceOfType({ coinType, balance, client, owner, used
     return coins;
   }
 }
+var COIN_WITH_BALANCE, SUI_TYPE, CoinWithBalanceData;
+var init_CoinWithBalance = __esm({
+  "packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/intents/CoinWithBalance.mjs"() {
+    init_sui_types();
+    init_bcs3();
+    init_Commands();
+    init_Inputs();
+    init_dist3();
+    COIN_WITH_BALANCE = "CoinWithBalance";
+    SUI_TYPE = normalizeStructTag("0x2::sui::SUI");
+    CoinWithBalanceData = object({
+      type: string(),
+      balance: bigint()
+    });
+  }
+});
 
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/data/v2.mjs
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/data/v2.mjs
 function enumUnion(options) {
   return union(Object.entries(options).map(([key, value]) => object({ [key]: value })));
 }
-var Argument2 = enumUnion({
-  GasCoin: literal(true),
-  Input: pipe(number(), integer()),
-  Result: pipe(number(), integer()),
-  NestedResult: tuple([pipe(number(), integer()), pipe(number(), integer())])
-});
-var GasData2 = object({
-  budget: nullable(JsonU64),
-  price: nullable(JsonU64),
-  owner: nullable(SuiAddress),
-  payment: nullable(array(ObjectRefSchema))
-});
-var ProgrammableMoveCall2 = object({
-  package: ObjectID,
-  module: string(),
-  function: string(),
-  typeArguments: array(string()),
-  arguments: array(Argument2)
-});
-var $Intent2 = object({
-  name: string(),
-  inputs: record(string(), union([Argument2, array(Argument2)])),
-  data: record(string(), unknown())
-});
-var Command2 = enumUnion({
-  MoveCall: ProgrammableMoveCall2,
-  TransferObjects: object({
-    objects: array(Argument2),
-    address: Argument2
-  }),
-  SplitCoins: object({
-    coin: Argument2,
-    amounts: array(Argument2)
-  }),
-  MergeCoins: object({
-    destination: Argument2,
-    sources: array(Argument2)
-  }),
-  Publish: object({
-    modules: array(BCSBytes),
-    dependencies: array(ObjectID)
-  }),
-  MakeMoveVec: object({
-    type: nullable(string()),
-    elements: array(Argument2)
-  }),
-  Upgrade: object({
-    modules: array(BCSBytes),
-    dependencies: array(ObjectID),
-    package: ObjectID,
-    ticket: Argument2
-  }),
-  $Intent: $Intent2
-});
-var CallArg2 = enumUnion({
-  Object: enumUnion({
-    ImmOrOwnedObject: ObjectRefSchema,
-    SharedObject: object({
-      objectId: ObjectID,
-      initialSharedVersion: JsonU64,
-      mutable: boolean()
-    }),
-    Receiving: ObjectRefSchema
-  }),
-  Pure: object({ bytes: BCSBytes }),
-  UnresolvedPure: object({ value: unknown() }),
-  UnresolvedObject: object({
-    objectId: ObjectID,
-    version: optional(nullable(JsonU64)),
-    digest: optional(nullable(string())),
-    initialSharedVersion: optional(nullable(JsonU64)),
-    mutable: optional(nullable(boolean()))
-  }),
-  FundsWithdrawal: FundsWithdrawalArgSchema
-});
-var TransactionExpiration4 = enumUnion({
-  None: literal(true),
-  Epoch: JsonU64,
-  ValidDuring: ValidDuringSchema
-});
-var SerializedTransactionDataV2Schema = object({
-  version: literal(2),
-  sender: nullish(SuiAddress),
-  expiration: nullish(TransactionExpiration4),
-  gasData: GasData2,
-  inputs: array(CallArg2),
-  commands: array(Command2),
-  digest: optional(nullable(string()))
-});
-
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/client/errors.mjs
-var SuiClientError = class extends Error {
-};
-var SimulationError = class extends SuiClientError {
-  constructor(message, options) {
-    super(message, { cause: options?.cause });
-    this.executionError = options?.executionError;
+var Argument2, GasData2, ProgrammableMoveCall2, $Intent2, Command2, CallArg2, TransactionExpiration4, SerializedTransactionDataV2Schema;
+var init_v2 = __esm({
+  "packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/data/v2.mjs"() {
+    init_internal();
+    init_dist3();
+    Argument2 = enumUnion({
+      GasCoin: literal(true),
+      Input: pipe(number(), integer()),
+      Result: pipe(number(), integer()),
+      NestedResult: tuple([pipe(number(), integer()), pipe(number(), integer())])
+    });
+    GasData2 = object({
+      budget: nullable(JsonU64),
+      price: nullable(JsonU64),
+      owner: nullable(SuiAddress),
+      payment: nullable(array(ObjectRefSchema))
+    });
+    ProgrammableMoveCall2 = object({
+      package: ObjectID,
+      module: string(),
+      function: string(),
+      typeArguments: array(string()),
+      arguments: array(Argument2)
+    });
+    $Intent2 = object({
+      name: string(),
+      inputs: record(string(), union([Argument2, array(Argument2)])),
+      data: record(string(), unknown())
+    });
+    Command2 = enumUnion({
+      MoveCall: ProgrammableMoveCall2,
+      TransferObjects: object({
+        objects: array(Argument2),
+        address: Argument2
+      }),
+      SplitCoins: object({
+        coin: Argument2,
+        amounts: array(Argument2)
+      }),
+      MergeCoins: object({
+        destination: Argument2,
+        sources: array(Argument2)
+      }),
+      Publish: object({
+        modules: array(BCSBytes),
+        dependencies: array(ObjectID)
+      }),
+      MakeMoveVec: object({
+        type: nullable(string()),
+        elements: array(Argument2)
+      }),
+      Upgrade: object({
+        modules: array(BCSBytes),
+        dependencies: array(ObjectID),
+        package: ObjectID,
+        ticket: Argument2
+      }),
+      $Intent: $Intent2
+    });
+    CallArg2 = enumUnion({
+      Object: enumUnion({
+        ImmOrOwnedObject: ObjectRefSchema,
+        SharedObject: object({
+          objectId: ObjectID,
+          initialSharedVersion: JsonU64,
+          mutable: boolean()
+        }),
+        Receiving: ObjectRefSchema
+      }),
+      Pure: object({ bytes: BCSBytes }),
+      UnresolvedPure: object({ value: unknown() }),
+      UnresolvedObject: object({
+        objectId: ObjectID,
+        version: optional(nullable(JsonU64)),
+        digest: optional(nullable(string())),
+        initialSharedVersion: optional(nullable(JsonU64)),
+        mutable: optional(nullable(boolean()))
+      }),
+      FundsWithdrawal: FundsWithdrawalArgSchema
+    });
+    TransactionExpiration4 = enumUnion({
+      None: literal(true),
+      Epoch: JsonU64,
+      ValidDuring: ValidDuringSchema
+    });
+    SerializedTransactionDataV2Schema = object({
+      version: literal(2),
+      sender: nullish(SuiAddress),
+      expiration: nullish(TransactionExpiration4),
+      gasData: GasData2,
+      inputs: array(CallArg2),
+      commands: array(Command2),
+      digest: optional(nullable(string()))
+    });
   }
-};
+});
 
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/client/core-resolver.mjs
-var MAX_OBJECTS_PER_FETCH = 50;
-var GAS_SAFE_OVERHEAD = 1000n;
-var MAX_GAS = 5e10;
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/client/errors.mjs
+var SuiClientError, SimulationError;
+var init_errors = __esm({
+  "packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/client/errors.mjs"() {
+    SuiClientError = class extends Error {
+    };
+    SimulationError = class extends SuiClientError {
+      constructor(message, options) {
+        super(message, { cause: options?.cause });
+        this.executionError = options?.executionError;
+      }
+    };
+  }
+});
+
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/client/core-resolver.mjs
 function getClient(options) {
   if (!options.client) throw new Error(`No sui client passed to Transaction#build, but transaction data was not sufficient to build offline.`);
   return options.client;
@@ -5102,13 +5368,29 @@ function isUsedAsReceiving(transactionData, index) {
   });
   return usedAsReceiving;
 }
-var RECEIVING_TYPE = "0x0000000000000000000000000000000000000000000000000000000000000002::transfer::Receiving";
 function isReceivingType(type) {
   if (type.body.$kind !== "datatype") return false;
   return type.body.datatype.typeName === RECEIVING_TYPE;
 }
+var MAX_OBJECTS_PER_FETCH, GAS_SAFE_OVERHEAD, MAX_GAS, RECEIVING_TYPE;
+var init_core_resolver = __esm({
+  "packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/client/core-resolver.mjs"() {
+    init_sui_types();
+    init_internal();
+    init_errors();
+    init_constants();
+    init_Inputs();
+    init_serializer();
+    init_dist();
+    init_dist3();
+    MAX_OBJECTS_PER_FETCH = 50;
+    GAS_SAFE_OVERHEAD = 1000n;
+    MAX_GAS = 5e10;
+    RECEIVING_TYPE = "0x0000000000000000000000000000000000000000000000000000000000000002::transfer::Receiving";
+  }
+});
 
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/resolve.mjs
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/resolve.mjs
 function needsTransactionResolution(data, options) {
   if (data.inputs.some((input) => {
     return input.UnresolvedObject || input.UnresolvedPure;
@@ -5157,8 +5439,15 @@ function normalizeRawArgument(arg, schema, transactionData) {
   if (input.$kind !== "UnresolvedPure") return;
   transactionData.inputs[arg.Input] = Inputs.Pure(schema.serialize(input.UnresolvedPure.value));
 }
+var init_resolve = __esm({
+  "packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/resolve.mjs"() {
+    init_bcs3();
+    init_Inputs();
+    init_core_resolver();
+  }
+});
 
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/object.mjs
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/object.mjs
 function createObjectMethods(makeObject) {
   function object2(value) {
     return makeObject(value);
@@ -5206,8 +5495,14 @@ function createObjectMethods(makeObject) {
   });
   return object2;
 }
+var init_object = __esm({
+  "packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/object.mjs"() {
+    init_constants();
+    init_Inputs();
+  }
+});
 
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/pure.mjs
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/pure.mjs
 function createPure(makePure) {
   function pure(typeOrSerializedValue, value) {
     if (typeof typeOrSerializedValue === "string") return makePure(pureBcsSchemaFromTypeName(typeOrSerializedValue).serialize(value));
@@ -5232,13 +5527,23 @@ function createPure(makePure) {
   };
   return pure;
 }
+var init_pure2 = __esm({
+  "packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/pure.mjs"() {
+    init_pure();
+    init_bcs3();
+    init_dist2();
+  }
+});
 
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/version.mjs
-var PACKAGE_VERSION = "2.4.0";
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/version.mjs
+var PACKAGE_VERSION;
+var init_version = __esm({
+  "packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/version.mjs"() {
+    PACKAGE_VERSION = "2.4.0";
+  }
+});
 
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/client/mvr.mjs
-var NAME_SEPARATOR2 = "/";
-var MVR_API_HEADER = { "Mvr-Source": `@mysten/sui@${PACKAGE_VERSION}` };
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/client/mvr.mjs
 function hasMvrName(nameOrType) {
   return nameOrType.includes(NAME_SEPARATOR2) || nameOrType.includes("@") || nameOrType.includes(".sui");
 }
@@ -5304,8 +5609,17 @@ function getNamesFromTypeList(types) {
   }
   return names;
 }
+var NAME_SEPARATOR2, MVR_API_HEADER;
+var init_mvr = __esm({
+  "packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/client/mvr.mjs"() {
+    init_move_registry();
+    init_version();
+    NAME_SEPARATOR2 = "/";
+    MVR_API_HEADER = { "Mvr-Source": `@mysten/sui@${PACKAGE_VERSION}` };
+  }
+});
 
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/plugins/NamedPackagesPlugin.mjs
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/plugins/NamedPackagesPlugin.mjs
 function namedPackagesPlugin() {
   return async (transactionData, buildOptions, next) => {
     const names = findNamesInTransaction(transactionData);
@@ -5318,8 +5632,13 @@ function namedPackagesPlugin() {
     await next();
   };
 }
+var init_NamedPackagesPlugin = __esm({
+  "packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/plugins/NamedPackagesPlugin.mjs"() {
+    init_mvr();
+  }
+});
 
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/Transaction.mjs
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/Transaction.mjs
 function createTransactionResult(index, length = Infinity) {
   const baseResult = {
     $kind: "Result",
@@ -5354,472 +5673,500 @@ function createTransactionResult(index, length = Infinity) {
     }
   });
 }
-var TRANSACTION_BRAND = Symbol.for("@mysten/transaction");
 function isTransaction(obj) {
   return !!obj && typeof obj === "object" && obj[TRANSACTION_BRAND] === true;
 }
-var Transaction = class Transaction2 {
-  #serializationPlugins;
-  #buildPlugins;
-  #intentResolvers = /* @__PURE__ */ new Map();
-  #inputSection = [];
-  #commandSection = [];
-  #availableResults = /* @__PURE__ */ new Set();
-  #pendingPromises = /* @__PURE__ */ new Set();
-  #added = /* @__PURE__ */ new Map();
-  /**
-  * Converts from a serialize transaction kind (built with `build({ onlyTransactionKind: true })`) to a `Transaction` class.
-  * Supports either a byte array, or base64-encoded bytes.
-  */
-  static fromKind(serialized) {
-    const tx = new Transaction2();
-    tx.#data = TransactionDataBuilder.fromKindBytes(typeof serialized === "string" ? fromBase64(serialized) : serialized);
-    tx.#inputSection = tx.#data.inputs.slice();
-    tx.#commandSection = tx.#data.commands.slice();
-    tx.#availableResults = new Set(tx.#commandSection.map((_, i) => i));
-    return tx;
-  }
-  /**
-  * Converts from a serialized transaction format to a `Transaction` class.
-  * There are two supported serialized formats:
-  * - A string returned from `Transaction#serialize`. The serialized format must be compatible, or it will throw an error.
-  * - A byte array (or base64-encoded bytes) containing BCS transaction data.
-  */
-  static from(transaction) {
-    const newTransaction = new Transaction2();
-    if (isTransaction(transaction)) newTransaction.#data = TransactionDataBuilder.restore(transaction.getData());
-    else if (typeof transaction !== "string" || !transaction.startsWith("{")) newTransaction.#data = TransactionDataBuilder.fromBytes(typeof transaction === "string" ? fromBase64(transaction) : transaction);
-    else newTransaction.#data = TransactionDataBuilder.restore(JSON.parse(transaction));
-    newTransaction.#inputSection = newTransaction.#data.inputs.slice();
-    newTransaction.#commandSection = newTransaction.#data.commands.slice();
-    newTransaction.#availableResults = new Set(newTransaction.#commandSection.map((_, i) => i));
-    if (!newTransaction.isPreparedForSerialization({ supportedIntents: [COIN_WITH_BALANCE] })) throw new Error("Transaction has unresolved intents or async thunks. Call `prepareForSerialization` before copying.");
-    if (newTransaction.#data.commands.some((cmd) => cmd.$Intent?.name === COIN_WITH_BALANCE)) newTransaction.addIntentResolver(COIN_WITH_BALANCE, resolveCoinBalance);
-    return newTransaction;
-  }
-  addSerializationPlugin(step) {
-    this.#serializationPlugins.push(step);
-  }
-  addBuildPlugin(step) {
-    this.#buildPlugins.push(step);
-  }
-  addIntentResolver(intent, resolver) {
-    if (this.#intentResolvers.has(intent) && this.#intentResolvers.get(intent) !== resolver) throw new Error(`Intent resolver for ${intent} already exists`);
-    this.#intentResolvers.set(intent, resolver);
-  }
-  setSender(sender) {
-    this.#data.sender = sender;
-  }
-  /**
-  * Sets the sender only if it has not already been set.
-  * This is useful for sponsored transaction flows where the sender may not be the same as the signer address.
-  */
-  setSenderIfNotSet(sender) {
-    if (!this.#data.sender) this.#data.sender = sender;
-  }
-  setExpiration(expiration) {
-    this.#data.expiration = expiration ? parse(TransactionExpiration, expiration) : null;
-  }
-  setGasPrice(price) {
-    this.#data.gasData.price = String(price);
-  }
-  setGasBudget(budget) {
-    this.#data.gasData.budget = String(budget);
-  }
-  setGasBudgetIfNotSet(budget) {
-    if (this.#data.gasData.budget == null) this.#data.gasData.budget = String(budget);
-  }
-  setGasOwner(owner) {
-    this.#data.gasData.owner = owner;
-  }
-  setGasPayment(payments) {
-    this.#data.gasData.payment = payments.map((payment) => parse(ObjectRefSchema, payment));
-  }
-  #data;
-  /** Get a snapshot of the transaction data, in JSON form: */
-  getData() {
-    return this.#data.snapshot();
-  }
-  get [TRANSACTION_BRAND]() {
-    return true;
-  }
-  get pure() {
-    Object.defineProperty(this, "pure", {
-      enumerable: false,
-      value: createPure((value) => {
-        if (isSerializedBcs(value)) return this.#addInput("pure", {
-          $kind: "Pure",
-          Pure: { bytes: value.toBase64() }
-        });
-        return this.#addInput("pure", is(NormalizedCallArg, value) ? parse(NormalizedCallArg, value) : value instanceof Uint8Array ? Inputs.Pure(value) : {
-          $kind: "UnresolvedPure",
-          UnresolvedPure: { value }
-        });
-      })
-    });
-    return this.pure;
-  }
-  constructor() {
-    this.object = createObjectMethods((value) => {
-      if (typeof value === "function") return this.object(this.add(value));
-      if (typeof value === "object" && is(ArgumentSchema, value)) return value;
-      const id = getIdFromCallArg(value);
-      const inserted = this.#data.inputs.find((i) => id === getIdFromCallArg(i));
-      if (inserted?.Object?.SharedObject && typeof value === "object" && value.Object?.SharedObject) inserted.Object.SharedObject.mutable = inserted.Object.SharedObject.mutable || value.Object.SharedObject.mutable;
-      return inserted ? {
-        $kind: "Input",
-        Input: this.#data.inputs.indexOf(inserted),
-        type: "object"
-      } : this.#addInput("object", typeof value === "string" ? {
-        $kind: "UnresolvedObject",
-        UnresolvedObject: { objectId: normalizeSuiAddress(value) }
-      } : value);
-    });
-    this.#data = new TransactionDataBuilder();
-    this.#buildPlugins = [];
-    this.#serializationPlugins = [];
-  }
-  /** Returns an argument for the gas coin, to be used in a transaction. */
-  get gas() {
-    return {
-      $kind: "GasCoin",
-      GasCoin: true
-    };
-  }
-  /**
-  * Add a new object input to the transaction using the fully-resolved object reference.
-  * If you only have an object ID, use `builder.object(id)` instead.
-  */
-  objectRef(...args) {
-    return this.object(Inputs.ObjectRef(...args));
-  }
-  /**
-  * Add a new receiving input to the transaction using the fully-resolved object reference.
-  * If you only have an object ID, use `builder.object(id)` instead.
-  */
-  receivingRef(...args) {
-    return this.object(Inputs.ReceivingRef(...args));
-  }
-  /**
-  * Add a new shared object input to the transaction using the fully-resolved shared object reference.
-  * If you only have an object ID, use `builder.object(id)` instead.
-  */
-  sharedObjectRef(...args) {
-    return this.object(Inputs.SharedObjectRef(...args));
-  }
-  #fork() {
-    const fork = new Transaction2();
-    fork.#data = this.#data;
-    fork.#serializationPlugins = this.#serializationPlugins;
-    fork.#buildPlugins = this.#buildPlugins;
-    fork.#intentResolvers = this.#intentResolvers;
-    fork.#pendingPromises = this.#pendingPromises;
-    fork.#availableResults = new Set(this.#availableResults);
-    fork.#added = this.#added;
-    this.#inputSection.push(fork.#inputSection);
-    this.#commandSection.push(fork.#commandSection);
-    return fork;
-  }
-  add(command) {
-    if (typeof command === "function") {
-      if (this.#added.has(command)) return this.#added.get(command);
-      const fork = this.#fork();
-      const result = command(fork);
-      if (!(result && typeof result === "object" && "then" in result)) {
-        this.#availableResults = fork.#availableResults;
-        this.#added.set(command, result);
-        return result;
+var TRANSACTION_BRAND, Transaction;
+var init_Transaction = __esm({
+  "packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/Transaction.mjs"() {
+    init_sui_types();
+    init_internal();
+    init_v1();
+    init_utils2();
+    init_TransactionData();
+    init_Commands();
+    init_v2();
+    init_Inputs();
+    init_resolve();
+    init_object();
+    init_pure2();
+    init_NamedPackagesPlugin();
+    init_CoinWithBalance();
+    init_dist2();
+    init_dist3();
+    TRANSACTION_BRAND = /* @__PURE__ */ Symbol.for("@mysten/transaction");
+    Transaction = class Transaction2 {
+      #serializationPlugins;
+      #buildPlugins;
+      #intentResolvers = /* @__PURE__ */ new Map();
+      #inputSection = [];
+      #commandSection = [];
+      #availableResults = /* @__PURE__ */ new Set();
+      #pendingPromises = /* @__PURE__ */ new Set();
+      #added = /* @__PURE__ */ new Map();
+      /**
+      * Converts from a serialize transaction kind (built with `build({ onlyTransactionKind: true })`) to a `Transaction` class.
+      * Supports either a byte array, or base64-encoded bytes.
+      */
+      static fromKind(serialized) {
+        const tx = new Transaction2();
+        tx.#data = TransactionDataBuilder.fromKindBytes(typeof serialized === "string" ? fromBase64(serialized) : serialized);
+        tx.#inputSection = tx.#data.inputs.slice();
+        tx.#commandSection = tx.#data.commands.slice();
+        tx.#availableResults = new Set(tx.#commandSection.map((_, i) => i));
+        return tx;
       }
-      const placeholder = this.#addCommand({
-        $kind: "$Intent",
-        $Intent: {
-          name: "AsyncTransactionThunk",
-          inputs: {},
-          data: {
-            resultIndex: this.#data.commands.length,
-            result: null
+      /**
+      * Converts from a serialized transaction format to a `Transaction` class.
+      * There are two supported serialized formats:
+      * - A string returned from `Transaction#serialize`. The serialized format must be compatible, or it will throw an error.
+      * - A byte array (or base64-encoded bytes) containing BCS transaction data.
+      */
+      static from(transaction) {
+        const newTransaction = new Transaction2();
+        if (isTransaction(transaction)) newTransaction.#data = TransactionDataBuilder.restore(transaction.getData());
+        else if (typeof transaction !== "string" || !transaction.startsWith("{")) newTransaction.#data = TransactionDataBuilder.fromBytes(typeof transaction === "string" ? fromBase64(transaction) : transaction);
+        else newTransaction.#data = TransactionDataBuilder.restore(JSON.parse(transaction));
+        newTransaction.#inputSection = newTransaction.#data.inputs.slice();
+        newTransaction.#commandSection = newTransaction.#data.commands.slice();
+        newTransaction.#availableResults = new Set(newTransaction.#commandSection.map((_, i) => i));
+        if (!newTransaction.isPreparedForSerialization({ supportedIntents: [COIN_WITH_BALANCE] })) throw new Error("Transaction has unresolved intents or async thunks. Call `prepareForSerialization` before copying.");
+        if (newTransaction.#data.commands.some((cmd) => cmd.$Intent?.name === COIN_WITH_BALANCE)) newTransaction.addIntentResolver(COIN_WITH_BALANCE, resolveCoinBalance);
+        return newTransaction;
+      }
+      addSerializationPlugin(step) {
+        this.#serializationPlugins.push(step);
+      }
+      addBuildPlugin(step) {
+        this.#buildPlugins.push(step);
+      }
+      addIntentResolver(intent, resolver) {
+        if (this.#intentResolvers.has(intent) && this.#intentResolvers.get(intent) !== resolver) throw new Error(`Intent resolver for ${intent} already exists`);
+        this.#intentResolvers.set(intent, resolver);
+      }
+      setSender(sender) {
+        this.#data.sender = sender;
+      }
+      /**
+      * Sets the sender only if it has not already been set.
+      * This is useful for sponsored transaction flows where the sender may not be the same as the signer address.
+      */
+      setSenderIfNotSet(sender) {
+        if (!this.#data.sender) this.#data.sender = sender;
+      }
+      setExpiration(expiration) {
+        this.#data.expiration = expiration ? parse(TransactionExpiration, expiration) : null;
+      }
+      setGasPrice(price) {
+        this.#data.gasData.price = String(price);
+      }
+      setGasBudget(budget) {
+        this.#data.gasData.budget = String(budget);
+      }
+      setGasBudgetIfNotSet(budget) {
+        if (this.#data.gasData.budget == null) this.#data.gasData.budget = String(budget);
+      }
+      setGasOwner(owner) {
+        this.#data.gasData.owner = owner;
+      }
+      setGasPayment(payments) {
+        this.#data.gasData.payment = payments.map((payment) => parse(ObjectRefSchema, payment));
+      }
+      #data;
+      /** Get a snapshot of the transaction data, in JSON form: */
+      getData() {
+        return this.#data.snapshot();
+      }
+      get [TRANSACTION_BRAND]() {
+        return true;
+      }
+      get pure() {
+        Object.defineProperty(this, "pure", {
+          enumerable: false,
+          value: createPure((value) => {
+            if (isSerializedBcs(value)) return this.#addInput("pure", {
+              $kind: "Pure",
+              Pure: { bytes: value.toBase64() }
+            });
+            return this.#addInput("pure", is(NormalizedCallArg, value) ? parse(NormalizedCallArg, value) : value instanceof Uint8Array ? Inputs.Pure(value) : {
+              $kind: "UnresolvedPure",
+              UnresolvedPure: { value }
+            });
+          })
+        });
+        return this.pure;
+      }
+      constructor() {
+        this.object = createObjectMethods((value) => {
+          if (typeof value === "function") return this.object(this.add(value));
+          if (typeof value === "object" && is(ArgumentSchema, value)) return value;
+          const id = getIdFromCallArg(value);
+          const inserted = this.#data.inputs.find((i) => id === getIdFromCallArg(i));
+          if (inserted?.Object?.SharedObject && typeof value === "object" && value.Object?.SharedObject) inserted.Object.SharedObject.mutable = inserted.Object.SharedObject.mutable || value.Object.SharedObject.mutable;
+          return inserted ? {
+            $kind: "Input",
+            Input: this.#data.inputs.indexOf(inserted),
+            type: "object"
+          } : this.#addInput("object", typeof value === "string" ? {
+            $kind: "UnresolvedObject",
+            UnresolvedObject: { objectId: normalizeSuiAddress(value) }
+          } : value);
+        });
+        this.#data = new TransactionDataBuilder();
+        this.#buildPlugins = [];
+        this.#serializationPlugins = [];
+      }
+      /** Returns an argument for the gas coin, to be used in a transaction. */
+      get gas() {
+        return {
+          $kind: "GasCoin",
+          GasCoin: true
+        };
+      }
+      /**
+      * Add a new object input to the transaction using the fully-resolved object reference.
+      * If you only have an object ID, use `builder.object(id)` instead.
+      */
+      objectRef(...args) {
+        return this.object(Inputs.ObjectRef(...args));
+      }
+      /**
+      * Add a new receiving input to the transaction using the fully-resolved object reference.
+      * If you only have an object ID, use `builder.object(id)` instead.
+      */
+      receivingRef(...args) {
+        return this.object(Inputs.ReceivingRef(...args));
+      }
+      /**
+      * Add a new shared object input to the transaction using the fully-resolved shared object reference.
+      * If you only have an object ID, use `builder.object(id)` instead.
+      */
+      sharedObjectRef(...args) {
+        return this.object(Inputs.SharedObjectRef(...args));
+      }
+      #fork() {
+        const fork = new Transaction2();
+        fork.#data = this.#data;
+        fork.#serializationPlugins = this.#serializationPlugins;
+        fork.#buildPlugins = this.#buildPlugins;
+        fork.#intentResolvers = this.#intentResolvers;
+        fork.#pendingPromises = this.#pendingPromises;
+        fork.#availableResults = new Set(this.#availableResults);
+        fork.#added = this.#added;
+        this.#inputSection.push(fork.#inputSection);
+        this.#commandSection.push(fork.#commandSection);
+        return fork;
+      }
+      add(command) {
+        if (typeof command === "function") {
+          if (this.#added.has(command)) return this.#added.get(command);
+          const fork = this.#fork();
+          const result = command(fork);
+          if (!(result && typeof result === "object" && "then" in result)) {
+            this.#availableResults = fork.#availableResults;
+            this.#added.set(command, result);
+            return result;
           }
+          const placeholder = this.#addCommand({
+            $kind: "$Intent",
+            $Intent: {
+              name: "AsyncTransactionThunk",
+              inputs: {},
+              data: {
+                resultIndex: this.#data.commands.length,
+                result: null
+              }
+            }
+          });
+          this.#pendingPromises.add(Promise.resolve(result).then((result$1) => {
+            placeholder.$Intent.data.result = result$1;
+          }));
+          const txResult = createTransactionResult(() => placeholder.$Intent.data.resultIndex);
+          this.#added.set(command, txResult);
+          return txResult;
+        } else this.#addCommand(command);
+        return createTransactionResult(this.#data.commands.length - 1);
+      }
+      #addCommand(command) {
+        const resultIndex = this.#data.commands.length;
+        this.#commandSection.push(command);
+        this.#availableResults.add(resultIndex);
+        this.#data.commands.push(command);
+        this.#data.mapCommandArguments(resultIndex, (arg) => {
+          if (arg.$kind === "Result" && !this.#availableResults.has(arg.Result)) throw new Error(`Result { Result: ${arg.Result} } is not available to use in the current transaction`);
+          if (arg.$kind === "NestedResult" && !this.#availableResults.has(arg.NestedResult[0])) throw new Error(`Result { NestedResult: [${arg.NestedResult[0]}, ${arg.NestedResult[1]}] } is not available to use in the current transaction`);
+          if (arg.$kind === "Input" && arg.Input >= this.#data.inputs.length) throw new Error(`Input { Input: ${arg.Input} } references an input that does not exist in the current transaction`);
+          return arg;
+        });
+        return command;
+      }
+      #addInput(type, input) {
+        this.#inputSection.push(input);
+        return this.#data.addInput(type, input);
+      }
+      #normalizeTransactionArgument(arg) {
+        if (isSerializedBcs(arg)) return this.pure(arg);
+        return this.#resolveArgument(arg);
+      }
+      #resolveArgument(arg) {
+        if (typeof arg === "function") {
+          const resolved = this.add(arg);
+          if (typeof resolved === "function") return this.#resolveArgument(resolved);
+          return parse(ArgumentSchema, resolved);
         }
-      });
-      this.#pendingPromises.add(Promise.resolve(result).then((result$1) => {
-        placeholder.$Intent.data.result = result$1;
-      }));
-      const txResult = createTransactionResult(() => placeholder.$Intent.data.resultIndex);
-      this.#added.set(command, txResult);
-      return txResult;
-    } else this.#addCommand(command);
-    return createTransactionResult(this.#data.commands.length - 1);
-  }
-  #addCommand(command) {
-    const resultIndex = this.#data.commands.length;
-    this.#commandSection.push(command);
-    this.#availableResults.add(resultIndex);
-    this.#data.commands.push(command);
-    this.#data.mapCommandArguments(resultIndex, (arg) => {
-      if (arg.$kind === "Result" && !this.#availableResults.has(arg.Result)) throw new Error(`Result { Result: ${arg.Result} } is not available to use in the current transaction`);
-      if (arg.$kind === "NestedResult" && !this.#availableResults.has(arg.NestedResult[0])) throw new Error(`Result { NestedResult: [${arg.NestedResult[0]}, ${arg.NestedResult[1]}] } is not available to use in the current transaction`);
-      if (arg.$kind === "Input" && arg.Input >= this.#data.inputs.length) throw new Error(`Input { Input: ${arg.Input} } references an input that does not exist in the current transaction`);
-      return arg;
-    });
-    return command;
-  }
-  #addInput(type, input) {
-    this.#inputSection.push(input);
-    return this.#data.addInput(type, input);
-  }
-  #normalizeTransactionArgument(arg) {
-    if (isSerializedBcs(arg)) return this.pure(arg);
-    return this.#resolveArgument(arg);
-  }
-  #resolveArgument(arg) {
-    if (typeof arg === "function") {
-      const resolved = this.add(arg);
-      if (typeof resolved === "function") return this.#resolveArgument(resolved);
-      return parse(ArgumentSchema, resolved);
-    }
-    return parse(ArgumentSchema, arg);
-  }
-  splitCoins(coin, amounts) {
-    const command = TransactionCommands.SplitCoins(typeof coin === "string" ? this.object(coin) : this.#resolveArgument(coin), amounts.map((amount) => typeof amount === "number" || typeof amount === "bigint" || typeof amount === "string" ? this.pure.u64(amount) : this.#normalizeTransactionArgument(amount)));
-    this.#addCommand(command);
-    return createTransactionResult(this.#data.commands.length - 1, amounts.length);
-  }
-  mergeCoins(destination, sources) {
-    return this.add(TransactionCommands.MergeCoins(this.object(destination), sources.map((src) => this.object(src))));
-  }
-  publish({ modules, dependencies }) {
-    return this.add(TransactionCommands.Publish({
-      modules,
-      dependencies
-    }));
-  }
-  upgrade({ modules, dependencies, package: packageId, ticket }) {
-    return this.add(TransactionCommands.Upgrade({
-      modules,
-      dependencies,
-      package: packageId,
-      ticket: this.object(ticket)
-    }));
-  }
-  moveCall({ arguments: args, ...input }) {
-    return this.add(TransactionCommands.MoveCall({
-      ...input,
-      arguments: args?.map((arg) => this.#normalizeTransactionArgument(arg))
-    }));
-  }
-  transferObjects(objects, address) {
-    return this.add(TransactionCommands.TransferObjects(objects.map((obj) => this.object(obj)), typeof address === "string" ? this.pure.address(address) : this.#normalizeTransactionArgument(address)));
-  }
-  makeMoveVec({ type, elements }) {
-    return this.add(TransactionCommands.MakeMoveVec({
-      type,
-      elements: elements.map((obj) => this.object(obj))
-    }));
-  }
-  /**
-  * Create a FundsWithdrawal input for withdrawing Balance<T> from an address balance accumulator.
-  * This is used for gas payments from address balances.
-  *
-  * @param options.amount - The Amount to withdraw (u64).
-  * @param options.type - The balance type (e.g., "0x2::sui::SUI"). Defaults to SUI.
-  */
-  withdrawal({ amount, type }) {
-    const input = {
-      $kind: "FundsWithdrawal",
-      FundsWithdrawal: {
-        reservation: {
-          $kind: "MaxAmountU64",
-          MaxAmountU64: String(amount)
-        },
-        typeArg: {
-          $kind: "Balance",
-          Balance: type ?? "0x2::sui::SUI"
-        },
-        withdrawFrom: {
-          $kind: "Sender",
-          Sender: true
+        return parse(ArgumentSchema, arg);
+      }
+      splitCoins(coin, amounts) {
+        const command = TransactionCommands.SplitCoins(typeof coin === "string" ? this.object(coin) : this.#resolveArgument(coin), amounts.map((amount) => typeof amount === "number" || typeof amount === "bigint" || typeof amount === "string" ? this.pure.u64(amount) : this.#normalizeTransactionArgument(amount)));
+        this.#addCommand(command);
+        return createTransactionResult(this.#data.commands.length - 1, amounts.length);
+      }
+      mergeCoins(destination, sources) {
+        return this.add(TransactionCommands.MergeCoins(this.object(destination), sources.map((src) => this.object(src))));
+      }
+      publish({ modules, dependencies }) {
+        return this.add(TransactionCommands.Publish({
+          modules,
+          dependencies
+        }));
+      }
+      upgrade({ modules, dependencies, package: packageId, ticket }) {
+        return this.add(TransactionCommands.Upgrade({
+          modules,
+          dependencies,
+          package: packageId,
+          ticket: this.object(ticket)
+        }));
+      }
+      moveCall({ arguments: args, ...input }) {
+        return this.add(TransactionCommands.MoveCall({
+          ...input,
+          arguments: args?.map((arg) => this.#normalizeTransactionArgument(arg))
+        }));
+      }
+      transferObjects(objects, address) {
+        return this.add(TransactionCommands.TransferObjects(objects.map((obj) => this.object(obj)), typeof address === "string" ? this.pure.address(address) : this.#normalizeTransactionArgument(address)));
+      }
+      makeMoveVec({ type, elements }) {
+        return this.add(TransactionCommands.MakeMoveVec({
+          type,
+          elements: elements.map((obj) => this.object(obj))
+        }));
+      }
+      /**
+      * Create a FundsWithdrawal input for withdrawing Balance<T> from an address balance accumulator.
+      * This is used for gas payments from address balances.
+      *
+      * @param options.amount - The Amount to withdraw (u64).
+      * @param options.type - The balance type (e.g., "0x2::sui::SUI"). Defaults to SUI.
+      */
+      withdrawal({ amount, type }) {
+        const input = {
+          $kind: "FundsWithdrawal",
+          FundsWithdrawal: {
+            reservation: {
+              $kind: "MaxAmountU64",
+              MaxAmountU64: String(amount)
+            },
+            typeArg: {
+              $kind: "Balance",
+              Balance: type ?? "0x2::sui::SUI"
+            },
+            withdrawFrom: {
+              $kind: "Sender",
+              Sender: true
+            }
+          }
+        };
+        return this.#addInput("object", input);
+      }
+      /**
+      * @deprecated Use toJSON instead.
+      * For synchronous serialization, you can use `getData()`
+      * */
+      serialize() {
+        return JSON.stringify(serializeV1TransactionData(this.#data.snapshot()));
+      }
+      async toJSON(options = {}) {
+        await this.prepareForSerialization(options);
+        const fullyResolved = this.isFullyResolved();
+        return JSON.stringify(parse(SerializedTransactionDataV2Schema, fullyResolved ? {
+          ...this.#data.snapshot(),
+          digest: this.#data.getDigest()
+        } : this.#data.snapshot()), (_key, value) => typeof value === "bigint" ? value.toString() : value, 2);
+      }
+      /** Build the transaction to BCS bytes, and sign it with the provided keypair. */
+      async sign(options) {
+        const { signer, ...buildOptions } = options;
+        const bytes = await this.build(buildOptions);
+        return signer.signTransaction(bytes);
+      }
+      /**
+      * Checks if the transaction is prepared for serialization to JSON.
+      * This means:
+      *  - All async thunks have been fully resolved
+      *  - All transaction intents have been resolved (unless in supportedIntents)
+      *
+      * Unlike `isFullyResolved()`, this does not require the sender, gas payment,
+      * budget, or object versions to be set.
+      */
+      isPreparedForSerialization(options = {}) {
+        if (this.#pendingPromises.size > 0) return false;
+        if (this.#data.commands.some((cmd) => cmd.$Intent && !options.supportedIntents?.includes(cmd.$Intent.name))) return false;
+        return true;
+      }
+      /**
+      *  Ensures that:
+      *  - All objects have been fully resolved to a specific version
+      *  - All pure inputs have been serialized to bytes
+      *  - All async thunks have been fully resolved
+      *  - All transaction intents have been resolved
+      * 	- The gas payment, budget, and price have been set
+      *  - The transaction sender has been set
+      *
+      *  When true, the transaction will always be built to the same bytes and digest (unless the transaction is mutated)
+      */
+      isFullyResolved() {
+        if (!this.isPreparedForSerialization()) return false;
+        if (!this.#data.sender) return false;
+        if (needsTransactionResolution(this.#data, {})) return false;
+        return true;
+      }
+      /** Build the transaction to BCS bytes. */
+      async build(options = {}) {
+        await this.prepareForSerialization(options);
+        await this.#prepareBuild(options);
+        return this.#data.build({ onlyTransactionKind: options.onlyTransactionKind });
+      }
+      /** Derive transaction digest */
+      async getDigest(options = {}) {
+        await this.prepareForSerialization(options);
+        await this.#prepareBuild(options);
+        return this.#data.getDigest();
+      }
+      /**
+      * Prepare the transaction by validating the transaction data and resolving all inputs
+      * so that it can be built into bytes.
+      */
+      async #prepareBuild(options) {
+        if (!options.onlyTransactionKind && !this.#data.sender) throw new Error("Missing transaction sender");
+        await this.#runPlugins([...this.#buildPlugins, resolveTransactionPlugin], options);
+      }
+      async #runPlugins(plugins, options) {
+        try {
+          const createNext = (i) => {
+            if (i >= plugins.length) return () => {
+            };
+            const plugin = plugins[i];
+            return async () => {
+              const next = createNext(i + 1);
+              let calledNext = false;
+              let nextResolved = false;
+              await plugin(this.#data, options, async () => {
+                if (calledNext) throw new Error(`next() was call multiple times in TransactionPlugin ${i}`);
+                calledNext = true;
+                await next();
+                nextResolved = true;
+              });
+              if (!calledNext) throw new Error(`next() was not called in TransactionPlugin ${i}`);
+              if (!nextResolved) throw new Error(`next() was not awaited in TransactionPlugin ${i}`);
+            };
+          };
+          await createNext(0)();
+        } finally {
+          this.#inputSection = this.#data.inputs.slice();
+          this.#commandSection = this.#data.commands.slice();
+          this.#availableResults = new Set(this.#commandSection.map((_, i) => i));
         }
+      }
+      async #waitForPendingTasks() {
+        while (this.#pendingPromises.size > 0) {
+          const newPromise = Promise.all(this.#pendingPromises);
+          this.#pendingPromises.clear();
+          this.#pendingPromises.add(newPromise);
+          await newPromise;
+          this.#pendingPromises.delete(newPromise);
+        }
+      }
+      #sortCommandsAndInputs() {
+        const unorderedCommands = this.#data.commands;
+        const unorderedInputs = this.#data.inputs;
+        const orderedCommands = this.#commandSection.flat(Infinity);
+        const orderedInputs = this.#inputSection.flat(Infinity);
+        if (orderedCommands.length !== unorderedCommands.length) throw new Error("Unexpected number of commands found in transaction data");
+        if (orderedInputs.length !== unorderedInputs.length) throw new Error("Unexpected number of inputs found in transaction data");
+        const filteredCommands = orderedCommands.filter((cmd) => cmd.$Intent?.name !== "AsyncTransactionThunk");
+        this.#data.commands = filteredCommands;
+        this.#data.inputs = orderedInputs;
+        this.#commandSection = filteredCommands;
+        this.#inputSection = orderedInputs;
+        this.#availableResults = new Set(filteredCommands.map((_, i) => i));
+        function getOriginalIndex(index) {
+          const command = unorderedCommands[index];
+          if (command.$Intent?.name === "AsyncTransactionThunk") {
+            const result = command.$Intent.data.result;
+            if (result == null) throw new Error("AsyncTransactionThunk has not been resolved");
+            return getOriginalIndex(result.Result);
+          }
+          const updated = filteredCommands.indexOf(command);
+          if (updated === -1) throw new Error("Unable to find original index for command");
+          return updated;
+        }
+        this.#data.mapArguments((arg) => {
+          if (arg.$kind === "Input") {
+            const updated = orderedInputs.indexOf(unorderedInputs[arg.Input]);
+            if (updated === -1) throw new Error("Input has not been resolved");
+            return {
+              ...arg,
+              Input: updated
+            };
+          } else if (arg.$kind === "Result") {
+            const updated = getOriginalIndex(arg.Result);
+            return {
+              ...arg,
+              Result: updated
+            };
+          } else if (arg.$kind === "NestedResult") {
+            const updated = getOriginalIndex(arg.NestedResult[0]);
+            return {
+              ...arg,
+              NestedResult: [updated, arg.NestedResult[1]]
+            };
+          }
+          return arg;
+        });
+        for (const [i, cmd] of unorderedCommands.entries()) if (cmd.$Intent?.name === "AsyncTransactionThunk") try {
+          cmd.$Intent.data.resultIndex = getOriginalIndex(i);
+        } catch {
+        }
+      }
+      async prepareForSerialization(options) {
+        await this.#waitForPendingTasks();
+        this.#sortCommandsAndInputs();
+        const intents = /* @__PURE__ */ new Set();
+        for (const command of this.#data.commands) if (command.$Intent) intents.add(command.$Intent.name);
+        const steps = [...this.#serializationPlugins];
+        for (const intent of intents) {
+          if (options.supportedIntents?.includes(intent)) continue;
+          if (!this.#intentResolvers.has(intent)) throw new Error(`Missing intent resolver for ${intent}`);
+          steps.push(this.#intentResolvers.get(intent));
+        }
+        steps.push(namedPackagesPlugin());
+        await this.#runPlugins(steps, options);
       }
     };
-    return this.#addInput("object", input);
   }
-  /**
-  * @deprecated Use toJSON instead.
-  * For synchronous serialization, you can use `getData()`
-  * */
-  serialize() {
-    return JSON.stringify(serializeV1TransactionData(this.#data.snapshot()));
-  }
-  async toJSON(options = {}) {
-    await this.prepareForSerialization(options);
-    const fullyResolved = this.isFullyResolved();
-    return JSON.stringify(parse(SerializedTransactionDataV2Schema, fullyResolved ? {
-      ...this.#data.snapshot(),
-      digest: this.#data.getDigest()
-    } : this.#data.snapshot()), (_key, value) => typeof value === "bigint" ? value.toString() : value, 2);
-  }
-  /** Build the transaction to BCS bytes, and sign it with the provided keypair. */
-  async sign(options) {
-    const { signer, ...buildOptions } = options;
-    const bytes = await this.build(buildOptions);
-    return signer.signTransaction(bytes);
-  }
-  /**
-  * Checks if the transaction is prepared for serialization to JSON.
-  * This means:
-  *  - All async thunks have been fully resolved
-  *  - All transaction intents have been resolved (unless in supportedIntents)
-  *
-  * Unlike `isFullyResolved()`, this does not require the sender, gas payment,
-  * budget, or object versions to be set.
-  */
-  isPreparedForSerialization(options = {}) {
-    if (this.#pendingPromises.size > 0) return false;
-    if (this.#data.commands.some((cmd) => cmd.$Intent && !options.supportedIntents?.includes(cmd.$Intent.name))) return false;
-    return true;
-  }
-  /**
-  *  Ensures that:
-  *  - All objects have been fully resolved to a specific version
-  *  - All pure inputs have been serialized to bytes
-  *  - All async thunks have been fully resolved
-  *  - All transaction intents have been resolved
-  * 	- The gas payment, budget, and price have been set
-  *  - The transaction sender has been set
-  *
-  *  When true, the transaction will always be built to the same bytes and digest (unless the transaction is mutated)
-  */
-  isFullyResolved() {
-    if (!this.isPreparedForSerialization()) return false;
-    if (!this.#data.sender) return false;
-    if (needsTransactionResolution(this.#data, {})) return false;
-    return true;
-  }
-  /** Build the transaction to BCS bytes. */
-  async build(options = {}) {
-    await this.prepareForSerialization(options);
-    await this.#prepareBuild(options);
-    return this.#data.build({ onlyTransactionKind: options.onlyTransactionKind });
-  }
-  /** Derive transaction digest */
-  async getDigest(options = {}) {
-    await this.prepareForSerialization(options);
-    await this.#prepareBuild(options);
-    return this.#data.getDigest();
-  }
-  /**
-  * Prepare the transaction by validating the transaction data and resolving all inputs
-  * so that it can be built into bytes.
-  */
-  async #prepareBuild(options) {
-    if (!options.onlyTransactionKind && !this.#data.sender) throw new Error("Missing transaction sender");
-    await this.#runPlugins([...this.#buildPlugins, resolveTransactionPlugin], options);
-  }
-  async #runPlugins(plugins, options) {
-    try {
-      const createNext = (i) => {
-        if (i >= plugins.length) return () => {
-        };
-        const plugin = plugins[i];
-        return async () => {
-          const next = createNext(i + 1);
-          let calledNext = false;
-          let nextResolved = false;
-          await plugin(this.#data, options, async () => {
-            if (calledNext) throw new Error(`next() was call multiple times in TransactionPlugin ${i}`);
-            calledNext = true;
-            await next();
-            nextResolved = true;
-          });
-          if (!calledNext) throw new Error(`next() was not called in TransactionPlugin ${i}`);
-          if (!nextResolved) throw new Error(`next() was not awaited in TransactionPlugin ${i}`);
-        };
-      };
-      await createNext(0)();
-    } finally {
-      this.#inputSection = this.#data.inputs.slice();
-      this.#commandSection = this.#data.commands.slice();
-      this.#availableResults = new Set(this.#commandSection.map((_, i) => i));
-    }
-  }
-  async #waitForPendingTasks() {
-    while (this.#pendingPromises.size > 0) {
-      const newPromise = Promise.all(this.#pendingPromises);
-      this.#pendingPromises.clear();
-      this.#pendingPromises.add(newPromise);
-      await newPromise;
-      this.#pendingPromises.delete(newPromise);
-    }
-  }
-  #sortCommandsAndInputs() {
-    const unorderedCommands = this.#data.commands;
-    const unorderedInputs = this.#data.inputs;
-    const orderedCommands = this.#commandSection.flat(Infinity);
-    const orderedInputs = this.#inputSection.flat(Infinity);
-    if (orderedCommands.length !== unorderedCommands.length) throw new Error("Unexpected number of commands found in transaction data");
-    if (orderedInputs.length !== unorderedInputs.length) throw new Error("Unexpected number of inputs found in transaction data");
-    const filteredCommands = orderedCommands.filter((cmd) => cmd.$Intent?.name !== "AsyncTransactionThunk");
-    this.#data.commands = filteredCommands;
-    this.#data.inputs = orderedInputs;
-    this.#commandSection = filteredCommands;
-    this.#inputSection = orderedInputs;
-    this.#availableResults = new Set(filteredCommands.map((_, i) => i));
-    function getOriginalIndex(index) {
-      const command = unorderedCommands[index];
-      if (command.$Intent?.name === "AsyncTransactionThunk") {
-        const result = command.$Intent.data.result;
-        if (result == null) throw new Error("AsyncTransactionThunk has not been resolved");
-        return getOriginalIndex(result.Result);
-      }
-      const updated = filteredCommands.indexOf(command);
-      if (updated === -1) throw new Error("Unable to find original index for command");
-      return updated;
-    }
-    this.#data.mapArguments((arg) => {
-      if (arg.$kind === "Input") {
-        const updated = orderedInputs.indexOf(unorderedInputs[arg.Input]);
-        if (updated === -1) throw new Error("Input has not been resolved");
-        return {
-          ...arg,
-          Input: updated
-        };
-      } else if (arg.$kind === "Result") {
-        const updated = getOriginalIndex(arg.Result);
-        return {
-          ...arg,
-          Result: updated
-        };
-      } else if (arg.$kind === "NestedResult") {
-        const updated = getOriginalIndex(arg.NestedResult[0]);
-        return {
-          ...arg,
-          NestedResult: [updated, arg.NestedResult[1]]
-        };
-      }
-      return arg;
-    });
-    for (const [i, cmd] of unorderedCommands.entries()) if (cmd.$Intent?.name === "AsyncTransactionThunk") try {
-      cmd.$Intent.data.resultIndex = getOriginalIndex(i);
-    } catch {
-    }
-  }
-  async prepareForSerialization(options) {
-    await this.#waitForPendingTasks();
-    this.#sortCommandsAndInputs();
-    const intents = /* @__PURE__ */ new Set();
-    for (const command of this.#data.commands) if (command.$Intent) intents.add(command.$Intent.name);
-    const steps = [...this.#serializationPlugins];
-    for (const intent of intents) {
-      if (options.supportedIntents?.includes(intent)) continue;
-      if (!this.#intentResolvers.has(intent)) throw new Error(`Missing intent resolver for ${intent}`);
-      steps.push(this.#intentResolvers.get(intent));
-    }
-    steps.push(namedPackagesPlugin());
-    await this.#runPlugins(steps, options);
-  }
-};
+});
 
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/utils/dynamic-fields.mjs
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/index.mjs
+var init_transactions = __esm({
+  "packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/transactions/index.mjs"() {
+    init_utils2();
+    init_Transaction();
+  }
+});
+
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/utils/dynamic-fields.mjs
 function deriveDynamicFieldID(parentId, typeTag, key) {
   const address = suiBcs.Address.serialize(parentId).toBytes();
   const tag2 = suiBcs.TypeTag.serialize(typeTag).toBytes();
@@ -5832,535 +6179,25 @@ function deriveDynamicFieldID(parentId, typeTag, key) {
   hash.update(tag2);
   return `0x${toHex(hash.digest().slice(0, 32))}`;
 }
+var init_dynamic_fields = __esm({
+  "packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/utils/dynamic-fields.mjs"() {
+    init_bcs3();
+    init_dist2();
+    init_blake2();
+  }
+});
 
-// node_modules/.pnpm/@logtape+logtape@1.2.2/node_modules/@logtape/logtape/dist/level.js
-var logLevels = [
-  "trace",
-  "debug",
-  "info",
-  "warning",
-  "error",
-  "fatal"
-];
-function compareLogLevel(a, b) {
-  const aIndex = logLevels.indexOf(a);
-  if (aIndex < 0) throw new TypeError(`Invalid log level: ${JSON.stringify(a)}.`);
-  const bIndex = logLevels.indexOf(b);
-  if (bIndex < 0) throw new TypeError(`Invalid log level: ${JSON.stringify(b)}.`);
-  return aIndex - bIndex;
-}
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/utils/index.mjs
+var init_utils4 = __esm({
+  "packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/utils/index.mjs"() {
+    init_move_registry();
+    init_sui_types();
+    init_dynamic_fields();
+    init_dist2();
+  }
+});
 
-// node_modules/.pnpm/@logtape+logtape@1.2.2/node_modules/@logtape/logtape/dist/logger.js
-function getLogger(category = []) {
-  return LoggerImpl.getLogger(category);
-}
-var globalRootLoggerSymbol = Symbol.for("logtape.rootLogger");
-var LoggerImpl = class LoggerImpl2 {
-  parent;
-  children;
-  category;
-  sinks;
-  parentSinks = "inherit";
-  filters;
-  lowestLevel = "trace";
-  contextLocalStorage;
-  static getLogger(category = []) {
-    let rootLogger = globalRootLoggerSymbol in globalThis ? globalThis[globalRootLoggerSymbol] ?? null : null;
-    if (rootLogger == null) {
-      rootLogger = new LoggerImpl2(null, []);
-      globalThis[globalRootLoggerSymbol] = rootLogger;
-    }
-    if (typeof category === "string") return rootLogger.getChild(category);
-    if (category.length === 0) return rootLogger;
-    return rootLogger.getChild(category);
-  }
-  constructor(parent, category) {
-    this.parent = parent;
-    this.children = {};
-    this.category = category;
-    this.sinks = [];
-    this.filters = [];
-  }
-  getChild(subcategory) {
-    const name = typeof subcategory === "string" ? subcategory : subcategory[0];
-    const childRef = this.children[name];
-    let child = childRef instanceof LoggerImpl2 ? childRef : childRef?.deref();
-    if (child == null) {
-      child = new LoggerImpl2(this, [...this.category, name]);
-      this.children[name] = "WeakRef" in globalThis ? new WeakRef(child) : child;
-    }
-    if (typeof subcategory === "string" || subcategory.length === 1) return child;
-    return child.getChild(subcategory.slice(1));
-  }
-  /**
-  * Reset the logger.  This removes all sinks and filters from the logger.
-  */
-  reset() {
-    while (this.sinks.length > 0) this.sinks.shift();
-    this.parentSinks = "inherit";
-    while (this.filters.length > 0) this.filters.shift();
-    this.lowestLevel = "trace";
-  }
-  /**
-  * Reset the logger and all its descendants.  This removes all sinks and
-  * filters from the logger and all its descendants.
-  */
-  resetDescendants() {
-    for (const child of Object.values(this.children)) {
-      const logger = child instanceof LoggerImpl2 ? child : child.deref();
-      if (logger != null) logger.resetDescendants();
-    }
-    this.reset();
-  }
-  with(properties) {
-    return new LoggerCtx(this, { ...properties });
-  }
-  filter(record2) {
-    for (const filter of this.filters) if (!filter(record2)) return false;
-    if (this.filters.length < 1) return this.parent?.filter(record2) ?? true;
-    return true;
-  }
-  *getSinks(level) {
-    if (this.lowestLevel === null || compareLogLevel(level, this.lowestLevel) < 0) return;
-    if (this.parent != null && this.parentSinks === "inherit") for (const sink of this.parent.getSinks(level)) yield sink;
-    for (const sink of this.sinks) yield sink;
-  }
-  emit(record2, bypassSinks) {
-    const fullRecord = "category" in record2 ? record2 : {
-      ...record2,
-      category: this.category
-    };
-    if (this.lowestLevel === null || compareLogLevel(fullRecord.level, this.lowestLevel) < 0 || !this.filter(fullRecord)) return;
-    for (const sink of this.getSinks(fullRecord.level)) {
-      if (bypassSinks?.has(sink)) continue;
-      try {
-        sink(fullRecord);
-      } catch (error) {
-        const bypassSinks2 = new Set(bypassSinks);
-        bypassSinks2.add(sink);
-        metaLogger.log("fatal", "Failed to emit a log record to sink {sink}: {error}", {
-          sink,
-          error,
-          record: fullRecord
-        }, bypassSinks2);
-      }
-    }
-  }
-  log(level, rawMessage, properties, bypassSinks) {
-    const implicitContext = LoggerImpl2.getLogger().contextLocalStorage?.getStore() ?? {};
-    let cachedProps = void 0;
-    const record2 = typeof properties === "function" ? {
-      category: this.category,
-      level,
-      timestamp: Date.now(),
-      get message() {
-        return parseMessageTemplate(rawMessage, this.properties);
-      },
-      rawMessage,
-      get properties() {
-        if (cachedProps == null) cachedProps = {
-          ...implicitContext,
-          ...properties()
-        };
-        return cachedProps;
-      }
-    } : {
-      category: this.category,
-      level,
-      timestamp: Date.now(),
-      message: parseMessageTemplate(rawMessage, {
-        ...implicitContext,
-        ...properties
-      }),
-      rawMessage,
-      properties: {
-        ...implicitContext,
-        ...properties
-      }
-    };
-    this.emit(record2, bypassSinks);
-  }
-  logLazily(level, callback, properties = {}) {
-    const implicitContext = LoggerImpl2.getLogger().contextLocalStorage?.getStore() ?? {};
-    let rawMessage = void 0;
-    let msg = void 0;
-    function realizeMessage() {
-      if (msg == null || rawMessage == null) {
-        msg = callback((tpl, ...values) => {
-          rawMessage = tpl;
-          return renderMessage(tpl, values);
-        });
-        if (rawMessage == null) throw new TypeError("No log record was made.");
-      }
-      return [msg, rawMessage];
-    }
-    this.emit({
-      category: this.category,
-      level,
-      get message() {
-        return realizeMessage()[0];
-      },
-      get rawMessage() {
-        return realizeMessage()[1];
-      },
-      timestamp: Date.now(),
-      properties: {
-        ...implicitContext,
-        ...properties
-      }
-    });
-  }
-  logTemplate(level, messageTemplate, values, properties = {}) {
-    const implicitContext = LoggerImpl2.getLogger().contextLocalStorage?.getStore() ?? {};
-    this.emit({
-      category: this.category,
-      level,
-      message: renderMessage(messageTemplate, values),
-      rawMessage: messageTemplate,
-      timestamp: Date.now(),
-      properties: {
-        ...implicitContext,
-        ...properties
-      }
-    });
-  }
-  trace(message, ...values) {
-    if (typeof message === "string") this.log("trace", message, values[0] ?? {});
-    else if (typeof message === "function") this.logLazily("trace", message);
-    else if (!Array.isArray(message)) this.log("trace", "{*}", message);
-    else this.logTemplate("trace", message, values);
-  }
-  debug(message, ...values) {
-    if (typeof message === "string") this.log("debug", message, values[0] ?? {});
-    else if (typeof message === "function") this.logLazily("debug", message);
-    else if (!Array.isArray(message)) this.log("debug", "{*}", message);
-    else this.logTemplate("debug", message, values);
-  }
-  info(message, ...values) {
-    if (typeof message === "string") this.log("info", message, values[0] ?? {});
-    else if (typeof message === "function") this.logLazily("info", message);
-    else if (!Array.isArray(message)) this.log("info", "{*}", message);
-    else this.logTemplate("info", message, values);
-  }
-  warn(message, ...values) {
-    if (typeof message === "string") this.log("warning", message, values[0] ?? {});
-    else if (typeof message === "function") this.logLazily("warning", message);
-    else if (!Array.isArray(message)) this.log("warning", "{*}", message);
-    else this.logTemplate("warning", message, values);
-  }
-  warning(message, ...values) {
-    this.warn(message, ...values);
-  }
-  error(message, ...values) {
-    if (typeof message === "string") this.log("error", message, values[0] ?? {});
-    else if (typeof message === "function") this.logLazily("error", message);
-    else if (!Array.isArray(message)) this.log("error", "{*}", message);
-    else this.logTemplate("error", message, values);
-  }
-  fatal(message, ...values) {
-    if (typeof message === "string") this.log("fatal", message, values[0] ?? {});
-    else if (typeof message === "function") this.logLazily("fatal", message);
-    else if (!Array.isArray(message)) this.log("fatal", "{*}", message);
-    else this.logTemplate("fatal", message, values);
-  }
-};
-var LoggerCtx = class LoggerCtx2 {
-  logger;
-  properties;
-  constructor(logger, properties) {
-    this.logger = logger;
-    this.properties = properties;
-  }
-  get category() {
-    return this.logger.category;
-  }
-  get parent() {
-    return this.logger.parent;
-  }
-  getChild(subcategory) {
-    return this.logger.getChild(subcategory).with(this.properties);
-  }
-  with(properties) {
-    return new LoggerCtx2(this.logger, {
-      ...this.properties,
-      ...properties
-    });
-  }
-  log(level, message, properties, bypassSinks) {
-    this.logger.log(level, message, typeof properties === "function" ? () => ({
-      ...this.properties,
-      ...properties()
-    }) : {
-      ...this.properties,
-      ...properties
-    }, bypassSinks);
-  }
-  logLazily(level, callback) {
-    this.logger.logLazily(level, callback, this.properties);
-  }
-  logTemplate(level, messageTemplate, values) {
-    this.logger.logTemplate(level, messageTemplate, values, this.properties);
-  }
-  emit(record2) {
-    const recordWithContext = {
-      ...record2,
-      properties: {
-        ...this.properties,
-        ...record2.properties
-      }
-    };
-    this.logger.emit(recordWithContext);
-  }
-  trace(message, ...values) {
-    if (typeof message === "string") this.log("trace", message, values[0] ?? {});
-    else if (typeof message === "function") this.logLazily("trace", message);
-    else if (!Array.isArray(message)) this.log("trace", "{*}", message);
-    else this.logTemplate("trace", message, values);
-  }
-  debug(message, ...values) {
-    if (typeof message === "string") this.log("debug", message, values[0] ?? {});
-    else if (typeof message === "function") this.logLazily("debug", message);
-    else if (!Array.isArray(message)) this.log("debug", "{*}", message);
-    else this.logTemplate("debug", message, values);
-  }
-  info(message, ...values) {
-    if (typeof message === "string") this.log("info", message, values[0] ?? {});
-    else if (typeof message === "function") this.logLazily("info", message);
-    else if (!Array.isArray(message)) this.log("info", "{*}", message);
-    else this.logTemplate("info", message, values);
-  }
-  warn(message, ...values) {
-    if (typeof message === "string") this.log("warning", message, values[0] ?? {});
-    else if (typeof message === "function") this.logLazily("warning", message);
-    else if (!Array.isArray(message)) this.log("warning", "{*}", message);
-    else this.logTemplate("warning", message, values);
-  }
-  warning(message, ...values) {
-    this.warn(message, ...values);
-  }
-  error(message, ...values) {
-    if (typeof message === "string") this.log("error", message, values[0] ?? {});
-    else if (typeof message === "function") this.logLazily("error", message);
-    else if (!Array.isArray(message)) this.log("error", "{*}", message);
-    else this.logTemplate("error", message, values);
-  }
-  fatal(message, ...values) {
-    if (typeof message === "string") this.log("fatal", message, values[0] ?? {});
-    else if (typeof message === "function") this.logLazily("fatal", message);
-    else if (!Array.isArray(message)) this.log("fatal", "{*}", message);
-    else this.logTemplate("fatal", message, values);
-  }
-};
-var metaLogger = LoggerImpl.getLogger(["logtape", "meta"]);
-function isNestedAccess(key) {
-  return key.includes(".") || key.includes("[") || key.includes("?.");
-}
-function getOwnProperty(obj, key) {
-  if (key === "__proto__" || key === "prototype" || key === "constructor") return void 0;
-  if ((typeof obj === "object" || typeof obj === "function") && obj !== null) return Object.prototype.hasOwnProperty.call(obj, key) ? obj[key] : void 0;
-  return void 0;
-}
-function parseNextSegment(path, fromIndex) {
-  const len = path.length;
-  let i = fromIndex;
-  if (i >= len) return null;
-  let segment;
-  if (path[i] === "[") {
-    i++;
-    if (i >= len) return null;
-    if (path[i] === '"' || path[i] === "'") {
-      const quote = path[i];
-      i++;
-      let segmentStr = "";
-      while (i < len && path[i] !== quote) if (path[i] === "\\") {
-        i++;
-        if (i < len) {
-          const escapeChar = path[i];
-          switch (escapeChar) {
-            case "n":
-              segmentStr += "\n";
-              break;
-            case "t":
-              segmentStr += "	";
-              break;
-            case "r":
-              segmentStr += "\r";
-              break;
-            case "b":
-              segmentStr += "\b";
-              break;
-            case "f":
-              segmentStr += "\f";
-              break;
-            case "v":
-              segmentStr += "\v";
-              break;
-            case "0":
-              segmentStr += "\0";
-              break;
-            case "\\":
-              segmentStr += "\\";
-              break;
-            case '"':
-              segmentStr += '"';
-              break;
-            case "'":
-              segmentStr += "'";
-              break;
-            case "u":
-              if (i + 4 < len) {
-                const hex = path.slice(i + 1, i + 5);
-                const codePoint = Number.parseInt(hex, 16);
-                if (!Number.isNaN(codePoint)) {
-                  segmentStr += String.fromCharCode(codePoint);
-                  i += 4;
-                } else segmentStr += escapeChar;
-              } else segmentStr += escapeChar;
-              break;
-            default:
-              segmentStr += escapeChar;
-          }
-          i++;
-        }
-      } else {
-        segmentStr += path[i];
-        i++;
-      }
-      if (i >= len) return null;
-      segment = segmentStr;
-      i++;
-    } else {
-      const startIndex = i;
-      while (i < len && path[i] !== "]" && path[i] !== "'" && path[i] !== '"') i++;
-      if (i >= len) return null;
-      const indexStr = path.slice(startIndex, i);
-      if (indexStr.length === 0) return null;
-      const indexNum = Number(indexStr);
-      segment = Number.isNaN(indexNum) ? indexStr : indexNum;
-    }
-    while (i < len && path[i] !== "]") i++;
-    if (i < len) i++;
-  } else {
-    const startIndex = i;
-    while (i < len && path[i] !== "." && path[i] !== "[" && path[i] !== "?" && path[i] !== "]") i++;
-    segment = path.slice(startIndex, i);
-    if (segment.length === 0) return null;
-  }
-  if (i < len && path[i] === ".") i++;
-  return {
-    segment,
-    nextIndex: i
-  };
-}
-function accessProperty(obj, segment) {
-  if (typeof segment === "string") return getOwnProperty(obj, segment);
-  if (Array.isArray(obj) && segment >= 0 && segment < obj.length) return obj[segment];
-  return void 0;
-}
-function resolvePropertyPath(obj, path) {
-  if (obj == null) return void 0;
-  if (path.length === 0 || path.endsWith(".")) return void 0;
-  let current = obj;
-  let i = 0;
-  const len = path.length;
-  while (i < len) {
-    const isOptional = path.slice(i, i + 2) === "?.";
-    if (isOptional) {
-      i += 2;
-      if (current == null) return void 0;
-    } else if (current == null) return void 0;
-    const result = parseNextSegment(path, i);
-    if (result === null) return void 0;
-    const { segment, nextIndex } = result;
-    i = nextIndex;
-    current = accessProperty(current, segment);
-    if (current === void 0) return void 0;
-  }
-  return current;
-}
-function parseMessageTemplate(template, properties) {
-  const length = template.length;
-  if (length === 0) return [""];
-  if (!template.includes("{")) return [template];
-  const message = [];
-  let startIndex = 0;
-  for (let i = 0; i < length; i++) {
-    const char = template[i];
-    if (char === "{") {
-      const nextChar = i + 1 < length ? template[i + 1] : "";
-      if (nextChar === "{") {
-        i++;
-        continue;
-      }
-      const closeIndex = template.indexOf("}", i + 1);
-      if (closeIndex === -1) continue;
-      const beforeText = template.slice(startIndex, i);
-      message.push(beforeText.replace(/{{/g, "{").replace(/}}/g, "}"));
-      const key = template.slice(i + 1, closeIndex);
-      let prop;
-      const trimmedKey = key.trim();
-      if (trimmedKey === "*") prop = key in properties ? properties[key] : "*" in properties ? properties["*"] : properties;
-      else {
-        if (key !== trimmedKey) prop = key in properties ? properties[key] : properties[trimmedKey];
-        else prop = properties[key];
-        if (prop === void 0 && isNestedAccess(trimmedKey)) prop = resolvePropertyPath(properties, trimmedKey);
-      }
-      message.push(prop);
-      i = closeIndex;
-      startIndex = i + 1;
-    } else if (char === "}" && i + 1 < length && template[i + 1] === "}") i++;
-  }
-  const remainingText = template.slice(startIndex);
-  message.push(remainingText.replace(/{{/g, "{").replace(/}}/g, "}"));
-  return message;
-}
-function renderMessage(template, values) {
-  const args = [];
-  for (let i = 0; i < template.length; i++) {
-    args.push(template[i]);
-    if (i < values.length) args.push(values[i]);
-  }
-  return args;
-}
-
-// messaging/dist/esm/logging/categories.js
-var LOG_CATEGORIES = {
-  /**
-   * Root category for all Messaging SDK logs.
-   * Configure this to enable/disable all SDK logging.
-   */
-  ROOT: ["@mysten/messaging"],
-  /**
-   * Client read operations: fetching channels, messages, members, etc.
-   */
-  CLIENT_READS: ["@mysten/messaging", "client", "reads"],
-  /**
-   * Client write operations: creating channels, sending messages, adding members, etc.
-   */
-  CLIENT_WRITES: ["@mysten/messaging", "client", "writes"],
-  /**
-   * Encryption operations: envelope encryption, key generation, decryption.
-   */
-  ENCRYPTION: ["@mysten/messaging", "encryption"],
-  /**
-   * All storage adapter operations.
-   */
-  STORAGE: ["@mysten/messaging", "storage"],
-  /**
-   * Walrus-specific storage operations.
-   */
-  STORAGE_WALRUS: ["@mysten/messaging", "storage", "walrus"]
-};
-
-// messaging/dist/esm/logging/index.js
-function getLogger2(category) {
-  return getLogger(category);
-}
-
-// messaging/dist/esm/contracts/utils/index.js
-var MOVE_STDLIB_ADDRESS2 = normalizeSuiAddress("0x1");
-var SUI_FRAMEWORK_ADDRESS2 = normalizeSuiAddress("0x2");
-var SUI_SYSTEM_ADDRESS = normalizeSuiAddress("0x3");
+// packages/messaging/dist/esm/contracts/utils/index.js
 function getPureBcsSchema2(typeTag) {
   const parsedTag = typeof typeTag === "string" ? TypeTagSerializer.parseFromStr(typeTag) : typeTag;
   if ("u8" in parsedTag) {
@@ -6462,10 +6299,6 @@ function normalizeMoveArguments(args, argTypes, parameterNames) {
   }
   return normalizedArgs;
 }
-var MoveStruct = class extends BcsStruct {
-};
-var MoveTuple = class extends BcsTuple {
-};
 function stringify(val) {
   if (typeof val === "object") {
     return JSON.stringify(val, (val2) => val2);
@@ -6475,18 +6308,41 @@ function stringify(val) {
   }
   return val;
 }
-
-// messaging/dist/esm/contracts/sui_stack_messaging/deps/sui/object.js
-var $moduleName = "0x2::object";
-var UID = new MoveStruct({
-  name: `${$moduleName}::UID`,
-  fields: {
-    id: suiBcs.Address
+var MOVE_STDLIB_ADDRESS2, SUI_FRAMEWORK_ADDRESS2, SUI_SYSTEM_ADDRESS, MoveStruct, MoveTuple;
+var init_utils5 = __esm({
+  "packages/messaging/dist/esm/contracts/utils/index.js"() {
+    "use strict";
+    init_bcs3();
+    init_utils4();
+    init_transactions();
+    MOVE_STDLIB_ADDRESS2 = normalizeSuiAddress("0x1");
+    SUI_FRAMEWORK_ADDRESS2 = normalizeSuiAddress("0x2");
+    SUI_SYSTEM_ADDRESS = normalizeSuiAddress("0x3");
+    MoveStruct = class extends BcsStruct {
+    };
+    MoveTuple = class extends BcsTuple {
+    };
   }
 });
 
-// messaging/dist/esm/contracts/sui_stack_messaging/deps/sui/vec_map.js
-var $moduleName2 = "0x2::vec_map";
+// packages/messaging/dist/esm/contracts/sui_stack_messaging/deps/sui/object.js
+var $moduleName, UID;
+var init_object2 = __esm({
+  "packages/messaging/dist/esm/contracts/sui_stack_messaging/deps/sui/object.js"() {
+    "use strict";
+    init_utils5();
+    init_bcs3();
+    $moduleName = "0x2::object";
+    UID = new MoveStruct({
+      name: `${$moduleName}::UID`,
+      fields: {
+        id: suiBcs.Address
+      }
+    });
+  }
+});
+
+// packages/messaging/dist/esm/contracts/sui_stack_messaging/deps/sui/vec_map.js
 function Entry(...typeParameters) {
   return new MoveStruct({
     name: `${$moduleName2}::Entry<${typeParameters[0].name}, ${typeParameters[1].name}>`,
@@ -6504,9 +6360,17 @@ function VecMap(...typeParameters) {
     }
   });
 }
+var $moduleName2;
+var init_vec_map = __esm({
+  "packages/messaging/dist/esm/contracts/sui_stack_messaging/deps/sui/vec_map.js"() {
+    "use strict";
+    init_bcs3();
+    init_utils5();
+    $moduleName2 = "0x2::vec_map";
+  }
+});
 
-// messaging/dist/esm/contracts/sui_stack_messaging/deps/sui/vec_set.js
-var $moduleName3 = "0x2::vec_set";
+// packages/messaging/dist/esm/contracts/sui_stack_messaging/deps/sui/vec_set.js
 function VecSet(...typeParameters) {
   return new MoveStruct({
     name: `${$moduleName3}::VecSet<${typeParameters[0].name}>`,
@@ -6515,83 +6379,127 @@ function VecSet(...typeParameters) {
     }
   });
 }
-
-// messaging/dist/esm/contracts/sui_stack_messaging/deps/std/type_name.js
-var $moduleName4 = "std::type_name";
-var TypeName = new MoveStruct({
-  name: `${$moduleName4}::TypeName`,
-  fields: {
-    /**
-     * String representation of the type. All types are represented using their source
-     * syntax: "u8", "u64", "bool", "address", "vector", and so on for primitive types.
-     * Struct types are represented as fully qualified type names; e.g.
-     * `00000000000000000000000000000001::string::String` or
-     * `0000000000000000000000000000000a::module_name1::type_name1<0000000000000000000000000000000a::module_name2::type_name2<u64>>`
-     * Addresses are hex-encoded lowercase values of length ADDRESS_LENGTH (16, 20, or
-     * 32 depending on the Move platform)
-     */
-    name: suiBcs.string()
+var $moduleName3;
+var init_vec_set = __esm({
+  "packages/messaging/dist/esm/contracts/sui_stack_messaging/deps/sui/vec_set.js"() {
+    "use strict";
+    init_bcs3();
+    init_utils5();
+    $moduleName3 = "0x2::vec_set";
   }
 });
 
-// messaging/dist/esm/contracts/sui_stack_messaging/deps/sui/versioned.js
-var $moduleName5 = "0x2::versioned";
-var Versioned = new MoveStruct({
-  name: `${$moduleName5}::Versioned`,
-  fields: {
-    id: UID,
-    version: suiBcs.u64()
+// packages/messaging/dist/esm/contracts/sui_stack_messaging/deps/std/type_name.js
+var $moduleName4, TypeName;
+var init_type_name = __esm({
+  "packages/messaging/dist/esm/contracts/sui_stack_messaging/deps/std/type_name.js"() {
+    "use strict";
+    init_utils5();
+    init_bcs3();
+    $moduleName4 = "std::type_name";
+    TypeName = new MoveStruct({
+      name: `${$moduleName4}::TypeName`,
+      fields: {
+        /**
+         * String representation of the type. All types are represented using their source
+         * syntax: "u8", "u64", "bool", "address", "vector", and so on for primitive types.
+         * Struct types are represented as fully qualified type names; e.g.
+         * `00000000000000000000000000000001::string::String` or
+         * `0000000000000000000000000000000a::module_name1::type_name1<0000000000000000000000000000000a::module_name2::type_name2<u64>>`
+         * Addresses are hex-encoded lowercase values of length ADDRESS_LENGTH (16, 20, or
+         * 32 depending on the Move platform)
+         */
+        name: suiBcs.string()
+      }
+    });
   }
 });
 
-// messaging/dist/esm/contracts/sui_stack_messaging/auth.js
-var $moduleName6 = "@local-pkg/sui-stack-messaging::auth";
-var Auth = new MoveStruct({
-  name: `${$moduleName6}::Auth`,
-  fields: {
-    member_permissions: VecMap(suiBcs.Address, VecSet(TypeName)),
-    config: Versioned
-  }
-});
-var EditPermissions = new MoveTuple({
-  name: `${$moduleName6}::EditPermissions`,
-  fields: [suiBcs.bool()]
-});
-
-// messaging/dist/esm/contracts/sui_stack_messaging/deps/sui/table.js
-var $moduleName7 = "0x2::table";
-var Table = new MoveStruct({
-  name: `${$moduleName7}::Table`,
-  fields: {
-    /** the ID of this table */
-    id: UID,
-    /** the number of key-value pairs in the table */
-    size: suiBcs.u64()
+// packages/messaging/dist/esm/contracts/sui_stack_messaging/deps/sui/versioned.js
+var $moduleName5, Versioned;
+var init_versioned = __esm({
+  "packages/messaging/dist/esm/contracts/sui_stack_messaging/deps/sui/versioned.js"() {
+    "use strict";
+    init_utils5();
+    init_bcs3();
+    init_object2();
+    $moduleName5 = "0x2::versioned";
+    Versioned = new MoveStruct({
+      name: `${$moduleName5}::Versioned`,
+      fields: {
+        id: UID,
+        version: suiBcs.u64()
+      }
+    });
   }
 });
 
-// messaging/dist/esm/contracts/sui_stack_messaging/deps/sui/table_vec.js
-var $moduleName8 = "0x2::table_vec";
-var TableVec = new MoveStruct({
-  name: `${$moduleName8}::TableVec`,
-  fields: {
-    /** The contents of the table vector. */
-    contents: Table
+// packages/messaging/dist/esm/contracts/sui_stack_messaging/auth.js
+var $moduleName6, Auth, EditPermissions;
+var init_auth = __esm({
+  "packages/messaging/dist/esm/contracts/sui_stack_messaging/auth.js"() {
+    "use strict";
+    init_utils5();
+    init_bcs3();
+    init_vec_map();
+    init_vec_set();
+    init_type_name();
+    init_versioned();
+    $moduleName6 = "@local-pkg/sui-stack-messaging::auth";
+    Auth = new MoveStruct({
+      name: `${$moduleName6}::Auth`,
+      fields: {
+        member_permissions: VecMap(suiBcs.Address, VecSet(TypeName)),
+        config: Versioned
+      }
+    });
+    EditPermissions = new MoveTuple({
+      name: `${$moduleName6}::EditPermissions`,
+      fields: [suiBcs.bool()]
+    });
   }
 });
 
-// messaging/dist/esm/contracts/sui_stack_messaging/attachment.js
-var $moduleName9 = "@local-pkg/sui-stack-messaging::attachment";
-var Attachment = new MoveStruct({
-  name: `${$moduleName9}::Attachment`,
-  fields: {
-    blob_ref: suiBcs.string(),
-    encrypted_metadata: suiBcs.vector(suiBcs.u8()),
-    data_nonce: suiBcs.vector(suiBcs.u8()),
-    metadata_nonce: suiBcs.vector(suiBcs.u8()),
-    key_version: suiBcs.u32()
+// packages/messaging/dist/esm/contracts/sui_stack_messaging/deps/sui/table.js
+var $moduleName7, Table;
+var init_table = __esm({
+  "packages/messaging/dist/esm/contracts/sui_stack_messaging/deps/sui/table.js"() {
+    "use strict";
+    init_utils5();
+    init_bcs3();
+    init_object2();
+    $moduleName7 = "0x2::table";
+    Table = new MoveStruct({
+      name: `${$moduleName7}::Table`,
+      fields: {
+        /** the ID of this table */
+        id: UID,
+        /** the number of key-value pairs in the table */
+        size: suiBcs.u64()
+      }
+    });
   }
 });
+
+// packages/messaging/dist/esm/contracts/sui_stack_messaging/deps/sui/table_vec.js
+var $moduleName8, TableVec;
+var init_table_vec = __esm({
+  "packages/messaging/dist/esm/contracts/sui_stack_messaging/deps/sui/table_vec.js"() {
+    "use strict";
+    init_utils5();
+    init_table();
+    $moduleName8 = "0x2::table_vec";
+    TableVec = new MoveStruct({
+      name: `${$moduleName8}::TableVec`,
+      fields: {
+        /** The contents of the table vector. */
+        contents: Table
+      }
+    });
+  }
+});
+
+// packages/messaging/dist/esm/contracts/sui_stack_messaging/attachment.js
 function _new(options) {
   const packageAddress = options.package ?? "@local-pkg/sui-stack-messaging";
   const argumentsTypes = [
@@ -6615,109 +6523,97 @@ function _new(options) {
     arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames)
   });
 }
-
-// messaging/dist/esm/contracts/sui_stack_messaging/message.js
-var $moduleName10 = "@local-pkg/sui-stack-messaging::message";
-var Message = new MoveStruct({
-  name: `${$moduleName10}::Message`,
-  fields: {
-    /** The address of the sender of this message. TODO: should we encrypt this as well? */
-    sender: suiBcs.Address,
-    /** The message content, encrypted with a DEK(Data Encryption Key) */
-    ciphertext: suiBcs.vector(suiBcs.u8()),
-    /** The nonce used for the encryption of the content. */
-    nonce: suiBcs.vector(suiBcs.u8()),
-    /**
-     * The version of the DEK(Data Encryption Key) that was used to encrypt this
-     * Message
-     */
-    key_version: suiBcs.u32(),
-    /** A vector of attachments associated with this message. */
-    attachments: suiBcs.vector(Attachment),
-    /** Timestamp in milliseconds when the message was created. */
-    created_at_ms: suiBcs.u64()
-  }
-});
-var MessageAddedEvent = new MoveStruct({
-  name: `${$moduleName10}::MessageAddedEvent`,
-  fields: {
-    channel_id: suiBcs.Address,
-    message_index: suiBcs.u64(),
-    sender: suiBcs.Address,
-    ciphertext: suiBcs.vector(suiBcs.u8()),
-    nonce: suiBcs.vector(suiBcs.u8()),
-    key_version: suiBcs.u32(),
-    attachment_refs: suiBcs.vector(suiBcs.string()),
-    attachment_nonces: suiBcs.vector(suiBcs.vector(suiBcs.u8())),
-    created_at_ms: suiBcs.u64()
+var $moduleName9, Attachment;
+var init_attachment = __esm({
+  "packages/messaging/dist/esm/contracts/sui_stack_messaging/attachment.js"() {
+    "use strict";
+    init_utils5();
+    init_bcs3();
+    $moduleName9 = "@local-pkg/sui-stack-messaging::attachment";
+    Attachment = new MoveStruct({
+      name: `${$moduleName9}::Attachment`,
+      fields: {
+        blob_ref: suiBcs.string(),
+        encrypted_metadata: suiBcs.vector(suiBcs.u8()),
+        data_nonce: suiBcs.vector(suiBcs.u8()),
+        metadata_nonce: suiBcs.vector(suiBcs.u8()),
+        key_version: suiBcs.u32()
+      }
+    });
   }
 });
 
-// messaging/dist/esm/contracts/sui_stack_messaging/encryption_key_history.js
-var $moduleName11 = "@local-pkg/sui-stack-messaging::encryption_key_history";
-var EncryptionKeyHistory = new MoveStruct({
-  name: `${$moduleName11}::EncryptionKeyHistory`,
-  fields: {
-    latest: suiBcs.vector(suiBcs.u8()),
-    latest_version: suiBcs.u32(),
-    history: TableVec
+// packages/messaging/dist/esm/contracts/sui_stack_messaging/message.js
+var $moduleName10, Message, MessageAddedEvent;
+var init_message = __esm({
+  "packages/messaging/dist/esm/contracts/sui_stack_messaging/message.js"() {
+    "use strict";
+    init_utils5();
+    init_bcs3();
+    init_attachment();
+    $moduleName10 = "@local-pkg/sui-stack-messaging::message";
+    Message = new MoveStruct({
+      name: `${$moduleName10}::Message`,
+      fields: {
+        /** The address of the sender of this message. TODO: should we encrypt this as well? */
+        sender: suiBcs.Address,
+        /** The message content, encrypted with a DEK(Data Encryption Key) */
+        ciphertext: suiBcs.vector(suiBcs.u8()),
+        /** The nonce used for the encryption of the content. */
+        nonce: suiBcs.vector(suiBcs.u8()),
+        /**
+         * The version of the DEK(Data Encryption Key) that was used to encrypt this
+         * Message
+         */
+        key_version: suiBcs.u32(),
+        /** A vector of attachments associated with this message. */
+        attachments: suiBcs.vector(Attachment),
+        /** Timestamp in milliseconds when the message was created. */
+        created_at_ms: suiBcs.u64()
+      }
+    });
+    MessageAddedEvent = new MoveStruct({
+      name: `${$moduleName10}::MessageAddedEvent`,
+      fields: {
+        channel_id: suiBcs.Address,
+        message_index: suiBcs.u64(),
+        sender: suiBcs.Address,
+        ciphertext: suiBcs.vector(suiBcs.u8()),
+        nonce: suiBcs.vector(suiBcs.u8()),
+        key_version: suiBcs.u32(),
+        attachment_refs: suiBcs.vector(suiBcs.string()),
+        attachment_nonces: suiBcs.vector(suiBcs.vector(suiBcs.u8())),
+        created_at_ms: suiBcs.u64()
+      }
+    });
   }
-});
-var EditEncryptionKey = new MoveTuple({
-  name: `${$moduleName11}::EditEncryptionKey`,
-  fields: [suiBcs.bool()]
 });
 
-// messaging/dist/esm/contracts/sui_stack_messaging/channel.js
-var $moduleName12 = "@local-pkg/sui-stack-messaging::channel";
-var Channel = new MoveStruct({
-  name: `${$moduleName12}::Channel`,
-  fields: {
-    id: UID,
-    /** The version of this object, for handling updgrades. */
-    version: suiBcs.u64(),
-    /**
-     * The Authorization struct, gating actions to member permissions. Note: It also,
-     * practically, keeps tracks of the members (MemberCap ID -> Permissions)
-     */
-    auth: Auth,
-    /**
-     * The message history of the channel.
-     *
-     * Using `TableVec` to avoid the object size limit.
-     */
-    messages: TableVec,
-    /**
-     * The total number of messages, for efficiency, so that we don't have to make a
-     * call to messages.length() (Maybe I am overthinking this, need to measure)
-     */
-    messages_count: suiBcs.u64(),
-    /**
-     * A duplicate of the last entry of the messages TableVec,
-     *
-     * Utilize this for efficient fetching e.g. list of conversations showing the
-     * latest message and the user who sent it
-     */
-    last_message: suiBcs.option(Message),
-    /** The timestamp (in milliseconds) when the channel was created. */
-    created_at_ms: suiBcs.u64(),
-    /**
-     * The timestamp (in milliseconds) when the channel was last updated. (e.g. change
-     * in metadata, members, admins, keys)
-     */
-    updated_at_ms: suiBcs.u64(),
-    /**
-     * History of Encryption keys
-     *
-     * Holds the latest key, the latest_version, and a TableVec of the historical keys
-     */
-    encryption_key_history: EncryptionKeyHistory
+// packages/messaging/dist/esm/contracts/sui_stack_messaging/encryption_key_history.js
+var $moduleName11, EncryptionKeyHistory, EditEncryptionKey;
+var init_encryption_key_history = __esm({
+  "packages/messaging/dist/esm/contracts/sui_stack_messaging/encryption_key_history.js"() {
+    "use strict";
+    init_utils5();
+    init_bcs3();
+    init_table_vec();
+    $moduleName11 = "@local-pkg/sui-stack-messaging::encryption_key_history";
+    EncryptionKeyHistory = new MoveStruct({
+      name: `${$moduleName11}::EncryptionKeyHistory`,
+      fields: {
+        latest: suiBcs.vector(suiBcs.u8()),
+        latest_version: suiBcs.u32(),
+        history: TableVec
+      }
+    });
+    EditEncryptionKey = new MoveTuple({
+      name: `${$moduleName11}::EditEncryptionKey`,
+      fields: [suiBcs.bool()]
+    });
   }
 });
-var SimpleMessenger = new MoveTuple({
-  name: `${$moduleName12}::SimpleMessenger`,
-  fields: [suiBcs.bool()]
-});
+
+// packages/messaging/dist/esm/contracts/sui_stack_messaging/channel.js
 function _new2(options) {
   const packageAddress = options.package ?? "@local-pkg/sui-stack-messaging";
   const argumentsTypes = [
@@ -6795,8 +6691,202 @@ function sendMessage(options) {
     arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames)
   });
 }
+var $moduleName12, Channel, SimpleMessenger;
+var init_channel = __esm({
+  "packages/messaging/dist/esm/contracts/sui_stack_messaging/channel.js"() {
+    "use strict";
+    init_utils5();
+    init_bcs3();
+    init_object2();
+    init_auth();
+    init_table_vec();
+    init_message();
+    init_encryption_key_history();
+    $moduleName12 = "@local-pkg/sui-stack-messaging::channel";
+    Channel = new MoveStruct({
+      name: `${$moduleName12}::Channel`,
+      fields: {
+        id: UID,
+        /** The version of this object, for handling updgrades. */
+        version: suiBcs.u64(),
+        /**
+         * The Authorization struct, gating actions to member permissions. Note: It also,
+         * practically, keeps tracks of the members (MemberCap ID -> Permissions)
+         */
+        auth: Auth,
+        /**
+         * The message history of the channel.
+         *
+         * Using `TableVec` to avoid the object size limit.
+         */
+        messages: TableVec,
+        /**
+         * The total number of messages, for efficiency, so that we don't have to make a
+         * call to messages.length() (Maybe I am overthinking this, need to measure)
+         */
+        messages_count: suiBcs.u64(),
+        /**
+         * A duplicate of the last entry of the messages TableVec,
+         *
+         * Utilize this for efficient fetching e.g. list of conversations showing the
+         * latest message and the user who sent it
+         */
+        last_message: suiBcs.option(Message),
+        /** The timestamp (in milliseconds) when the channel was created. */
+        created_at_ms: suiBcs.u64(),
+        /**
+         * The timestamp (in milliseconds) when the channel was last updated. (e.g. change
+         * in metadata, members, admins, keys)
+         */
+        updated_at_ms: suiBcs.u64(),
+        /**
+         * History of Encryption keys
+         *
+         * Holds the latest key, the latest_version, and a TableVec of the historical keys
+         */
+        encryption_key_history: EncryptionKeyHistory
+      }
+    });
+    SimpleMessenger = new MoveTuple({
+      name: `${$moduleName12}::SimpleMessenger`,
+      fields: [suiBcs.bool()]
+    });
+  }
+});
 
-// messaging/dist/esm/constants.js
+// packages/messaging/dist/esm/thunder.js
+function createThunderAction(tool, input, origin) {
+  return {
+    v: THUNDER_VERSION,
+    method: "tools/call",
+    tool,
+    input,
+    origin
+  };
+}
+function serializeThunderAction(action) {
+  return new TextEncoder().encode(JSON.stringify(action));
+}
+function deserializeThunderAction(bytes) {
+  const text = new TextDecoder().decode(bytes);
+  const parsed = JSON.parse(text);
+  if (parsed.v !== THUNDER_VERSION) {
+    throw new Error(`Unsupported Thunder action version: ${parsed.v}`);
+  }
+  if (parsed.method !== "tools/call") {
+    throw new Error(`Unsupported Thunder action method: ${parsed.method}`);
+  }
+  return parsed;
+}
+var THUNDER_VERSION, THUNDER_TOOLS;
+var init_thunder = __esm({
+  "packages/messaging/dist/esm/thunder.js"() {
+    "use strict";
+    THUNDER_VERSION = 1;
+    THUNDER_TOOLS = {
+      REGISTER: "sui:register",
+      TRANSFER: "sui:transfer",
+      SWAP: "sui:swap",
+      STAKE: "sui:stake",
+      SKI: "sui:ski",
+      MESSAGE: "sui:message"
+    };
+  }
+});
+
+// packages/messaging/dist/esm/compose.js
+var compose_exports = {};
+__export(compose_exports, {
+  appendThunderMessage: () => appendThunderMessage
+});
+async function appendThunderMessage(tx, options, envelopeEncryption) {
+  const { packageId, channelId, memberCapId, action, encryptedKey, sender } = options;
+  const messageBytes = serializeThunderAction(action);
+  const messageText = new TextDecoder().decode(messageBytes);
+  const { encryptedBytes: ciphertext, nonce } = await envelopeEncryption.encryptText({
+    text: messageText,
+    channelId,
+    sender,
+    memberCapId,
+    encryptedKey
+  });
+  const attachmentType = Attachment.name.replace("@local-pkg/sui-stack-messaging", packageId);
+  const emptyAttachments = tx.moveCall({
+    package: "0x1",
+    module: "vector",
+    function: "empty",
+    arguments: [],
+    typeArguments: [attachmentType]
+  });
+  tx.add(
+    sendMessage({
+      package: packageId,
+      arguments: {
+        self: tx.object(channelId),
+        memberCap: tx.object(memberCapId),
+        ciphertext: tx.pure.vector("u8", ciphertext),
+        nonce: tx.pure.vector("u8", nonce),
+        attachments: emptyAttachments
+      }
+    })
+  );
+}
+var init_compose = __esm({
+  "packages/messaging/dist/esm/compose.js"() {
+    "use strict";
+    init_channel();
+    init_attachment();
+    init_thunder();
+  }
+});
+
+// packages/messaging/dist/esm/client.js
+init_transactions();
+init_utils4();
+init_bcs3();
+
+// packages/messaging/dist/esm/logging/index.js
+import { getLogger as getLogTapeLogger } from "@logtape/logtape";
+
+// packages/messaging/dist/esm/logging/categories.js
+var LOG_CATEGORIES = {
+  /**
+   * Root category for all Messaging SDK logs.
+   * Configure this to enable/disable all SDK logging.
+   */
+  ROOT: ["@mysten/messaging"],
+  /**
+   * Client read operations: fetching channels, messages, members, etc.
+   */
+  CLIENT_READS: ["@mysten/messaging", "client", "reads"],
+  /**
+   * Client write operations: creating channels, sending messages, adding members, etc.
+   */
+  CLIENT_WRITES: ["@mysten/messaging", "client", "writes"],
+  /**
+   * Encryption operations: envelope encryption, key generation, decryption.
+   */
+  ENCRYPTION: ["@mysten/messaging", "encryption"],
+  /**
+   * All storage adapter operations.
+   */
+  STORAGE: ["@mysten/messaging", "storage"],
+  /**
+   * Walrus-specific storage operations.
+   */
+  STORAGE_WALRUS: ["@mysten/messaging", "storage", "walrus"]
+};
+
+// packages/messaging/dist/esm/logging/index.js
+function getLogger(category) {
+  return getLogTapeLogger(category);
+}
+
+// packages/messaging/dist/esm/client.js
+init_channel();
+init_attachment();
+
+// packages/messaging/dist/esm/constants.js
 var TESTNET_PACKAGE_ID = "0x984960ebddd75c15c6d38355ac462621db0ffc7d6647214c802cd3b685e1af3d";
 var MAINNET_PACKAGE_ID = "0x74e34e2e4a2ba60d935db245c0ed93070bbbe23bf1558ae5c6a2a8590c8ad470";
 var DEFAULT_SEAL_APPROVE_CONTRACT = {
@@ -6810,7 +6900,7 @@ var MAINNET_MESSAGING_PACKAGE_CONFIG = {
   packageId: MAINNET_PACKAGE_ID
 };
 
-// messaging/dist/esm/error.js
+// packages/messaging/dist/esm/error.js
 var __typeError = (msg) => {
   throw TypeError(msg);
 };
@@ -6885,7 +6975,7 @@ function toMajorityError(errors) {
   return majorityError;
 }
 
-// messaging/dist/esm/storage/adapters/walrus/walrus.js
+// packages/messaging/dist/esm/storage/adapters/walrus/walrus.js
 var __typeError2 = (msg) => {
   throw TypeError(msg);
 };
@@ -6910,7 +7000,7 @@ var WalrusStorageAdapter = class {
    * @returns Upload result with blob IDs
    */
   async upload(data, _options) {
-    const logger = getLogger2(LOG_CATEGORIES.STORAGE_WALRUS);
+    const logger = getLogger(LOG_CATEGORIES.STORAGE_WALRUS);
     const totalBytes = data.reduce((sum, d) => sum + d.length, 0);
     logger.debug("Uploading to Walrus", {
       count: data.length,
@@ -6932,7 +7022,7 @@ var WalrusStorageAdapter = class {
    * @returns Array of downloaded data
    */
   async download(ids) {
-    const logger = getLogger2(LOG_CATEGORIES.STORAGE_WALRUS);
+    const logger = getLogger(LOG_CATEGORIES.STORAGE_WALRUS);
     logger.debug("Downloading from Walrus", {
       count: ids.length,
       ids,
@@ -6966,7 +7056,7 @@ uploadQuilts_fn = async function(data) {
   );
   if (!response.ok) {
     const errorText = await response.text();
-    const logger = getLogger2(LOG_CATEGORIES.STORAGE_WALRUS);
+    const logger = getLogger(LOG_CATEGORIES.STORAGE_WALRUS);
     logger.error("Walrus upload failed", {
       status: response.status,
       statusText: response.statusText,
@@ -7008,7 +7098,9 @@ extractQuiltsPatchIds_fn = function(response) {
   throw new Error("Unable to extract quilt patch IDs from response");
 };
 
-// node_modules/.pnpm/@mysten+seal@1.0.1_@mysten+sui@2.4.0_typescript@5.9.3_/node_modules/@mysten/seal/dist/bcs.mjs
+// packages/node_modules/.pnpm/@mysten+seal@1.0.1_@mysten+sui@2.4.0_typescript@5.9.3_/node_modules/@mysten/seal/dist/bcs.mjs
+init_dist2();
+init_bcs3();
 var IBEEncryptions = suiBcs.enum("IBEEncryptions", { BonehFranklinBLS12381: suiBcs.struct("BonehFranklinBLS12381", {
   nonce: suiBcs.bytes(96),
   encryptedShares: suiBcs.vector(suiBcs.bytes(32)),
@@ -7073,7 +7165,7 @@ var KeyServerMove = suiBcs.struct("KeyServer", {
   lastVersion: suiBcs.u64()
 });
 
-// node_modules/.pnpm/@mysten+seal@1.0.1_@mysten+sui@2.4.0_typescript@5.9.3_/node_modules/@mysten/seal/dist/error.mjs
+// packages/node_modules/.pnpm/@mysten+seal@1.0.1_@mysten+sui@2.4.0_typescript@5.9.3_/node_modules/@mysten/seal/dist/error.mjs
 var SealError = class extends Error {
 };
 var UserError2 = class extends SealError {
@@ -7240,7 +7332,9 @@ function toMajorityError2(errors) {
   return majorityError;
 }
 
-// node_modules/.pnpm/@mysten+seal@1.0.1_@mysten+sui@2.4.0_typescript@5.9.3_/node_modules/@mysten/seal/dist/utils.mjs
+// packages/node_modules/.pnpm/@mysten+seal@1.0.1_@mysten+sui@2.4.0_typescript@5.9.3_/node_modules/@mysten/seal/dist/utils.mjs
+init_dist2();
+init_utils4();
 var MAX_U8 = 255;
 var SUI_ADDRESS_LENGTH2 = 32;
 var ENCRYPTED_SHARE_LENGTH = 32;
@@ -7294,7 +7388,10 @@ var Version = class {
   }
 };
 
-// node_modules/.pnpm/@noble+hashes@2.0.1/node_modules/@noble/hashes/sha2.js
+// packages/node_modules/.pnpm/@noble+hashes@2.0.1/node_modules/@noble/hashes/sha2.js
+init_md();
+init_u64();
+init_utils3();
 var SHA256_K = /* @__PURE__ */ Uint32Array.from([
   1116352408,
   1899447441,
@@ -7650,7 +7747,9 @@ var sha512 = /* @__PURE__ */ createHasher(
   /* @__PURE__ */ oidNist(3)
 );
 
-// node_modules/.pnpm/@noble+curves@2.0.1/node_modules/@noble/curves/utils.js
+// packages/node_modules/.pnpm/@noble+curves@2.0.1/node_modules/@noble/curves/utils.js
+init_utils3();
+init_utils3();
 var _0n = /* @__PURE__ */ BigInt(0);
 var _1n = /* @__PURE__ */ BigInt(1);
 function abool(value, title = "") {
@@ -7819,7 +7918,7 @@ function memoized(fn) {
   };
 }
 
-// node_modules/.pnpm/@noble+curves@2.0.1/node_modules/@noble/curves/abstract/modular.js
+// packages/node_modules/.pnpm/@noble+curves@2.0.1/node_modules/@noble/curves/abstract/modular.js
 var _0n2 = /* @__PURE__ */ BigInt(0);
 var _1n2 = /* @__PURE__ */ BigInt(1);
 var _2n = /* @__PURE__ */ BigInt(2);
@@ -8206,7 +8305,7 @@ function mapHashToField(key, fieldOrder, isLE2 = false) {
   return isLE2 ? numberToBytesLE(reduced, fieldLen) : numberToBytesBE(reduced, fieldLen);
 }
 
-// node_modules/.pnpm/@noble+curves@2.0.1/node_modules/@noble/curves/abstract/curve.js
+// packages/node_modules/.pnpm/@noble+curves@2.0.1/node_modules/@noble/curves/abstract/curve.js
 var _0n3 = /* @__PURE__ */ BigInt(0);
 var _1n3 = /* @__PURE__ */ BigInt(1);
 function negateCt(condition, item) {
@@ -8439,7 +8538,7 @@ function createKeygen(randomSecretKey, getPublicKey) {
   };
 }
 
-// node_modules/.pnpm/@noble+curves@2.0.1/node_modules/@noble/curves/abstract/hash-to-curve.js
+// packages/node_modules/.pnpm/@noble+curves@2.0.1/node_modules/@noble/curves/abstract/hash-to-curve.js
 var os2ip = bytesToNumberBE;
 function i2osp(value, length) {
   asafenumber(value);
@@ -8601,7 +8700,8 @@ function createHasher2(Point, mapToCurve, defaults) {
   };
 }
 
-// node_modules/.pnpm/@noble+hashes@2.0.1/node_modules/@noble/hashes/hmac.js
+// packages/node_modules/.pnpm/@noble+hashes@2.0.1/node_modules/@noble/hashes/hmac.js
+init_utils3();
 var _HMAC = class {
   oHash;
   iHash;
@@ -8672,7 +8772,8 @@ var _HMAC = class {
 var hmac = (hash, key, message) => new _HMAC(hash, key).update(message).digest();
 hmac.create = (hash, key) => new _HMAC(hash, key);
 
-// node_modules/.pnpm/@noble+curves@2.0.1/node_modules/@noble/curves/abstract/weierstrass.js
+// packages/node_modules/.pnpm/@noble+curves@2.0.1/node_modules/@noble/curves/abstract/weierstrass.js
+init_utils3();
 var divNearest = (num, den) => (num + (num >= 0 ? den : -den) / _2n2) / den;
 function _splitEndoScalar(k, basis, n) {
   const [[a1, b1], [a2, b2]] = basis;
@@ -9645,7 +9746,7 @@ function ecdsa(Point, hash, ecdsaOpts = {}) {
   });
 }
 
-// node_modules/.pnpm/@noble+curves@2.0.1/node_modules/@noble/curves/abstract/bls.js
+// packages/node_modules/.pnpm/@noble+curves@2.0.1/node_modules/@noble/curves/abstract/bls.js
 var _0n5 = BigInt(0);
 var _1n5 = BigInt(1);
 var _2n3 = BigInt(2);
@@ -9957,7 +10058,7 @@ function bls(fields2, G1_Point2, G2_Point2, params, hasherParams, signatureCoder
   return Object.freeze({ ...base, longSignatures, shortSignatures });
 }
 
-// node_modules/.pnpm/@noble+curves@2.0.1/node_modules/@noble/curves/abstract/tower.js
+// packages/node_modules/.pnpm/@noble+curves@2.0.1/node_modules/@noble/curves/abstract/tower.js
 var _0n6 = BigInt(0);
 var _1n6 = BigInt(1);
 var _2n4 = BigInt(2);
@@ -10669,7 +10770,7 @@ function tower12(opts) {
   return { Fp: Fp3, Fp2: Fp22, Fp6: Fp62, Fp12: Fp122 };
 }
 
-// node_modules/.pnpm/@noble+curves@2.0.1/node_modules/@noble/curves/bls12-381.js
+// packages/node_modules/.pnpm/@noble+curves@2.0.1/node_modules/@noble/curves/bls12-381.js
 var _0n7 = BigInt(0);
 var _1n7 = BigInt(1);
 var _2n5 = BigInt(2);
@@ -11209,7 +11310,7 @@ function mapToG2(scalars) {
   return isogenyMapG2(x, y);
 }
 
-// node_modules/.pnpm/@mysten+seal@1.0.1_@mysten+sui@2.4.0_typescript@5.9.3_/node_modules/@mysten/seal/dist/bls12381.mjs
+// packages/node_modules/.pnpm/@mysten+seal@1.0.1_@mysten+sui@2.4.0_typescript@5.9.3_/node_modules/@mysten/seal/dist/bls12381.mjs
 var G1Element = class G1Element2 {
   static {
     this.SIZE = 48;
@@ -11338,7 +11439,12 @@ var Scalar = class Scalar2 {
   }
 };
 
-// node_modules/.pnpm/@noble+hashes@2.0.1/node_modules/@noble/hashes/sha3.js
+// packages/node_modules/.pnpm/@mysten+seal@1.0.1_@mysten+sui@2.4.0_typescript@5.9.3_/node_modules/@mysten/seal/dist/kdf.mjs
+init_dist2();
+
+// packages/node_modules/.pnpm/@noble+hashes@2.0.1/node_modules/@noble/hashes/sha3.js
+init_u64();
+init_utils3();
 var _0n8 = BigInt(0);
 var _1n8 = BigInt(1);
 var _2n6 = BigInt(2);
@@ -11528,7 +11634,7 @@ var sha3_256 = /* @__PURE__ */ genKeccak(
   /* @__PURE__ */ oidNist(8)
 );
 
-// node_modules/.pnpm/@mysten+seal@1.0.1_@mysten+sui@2.4.0_typescript@5.9.3_/node_modules/@mysten/seal/dist/kdf.mjs
+// packages/node_modules/.pnpm/@mysten+seal@1.0.1_@mysten+sui@2.4.0_typescript@5.9.3_/node_modules/@mysten/seal/dist/kdf.mjs
 var DST = new TextEncoder().encode("SUI-SEAL-IBE-BLS12381-00");
 var KDF_DST = new TextEncoder().encode("SUI-SEAL-IBE-BLS12381-H2-00");
 var DERIVE_KEY_DST = new TextEncoder().encode("SUI-SEAL-IBE-BLS12381-H3-00");
@@ -11580,7 +11686,8 @@ function deriveKey(purpose, baseKey, encryptedShares, threshold, keyServers) {
   return hash.digest();
 }
 
-// node_modules/.pnpm/@mysten+seal@1.0.1_@mysten+sui@2.4.0_typescript@5.9.3_/node_modules/@mysten/seal/dist/ibe.mjs
+// packages/node_modules/.pnpm/@mysten+seal@1.0.1_@mysten+sui@2.4.0_typescript@5.9.3_/node_modules/@mysten/seal/dist/ibe.mjs
+init_dist2();
 var DST_POP = new TextEncoder().encode("SUI-SEAL-IBE-BLS12381-POP-00");
 var IBEServers = class {
   constructor(objectIds) {
@@ -11696,7 +11803,7 @@ function verifyNonceWithLE(nonce, randomness) {
   return verifyNonce(nonce, randomness, true);
 }
 
-// node_modules/.pnpm/@mysten+seal@1.0.1_@mysten+sui@2.4.0_typescript@5.9.3_/node_modules/@mysten/seal/dist/shamir.mjs
+// packages/node_modules/.pnpm/@mysten+seal@1.0.1_@mysten+sui@2.4.0_typescript@5.9.3_/node_modules/@mysten/seal/dist/shamir.mjs
 var GF256_SIZE = 256;
 var GF256 = class GF2562 {
   constructor(value) {
@@ -12386,7 +12493,8 @@ function interpolate(shares) {
   };
 }
 
-// node_modules/.pnpm/@mysten+seal@1.0.1_@mysten+sui@2.4.0_typescript@5.9.3_/node_modules/@mysten/seal/dist/encrypt.mjs
+// packages/node_modules/.pnpm/@mysten+seal@1.0.1_@mysten+sui@2.4.0_typescript@5.9.3_/node_modules/@mysten/seal/dist/encrypt.mjs
+init_dist2();
 async function encrypt({ keyServers, kemType, threshold, packageId, id, encryptionInput }) {
   if (threshold <= 0 || threshold >= MAX_U8 || keyServers.length < threshold || keyServers.length >= MAX_U8) throw new UserError2(`Invalid key servers or threshold ${threshold} for ${keyServers.length} key servers for package ${packageId}`);
   const baseKey = await encryptionInput.generateKey();
@@ -12426,7 +12534,8 @@ function encryptBatched(keyServers, kemType, id, shares, baseKey, threshold) {
   }
 }
 
-// node_modules/.pnpm/@mysten+seal@1.0.1_@mysten+sui@2.4.0_typescript@5.9.3_/node_modules/@mysten/seal/dist/dem.mjs
+// packages/node_modules/.pnpm/@mysten+seal@1.0.1_@mysten+sui@2.4.0_typescript@5.9.3_/node_modules/@mysten/seal/dist/dem.mjs
+init_dist2();
 var iv = Uint8Array.from([
   138,
   55,
@@ -12536,7 +12645,8 @@ function toBytes(n) {
 var EncryptionKeyTag = new TextEncoder().encode("HMAC-CTR-ENC");
 var MacKeyTag = new TextEncoder().encode("HMAC-CTR-MAC");
 
-// node_modules/.pnpm/@mysten+seal@1.0.1_@mysten+sui@2.4.0_typescript@5.9.3_/node_modules/@mysten/seal/dist/decrypt.mjs
+// packages/node_modules/.pnpm/@mysten+seal@1.0.1_@mysten+sui@2.4.0_typescript@5.9.3_/node_modules/@mysten/seal/dist/decrypt.mjs
+init_dist2();
 async function decrypt({ encryptedObject, keys, publicKeys, checkLEEncoding }) {
   if (!encryptedObject.encryptedShares.BonehFranklinBLS12381) throw new UnsupportedFeatureError("Encryption mode not supported");
   const fullId = createFullId(encryptedObject.packageId, encryptedObject.id);
@@ -12566,10 +12676,10 @@ async function decrypt({ encryptedObject, keys, publicKeys, checkLEEncoding }) {
   else throw new InvalidCiphertextError("Invalid ciphertext type");
 }
 
-// node_modules/.pnpm/@mysten+seal@1.0.1_@mysten+sui@2.4.0_typescript@5.9.3_/node_modules/@mysten/seal/dist/version.mjs
+// packages/node_modules/.pnpm/@mysten+seal@1.0.1_@mysten+sui@2.4.0_typescript@5.9.3_/node_modules/@mysten/seal/dist/version.mjs
 var PACKAGE_VERSION2 = "1.0.1";
 
-// node_modules/.pnpm/@mysten+seal@1.0.1_@mysten+sui@2.4.0_typescript@5.9.3_/node_modules/@mysten/seal/dist/elgamal.mjs
+// packages/node_modules/.pnpm/@mysten+seal@1.0.1_@mysten+sui@2.4.0_typescript@5.9.3_/node_modules/@mysten/seal/dist/elgamal.mjs
 function elgamalDecrypt(sk, [c0, c1]) {
   return decrypt2(Scalar.fromBytes(sk), [G1Element.fromBytes(c0), G1Element.fromBytes(c1)]).toBytes();
 }
@@ -12586,7 +12696,8 @@ function toVerificationKey(sk) {
   return G2Element.generator().multiply(Scalar.fromBytes(sk)).toBytes();
 }
 
-// node_modules/.pnpm/@mysten+seal@1.0.1_@mysten+sui@2.4.0_typescript@5.9.3_/node_modules/@mysten/seal/dist/key-server.mjs
+// packages/node_modules/.pnpm/@mysten+seal@1.0.1_@mysten+sui@2.4.0_typescript@5.9.3_/node_modules/@mysten/seal/dist/key-server.mjs
+init_dist2();
 var SUPPORTED_SERVER_VERSIONS = [2, 1];
 var KeyType = /* @__PURE__ */ (function(KeyType$1) {
   KeyType$1[KeyType$1["BonehFranklinBLS12381"] = 0] = "BonehFranklinBLS12381";
@@ -12730,7 +12841,7 @@ async function fetchKeysForAllIds({ url, requestSignature, transactionBytes, enc
   }));
 }
 
-// node_modules/.pnpm/@mysten+seal@1.0.1_@mysten+sui@2.4.0_typescript@5.9.3_/node_modules/@mysten/seal/dist/client.mjs
+// packages/node_modules/.pnpm/@mysten+seal@1.0.1_@mysten+sui@2.4.0_typescript@5.9.3_/node_modules/@mysten/seal/dist/client.mjs
 var SealClient = class {
   #suiClient;
   #configs;
@@ -12993,7 +13104,12 @@ var SealClient = class {
   }
 };
 
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/cryptography/signature-scheme.mjs
+// packages/node_modules/.pnpm/@mysten+seal@1.0.1_@mysten+sui@2.4.0_typescript@5.9.3_/node_modules/@mysten/seal/dist/session-key.mjs
+init_dist2();
+init_bcs3();
+init_utils4();
+
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/cryptography/signature-scheme.mjs
 var SIGNATURE_SCHEME_TO_FLAG = {
   ED25519: 0,
   Secp256k1: 1,
@@ -13017,7 +13133,12 @@ var SIGNATURE_FLAG_TO_SCHEME = {
   6: "Passkey"
 };
 
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/cryptography/intent.mjs
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/cryptography/publickey.mjs
+init_sui_types();
+init_bcs3();
+
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/cryptography/intent.mjs
+init_bcs3();
 function messageWithIntent(scope, message) {
   return suiBcs.IntentMessage(suiBcs.bytes(message.length)).serialize({
     intent: {
@@ -13029,7 +13150,10 @@ function messageWithIntent(scope, message) {
   }).toBytes();
 }
 
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/cryptography/publickey.mjs
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/cryptography/publickey.mjs
+init_dist2();
+init_blake2();
+init_utils3();
 function bytesEqual(a, b) {
   if (a === b) return true;
   if (a.length !== b.length) return false;
@@ -13121,7 +13245,10 @@ function parseSerializedKeypairSignature(serializedSignature) {
   }
 }
 
-// node_modules/.pnpm/@noble+curves@2.0.1/node_modules/@noble/curves/abstract/edwards.js
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/keypairs/ed25519/publickey.mjs
+init_dist2();
+
+// packages/node_modules/.pnpm/@noble+curves@2.0.1/node_modules/@noble/curves/abstract/edwards.js
 var _0n9 = BigInt(0);
 var _1n9 = BigInt(1);
 var _2n7 = BigInt(2);
@@ -13541,7 +13668,7 @@ function eddsa(Point, cHash, eddsaOpts = {}) {
   });
 }
 
-// node_modules/.pnpm/@noble+curves@2.0.1/node_modules/@noble/curves/ed25519.js
+// packages/node_modules/.pnpm/@noble+curves@2.0.1/node_modules/@noble/curves/ed25519.js
 var _1n10 = BigInt(1);
 var _2n8 = BigInt(2);
 var _5n2 = BigInt(5);
@@ -13606,7 +13733,7 @@ function ed(opts) {
 }
 var ed25519 = /* @__PURE__ */ ed({});
 
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/keypairs/ed25519/publickey.mjs
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/keypairs/ed25519/publickey.mjs
 var PUBLIC_KEY_SIZE = 32;
 var Ed25519PublicKey = class extends PublicKey2 {
   static {
@@ -13656,7 +13783,11 @@ var Ed25519PublicKey = class extends PublicKey2 {
   }
 };
 
-// node_modules/.pnpm/@noble+hashes@2.0.1/node_modules/@noble/hashes/pbkdf2.js
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/cryptography/mnemonics.mjs
+init_dist2();
+
+// packages/node_modules/.pnpm/@noble+hashes@2.0.1/node_modules/@noble/hashes/pbkdf2.js
+init_utils3();
 function pbkdf2Init(hash, _password, _salt, _opts) {
   ahash(hash);
   const opts = checkOpts({ dkLen: 32, asyncTick: 10 }, _opts);
@@ -13701,7 +13832,7 @@ function pbkdf2(hash, password, salt, opts) {
   return pbkdf2Output(PRF, PRFSalt, DK, prfW, u);
 }
 
-// node_modules/.pnpm/@scure+bip39@2.0.1/node_modules/@scure/bip39/index.js
+// packages/node_modules/.pnpm/@scure+bip39@2.0.1/node_modules/@scure/bip39/index.js
 function nfkd(str) {
   if (typeof str !== "string")
     throw new TypeError("invalid mnemonic type: " + typeof str);
@@ -13719,7 +13850,7 @@ function mnemonicToSeedSync(mnemonic, passphrase = "") {
   return pbkdf2(sha512, normalize(mnemonic).nfkd, psalt(passphrase), { c: 2048, dkLen: 64 });
 }
 
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/cryptography/mnemonics.mjs
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/cryptography/mnemonics.mjs
 function isValidHardenedPath(path) {
   if (!(/* @__PURE__ */ new RegExp("^m\\/44'\\/784'\\/[0-9]+'\\/[0-9]+'\\/[0-9]+'+$")).test(path)) return false;
   return true;
@@ -13731,7 +13862,14 @@ function mnemonicToSeedHex(mnemonics) {
   return toHex(mnemonicToSeed(mnemonics));
 }
 
-// node_modules/.pnpm/@noble+curves@2.0.1/node_modules/@noble/curves/nist.js
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/cryptography/signature.mjs
+init_bcs3();
+
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/keypairs/passkey/publickey.mjs
+init_bcs2();
+init_dist2();
+
+// packages/node_modules/.pnpm/@noble+curves@2.0.1/node_modules/@noble/curves/nist.js
 var p256_CURVE = /* @__PURE__ */ (() => ({
   p: BigInt("0xffffffff00000001000000000000000000000000ffffffffffffffffffffffff"),
   n: BigInt("0xffffffff00000000ffffffffffffffffbce6faada7179e84f3b9cac2fc632551"),
@@ -13744,7 +13882,7 @@ var p256_CURVE = /* @__PURE__ */ (() => ({
 var p256_Point = /* @__PURE__ */ weierstrass(p256_CURVE);
 var p256 = /* @__PURE__ */ ecdsa(p256_Point, sha256);
 
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/keypairs/passkey/publickey.mjs
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/keypairs/passkey/publickey.mjs
 var PASSKEY_PUBLIC_KEY_SIZE = 33;
 var PASSKEY_SIGNATURE_SIZE = 64;
 var SECP256R1_SPKI_HEADER = new Uint8Array([
@@ -13838,7 +13976,11 @@ function parseSerializedPasskeySignature(signature) {
   };
 }
 
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/zklogin/utils.mjs
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/zklogin/publickey.mjs
+init_sui_types();
+
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/zklogin/utils.mjs
+init_utils3();
 function findFirstNonZeroIndex(bytes) {
   for (let i = 0; i < bytes.length; i++) if (bytes[i] !== 0) return i;
   return -1;
@@ -13857,7 +13999,7 @@ function normalizeZkLoginIssuer(iss) {
   return iss;
 }
 
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/zklogin/jwt-utils.mjs
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/zklogin/jwt-utils.mjs
 function base64UrlCharTo6Bits(base64UrlChar) {
   if (base64UrlChar.length !== 1) throw new Error("Invalid base64Url character: " + base64UrlChar);
   const index = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_".indexOf(base64UrlChar);
@@ -13909,7 +14051,8 @@ function extractClaimValue(claim, claimName) {
   return value;
 }
 
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/zklogin/bcs.mjs
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/zklogin/bcs.mjs
+init_dist2();
 var zkLoginSignature = bcs.struct("ZkLoginSignature", {
   inputs: bcs.struct("ZkLoginSignatureInputs", {
     proofPoints: bcs.struct("ZkLoginSignatureInputsProofPoints", {
@@ -13928,12 +14071,16 @@ var zkLoginSignature = bcs.struct("ZkLoginSignature", {
   userSignature: bcs.byteVector()
 });
 
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/zklogin/signature.mjs
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/zklogin/signature.mjs
+init_dist2();
 function parseZkLoginSignature(signature) {
   return zkLoginSignature.parse(typeof signature === "string" ? fromBase64(signature) : signature);
 }
 
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/zklogin/publickey.mjs
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/zklogin/publickey.mjs
+init_dist2();
+init_blake2();
+init_utils3();
 var ZkLoginPublicIdentifier = class ZkLoginPublicIdentifier2 extends PublicKey2 {
   #data;
   #client;
@@ -14090,7 +14237,8 @@ function parseSerializedZkLoginSignature(signature) {
   };
 }
 
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/cryptography/signature.mjs
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/cryptography/signature.mjs
+init_dist2();
 function toSerializedSignature({ signature, signatureScheme, publicKey }) {
   if (!publicKey) throw new Error("`publicKey` is required");
   const pubKeyBytes = publicKey.toRawBytes();
@@ -14125,7 +14273,10 @@ function parseSerializedSignature(serializedSignature) {
   }
 }
 
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/cryptography/keypair.mjs
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/cryptography/keypair.mjs
+init_dist2();
+init_blake2();
+init_base();
 var PRIVATE_KEY_SIZE = 32;
 var SUI_PRIVATE_KEY_PREFIX = "suiprivkey";
 var Signer = class {
@@ -14198,7 +14349,8 @@ function encodeSuiPrivateKey(bytes, scheme) {
   return bech32.encode(SUI_PRIVATE_KEY_PREFIX, bech32.toWords(privKeyBytes));
 }
 
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/keypairs/ed25519/ed25519-hd-key.mjs
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/keypairs/ed25519/ed25519-hd-key.mjs
+init_dist2();
 var ED25519_CURVE = "ed25519 seed";
 var HARDENED_OFFSET = 2147483648;
 var pathRegex = /* @__PURE__ */ new RegExp("^m(\\/[0-9]+')+$");
@@ -14236,7 +14388,7 @@ var derivePath = (path, seed, offset = HARDENED_OFFSET) => {
   });
 };
 
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/keypairs/ed25519/keypair.mjs
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/keypairs/ed25519/keypair.mjs
 var DEFAULT_ED25519_DERIVATION_PATH = "m/44'/784'/0'/0'/0'";
 var Ed25519Keypair = class Ed25519Keypair2 extends Keypair {
   /**
@@ -14349,7 +14501,10 @@ var Ed25519Keypair = class Ed25519Keypair2 extends Keypair {
   }
 };
 
-// node_modules/.pnpm/@noble+curves@2.0.1/node_modules/@noble/curves/secp256k1.js
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/keypairs/secp256k1/publickey.mjs
+init_dist2();
+
+// packages/node_modules/.pnpm/@noble+curves@2.0.1/node_modules/@noble/curves/secp256k1.js
 var secp256k1_CURVE = {
   p: BigInt("0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffc2f"),
   n: BigInt("0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141"),
@@ -14396,7 +14551,7 @@ var Pointk1 = /* @__PURE__ */ weierstrass(secp256k1_CURVE, {
 });
 var secp256k1 = /* @__PURE__ */ ecdsa(Pointk1, sha256);
 
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/keypairs/secp256k1/publickey.mjs
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/keypairs/secp256k1/publickey.mjs
 var SECP256K1_PUBLIC_KEY_SIZE = 33;
 var Secp256k1PublicKey = class extends PublicKey2 {
   static {
@@ -14446,7 +14601,8 @@ var Secp256k1PublicKey = class extends PublicKey2 {
   }
 };
 
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/keypairs/secp256r1/publickey.mjs
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/keypairs/secp256r1/publickey.mjs
+init_dist2();
 var SECP256R1_PUBLIC_KEY_SIZE = 33;
 var Secp256r1PublicKey = class extends PublicKey2 {
   static {
@@ -14496,7 +14652,12 @@ var Secp256r1PublicKey = class extends PublicKey2 {
   }
 };
 
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/multisig/signer.mjs
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/multisig/publickey.mjs
+init_sui_types();
+init_bcs3();
+
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/multisig/signer.mjs
+init_dist2();
 var MultiSigSigner = class extends Signer {
   #pubkey;
   #signers;
@@ -14543,7 +14704,10 @@ var MultiSigSigner = class extends Signer {
   }
 };
 
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/multisig/publickey.mjs
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/multisig/publickey.mjs
+init_dist2();
+init_blake2();
+init_utils3();
 var MAX_SIGNER_IN_MULTISIG = 10;
 var MIN_SIGNER_IN_MULTISIG = 1;
 var MultiSigPublicKey2 = class MultiSigPublicKey3 extends PublicKey2 {
@@ -14714,7 +14878,7 @@ function asIndices(bitmap) {
   return Uint8Array.from(res);
 }
 
-// node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/verify/verify.mjs
+// packages/node_modules/.pnpm/@mysten+sui@2.4.0_typescript@5.9.3/node_modules/@mysten/sui/dist/verify/verify.mjs
 async function verifyPersonalMessageSignature(message, signature, options = {}) {
   const parsedSignature = parseSignature(signature, options);
   if (!await parsedSignature.publicKey.verifyPersonalMessage(message, parsedSignature.serializedSignature)) throw new Error(`Signature is not valid for the provided message`);
@@ -14761,7 +14925,7 @@ function publicKeyFromRawBytes(signatureScheme, bytes, options = {}) {
   return publicKey;
 }
 
-// node_modules/.pnpm/@mysten+seal@1.0.1_@mysten+sui@2.4.0_typescript@5.9.3_/node_modules/@mysten/seal/dist/session-key.mjs
+// packages/node_modules/.pnpm/@mysten+seal@1.0.1_@mysten+sui@2.4.0_typescript@5.9.3_/node_modules/@mysten/seal/dist/session-key.mjs
 var RequestFormat = suiBcs.struct("RequestFormat", {
   ptb: suiBcs.byteVector(),
   encKey: suiBcs.byteVector(),
@@ -14921,14 +15085,17 @@ var SessionKey = class SessionKey2 {
   }
 };
 
-// messaging/dist/esm/encryption/constants.js
+// packages/messaging/dist/esm/encryption/envelopeEncryption.js
+init_utils4();
+
+// packages/messaging/dist/esm/encryption/constants.js
 var ENCRYPTION_PRIMITIVES_CONFIG = {
   keySize: 256,
   nonceSize: 12,
   dekAlgorithm: "AES-GCM"
 };
 
-// messaging/dist/esm/encryption/webCryptoPrimitives.js
+// packages/messaging/dist/esm/encryption/webCryptoPrimitives.js
 var WebCryptoPrimitives = class _WebCryptoPrimitives {
   constructor(config) {
     this.config = config;
@@ -15036,7 +15203,10 @@ var WebCryptoPrimitives = class _WebCryptoPrimitives {
   }
 };
 
-// messaging/dist/esm/encryption/sessionKeyManager.js
+// packages/messaging/dist/esm/encryption/envelopeEncryption.js
+init_transactions();
+
+// packages/messaging/dist/esm/encryption/sessionKeyManager.js
 var SessionKeyManager = class _SessionKeyManager {
   constructor(sessionKey, sessionKeyConfig, suiClient, sealApproveContract) {
     this.sessionKey = sessionKey;
@@ -15127,7 +15297,7 @@ var SessionKeyManager = class _SessionKeyManager {
   }
 };
 
-// messaging/dist/esm/encryption/envelopeEncryption.js
+// packages/messaging/dist/esm/encryption/envelopeEncryption.js
 var __typeError3 = (msg) => {
   throw TypeError(msg);
 };
@@ -15181,7 +15351,7 @@ var EnvelopeEncryption = class {
   async generateEncryptedChannelDEK({
     channelId
   }) {
-    const logger = getLogger2(LOG_CATEGORIES.ENCRYPTION);
+    const logger = getLogger(LOG_CATEGORIES.ENCRYPTION);
     logger.debug("Generating encrypted channel DEK", { channelId });
     if (!isValidSuiObjectId(channelId)) {
       throw new Error("The channelId provided is not a valid Sui Object ID");
@@ -15225,7 +15395,7 @@ var EnvelopeEncryption = class {
     encryptedKey,
     memberCapId
   }) {
-    const logger = getLogger2(LOG_CATEGORIES.ENCRYPTION);
+    const logger = getLogger(LOG_CATEGORIES.ENCRYPTION);
     logger.debug("Encrypting text message", {
       channelId,
       textLength: text.length,
@@ -15266,7 +15436,7 @@ var EnvelopeEncryption = class {
     sender,
     memberCapId
   }) {
-    const logger = getLogger2(LOG_CATEGORIES.ENCRYPTION);
+    const logger = getLogger(LOG_CATEGORIES.ENCRYPTION);
     logger.debug("Decrypting text message", {
       channelId,
       ciphertextLength: ciphertext.length,
@@ -15602,7 +15772,7 @@ var EnvelopeEncryption = class {
     channelId,
     memberCapId
   }) {
-    const logger = getLogger2(LOG_CATEGORIES.ENCRYPTION);
+    const logger = getLogger(LOG_CATEGORIES.ENCRYPTION);
     if (!isValidSuiObjectId(channelId)) {
       throw new Error("The channelId provided is not a valid Sui Object ID");
     }
@@ -15666,7 +15836,10 @@ _sessionKeyManager = /* @__PURE__ */ new WeakMap();
 _sealApproveContract = /* @__PURE__ */ new WeakMap();
 _sealConfig = /* @__PURE__ */ new WeakMap();
 
-// messaging/dist/esm/contracts/sui_stack_messaging/creator_cap.js
+// packages/messaging/dist/esm/contracts/sui_stack_messaging/creator_cap.js
+init_utils5();
+init_bcs3();
+init_object2();
 var $moduleName13 = "@local-pkg/sui-stack-messaging::creator_cap";
 var CreatorCap = new MoveStruct({
   name: `${$moduleName13}::CreatorCap`,
@@ -15687,7 +15860,10 @@ function transferToSender(options) {
   });
 }
 
-// messaging/dist/esm/contracts/sui_stack_messaging/member_cap.js
+// packages/messaging/dist/esm/contracts/sui_stack_messaging/member_cap.js
+init_utils5();
+init_bcs3();
+init_object2();
 var $moduleName14 = "@local-pkg/sui-stack-messaging::member_cap";
 var MemberCap = new MoveStruct({
   name: `${$moduleName14}::MemberCap`,
@@ -15727,7 +15903,9 @@ function transferMemberCaps(options) {
   });
 }
 
-// messaging/dist/esm/contracts/sui_stack_messaging/config.js
+// packages/messaging/dist/esm/contracts/sui_stack_messaging/config.js
+init_utils5();
+init_bcs3();
 var $moduleName15 = "@local-pkg/sui-stack-messaging::config";
 var EditConfig = new MoveTuple({
   name: `${$moduleName15}::EditConfig`,
@@ -15754,7 +15932,8 @@ function none(options = {}) {
   });
 }
 
-// messaging/dist/esm/client.js
+// packages/messaging/dist/esm/client.js
+init_message();
 var __typeError4 = (msg) => {
   throw TypeError(msg);
 };
@@ -15964,7 +16143,7 @@ var _SuiStackMessagingClient = class _SuiStackMessagingClient2 {
    * @returns Decrypted channel objects
    */
   async getChannelObjectsByChannelIds(request) {
-    const logger = getLogger2(LOG_CATEGORIES.CLIENT_READS);
+    const logger = getLogger(LOG_CATEGORIES.CLIENT_READS);
     const { channelIds, userAddress, memberCapIds } = request;
     logger.debug("Fetching channel objects by IDs", {
       channelCount: channelIds.length,
@@ -16021,7 +16200,7 @@ var _SuiStackMessagingClient = class _SuiStackMessagingClient2 {
    * @returns CreatorCap object or null if not found
    */
   async getCreatorCap(userAddress, channelId) {
-    const logger = getLogger2(LOG_CATEGORIES.CLIENT_READS);
+    const logger = getLogger(LOG_CATEGORIES.CLIENT_READS);
     logger.debug("Fetching CreatorCap", { userAddress, channelId });
     const creatorCap = await __privateMethod3(this, _SuiStackMessagingClient_instances, findOwnedObjectByChannelId_fn).call(this, CreatorCap, userAddress, channelId);
     if (creatorCap) {
@@ -16044,7 +16223,7 @@ var _SuiStackMessagingClient = class _SuiStackMessagingClient2 {
    * @returns MemberCap object or null if not found
    */
   async getUserMemberCap(userAddress, channelId) {
-    const logger = getLogger2(LOG_CATEGORIES.CLIENT_READS);
+    const logger = getLogger(LOG_CATEGORIES.CLIENT_READS);
     logger.debug("Fetching MemberCap", { userAddress, channelId });
     const memberCap = await __privateMethod3(this, _SuiStackMessagingClient_instances, findOwnedObjectByChannelId_fn).call(this, MemberCap, userAddress, channelId);
     if (memberCap) {
@@ -16065,7 +16244,7 @@ var _SuiStackMessagingClient = class _SuiStackMessagingClient2 {
    */
   async getChannelMembers(channelNameOrId) {
     const channelId = await __privateMethod3(this, _SuiStackMessagingClient_instances, resolveChannelId_fn).call(this, channelNameOrId);
-    const logger = getLogger2(LOG_CATEGORIES.CLIENT_READS);
+    const logger = getLogger(LOG_CATEGORIES.CLIENT_READS);
     logger.debug("Fetching channel members", { channelId, originalInput: channelNameOrId });
     const channelObjectsRes = await __privateGet2(this, _suiClient2).core.getObjects({
       objectIds: [channelId],
@@ -16144,7 +16323,7 @@ var _SuiStackMessagingClient = class _SuiStackMessagingClient2 {
     direction = "backward"
   }) {
     const channelId = await __privateMethod3(this, _SuiStackMessagingClient_instances, resolveChannelId_fn).call(this, channelNameOrId);
-    const logger = getLogger2(LOG_CATEGORIES.CLIENT_READS);
+    const logger = getLogger(LOG_CATEGORIES.CLIENT_READS);
     logger.debug("Fetching channel messages", {
       channelId,
       originalInput: channelNameOrId,
@@ -16294,7 +16473,7 @@ var _SuiStackMessagingClient = class _SuiStackMessagingClient2 {
     const resolvedInitialMemberAddresses = initialMemberAddresses ? await __privateMethod3(this, _SuiStackMessagingClient_instances, resolveAddresses_fn).call(this, initialMemberAddresses) : void 0;
     const pkg = __privateGet2(this, _packageConfig).packageId;
     const build = () => {
-      const logger = getLogger2(LOG_CATEGORIES.CLIENT_WRITES);
+      const logger = getLogger(LOG_CATEGORIES.CLIENT_WRITES);
       const tx = new Transaction();
       const config = tx.add(none({ package: pkg }));
       const [channel, creatorCap, creatorMemberCap] = tx.add(
@@ -16463,7 +16642,7 @@ var _SuiStackMessagingClient = class _SuiStackMessagingClient2 {
     encryptedKey
   }) {
     const channelId = await __privateMethod3(this, _SuiStackMessagingClient_instances, resolveChannelId_fn).call(this, channelNameOrId);
-    const logger = getLogger2(LOG_CATEGORIES.CLIENT_WRITES);
+    const logger = getLogger(LOG_CATEGORIES.CLIENT_WRITES);
     const senderAddress = __privateMethod3(this, _SuiStackMessagingClient_instances, resolveSignerAddress_fn).call(this, signer, "send message");
     logger.debug("Sending message", {
       channelId,
@@ -16501,6 +16680,26 @@ var _SuiStackMessagingClient = class _SuiStackMessagingClient2 {
     return { digest, messageId };
   }
   /**
+   * Append a Thunder action message to an existing transaction.
+   * The action is serialized, encrypted, and added as a send_message MoveCall.
+   * This allows atomic journaling: the action and its log entry succeed or fail together.
+   */
+  async appendThunderAction(tx, channelId, memberCapId, action, encryptedKey, sender) {
+    const { appendThunderMessage: appendThunderMessage2 } = await Promise.resolve().then(() => (init_compose(), compose_exports));
+    await appendThunderMessage2(
+      tx,
+      {
+        packageId: __privateGet2(this, _packageConfig).packageId,
+        channelId,
+        memberCapId,
+        action,
+        encryptedKey,
+        sender
+      },
+      __privateGet2(this, _envelopeEncryption)
+    );
+  }
+  /**
    * Add members to a channel
    *
    * @example
@@ -16526,7 +16725,7 @@ var _SuiStackMessagingClient = class _SuiStackMessagingClient2 {
     return async (tx) => {
       const { memberCapId, newMemberAddresses } = options;
       const channelId = await __privateMethod3(this, _SuiStackMessagingClient_instances, resolveChannelId_fn).call(this, options.channelId);
-      const logger = getLogger2(LOG_CATEGORIES.CLIENT_WRITES);
+      const logger = getLogger(LOG_CATEGORIES.CLIENT_WRITES);
       const resolvedAddresses = await __privateMethod3(this, _SuiStackMessagingClient_instances, resolveAddresses_fn).call(this, newMemberAddresses);
       const uniqueAddresses = __privateMethod3(this, _SuiStackMessagingClient_instances, deduplicateAddresses_fn).call(this, resolvedAddresses);
       if (uniqueAddresses.length !== resolvedAddresses.length) {
@@ -16624,7 +16823,7 @@ var _SuiStackMessagingClient = class _SuiStackMessagingClient2 {
     ...options
   }) {
     const channelId = await __privateMethod3(this, _SuiStackMessagingClient_instances, resolveChannelId_fn).call(this, options.channelId);
-    const logger = getLogger2(LOG_CATEGORIES.CLIENT_WRITES);
+    const logger = getLogger(LOG_CATEGORIES.CLIENT_WRITES);
     logger.debug("Adding members to channel", {
       channelId,
       originalInput: options.channelId,
@@ -16690,7 +16889,7 @@ var _SuiStackMessagingClient = class _SuiStackMessagingClient2 {
     signer,
     initialMembers
   }) {
-    const logger = getLogger2(LOG_CATEGORIES.CLIENT_WRITES);
+    const logger = getLogger(LOG_CATEGORIES.CLIENT_WRITES);
     const creatorAddress = __privateMethod3(this, _SuiStackMessagingClient_instances, resolveSignerAddress_fn).call(this, signer, "create channel");
     logger.debug("Creating channel", {
       creatorAddress,
@@ -16883,7 +17082,7 @@ resolveCreatorCapId_fn = async function(options) {
   const { address, channelId } = options;
   const creatorCap = await this.getCreatorCap(address, channelId);
   if (!creatorCap) {
-    const logger = getLogger2(LOG_CATEGORIES.CLIENT_WRITES);
+    const logger = getLogger(LOG_CATEGORIES.CLIENT_WRITES);
     logger.warn("CreatorCap not found for user", { address, channelId });
     throw new MessagingClientError(
       `User ${address} does not own a CreatorCap for channel ${channelId}`
@@ -17230,7 +17429,7 @@ function messaging(options) {
   };
 }
 
-// messaging/dist/esm/utils/addressResolution.js
+// packages/messaging/dist/esm/utils/addressResolution.js
 var __typeError5 = (msg) => {
   throw TypeError(msg);
 };
@@ -17290,7 +17489,7 @@ var SuiNSResolver = class {
 };
 _suinsClient = /* @__PURE__ */ new WeakMap();
 
-// messaging/dist/esm/utils/channelResolution.js
+// packages/messaging/dist/esm/utils/channelResolution.js
 var __typeError6 = (msg) => {
   throw TypeError(msg);
 };
@@ -17501,7 +17700,7 @@ persist_fn = function() {
   }
 };
 
-// messaging/dist/esm/utils/seal-extension.js
+// packages/messaging/dist/esm/utils/seal-extension.js
 function sealClientExtension(options) {
   return {
     name: "seal",
@@ -17515,6 +17714,10 @@ function sealClientExtension(options) {
     }
   };
 }
+
+// packages/messaging/dist/esm/index.js
+init_thunder();
+init_compose();
 export {
   ApiNotImplementedFeatureError,
   DEFAULT_SEAL_APPROVE_CONTRACT,
@@ -17529,15 +17732,21 @@ export {
   SuiNSResolver,
   SuiStackMessagingClient,
   TESTNET_MESSAGING_PACKAGE_CONFIG,
+  THUNDER_TOOLS,
+  THUNDER_VERSION,
   UserError,
   WalrusStorageAdapter,
+  appendThunderMessage,
+  createThunderAction,
+  deserializeThunderAction,
   formatChannelName,
-  getLogger2 as getLogger,
+  getLogger,
   isChannelName,
   isSuiNSName,
   messaging,
   normalizeChannelName,
   sealClientExtension,
+  serializeThunderAction,
   toMajorityError
 };
 /*! Bundled license information:

@@ -13,3 +13,7 @@ export type { ChannelNameResolver } from './utils/channelResolution.js';
 export { formatChannelName, isChannelName, LocalChannelRegistry, normalizeChannelName, PersistentChannelRegistry, } from './utils/channelResolution.js';
 export type { SealClientExtensionOptions } from './utils/seal-extension.js';
 export { sealClientExtension } from './utils/seal-extension.js';
+export { createThunderAction, serializeThunderAction, deserializeThunderAction, THUNDER_TOOLS, THUNDER_VERSION, } from './thunder.js';
+export type { ThunderAction, ThunderTool } from './thunder.js';
+export { appendThunderMessage } from './compose.js';
+export type { AppendThunderMessageOptions } from './compose.js';

@@ -1206,6 +1206,34 @@ export class SuiStackMessagingClient {
 	}
 
 	/**
+	 * Append a Thunder action message to an existing transaction.
+	 * The action is serialized, encrypted, and added as a send_message MoveCall.
+	 * This allows atomic journaling: the action and its log entry succeed or fail together.
+	 */
+	async appendThunderAction(
+		tx: Transaction,
+		channelId: string,
+		memberCapId: string,
+		action: import('./thunder.js').ThunderAction,
+		encryptedKey: EncryptedSymmetricKey,
+		sender: string,
+	): Promise<void> {
+		const { appendThunderMessage } = await import('./compose.js');
+		await appendThunderMessage(
+			tx,
+			{
+				packageId: this.#packageConfig.packageId,
+				channelId,
+				memberCapId,
+				action,
+				encryptedKey,
+				sender,
+			},
+			this.#envelopeEncryption,
+		);
+	}
+
+	/**
 	 * Add members to a channel
 	 *
 	 * @example

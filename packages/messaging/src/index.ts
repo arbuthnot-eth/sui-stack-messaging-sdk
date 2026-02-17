@@ -45,3 +45,14 @@ export {
 export type { SealClientExtensionOptions } from './utils/seal-extension.js';
 // Seal client extension helper
 export { sealClientExtension } from './utils/seal-extension.js';
+// Thunder action journal
+export {
+	createThunderAction,
+	serializeThunderAction,
+	deserializeThunderAction,
+	THUNDER_TOOLS,
+	THUNDER_VERSION,
+} from './thunder.js';
+export type { ThunderAction, ThunderTool } from './thunder.js';
+export { appendThunderMessage } from './compose.js';
+export type { AppendThunderMessageOptions } from './compose.js';
