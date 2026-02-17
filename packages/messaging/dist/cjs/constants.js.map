@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/constants.ts"],
+  "sourcesContent": ["// Copyright (c) Mysten Labs, Inc.\n// SPDX-License-Identifier: Apache-2.0\nimport type { MessagingPackageConfig } from './types.js';\n\nconst TESTNET_PACKAGE_ID = '0x984960ebddd75c15c6d38355ac462621db0ffc7d6647214c802cd3b685e1af3d';\nconst MAINNET_PACKAGE_ID = '0x74e34e2e4a2ba60d935db245c0ed93070bbbe23bf1558ae5c6a2a8590c8ad470';\n\nexport const DEFAULT_SEAL_APPROVE_CONTRACT = {\n\tmodule: 'seal_policies',\n\tfunctionName: 'seal_approve',\n};\n\nexport const TESTNET_MESSAGING_PACKAGE_CONFIG = {\n\tpackageId: TESTNET_PACKAGE_ID,\n} satisfies MessagingPackageConfig;\n\nexport const MAINNET_MESSAGING_PACKAGE_CONFIG = {\n\tpackageId: MAINNET_PACKAGE_ID,\n} satisfies MessagingPackageConfig;\n"],
+  "mappings": ";;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAIA,MAAM,qBAAqB;AAC3B,MAAM,qBAAqB;AAEpB,MAAM,gCAAgC;AAAA,EAC5C,QAAQ;AAAA,EACR,cAAc;AACf;AAEO,MAAM,mCAAmC;AAAA,EAC/C,WAAW;AACZ;AAEO,MAAM,mCAAmC;AAAA,EAC/C,WAAW;AACZ;",
+  "names": []
+}

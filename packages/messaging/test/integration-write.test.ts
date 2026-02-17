@@ -14,8 +14,6 @@ import { MemberCap } from '../src/contracts/sui_stack_messaging/member_cap';
 type TestClient = ReturnType<typeof createTestClient>;
 
 describe('Integration tests - Write Path', () => {
-	const DEFAULT_GRAPHQL_URL = 'http://127.0.0.1:9125';
-
 	let testSetup: TestEnvironmentSetup;
 	let suiJsonRpcClient: any; // Will be set from testSetup
 	// @ts-ignore todo: remove when support added
@@ -35,19 +33,22 @@ describe('Integration tests - Write Path', () => {
 		userSigner = testSetup.userSigner;
 		// packageId = testSetup.packageId; // No longer needed
 
-		// Setup GraphQL and gRPC clients for localnet only
-		if (testSetup.config.environment === 'localnet') {
-			suiGraphQLClient = new SuiGraphQLClient({ url: DEFAULT_GRAPHQL_URL });
+		// Setup GraphQL and gRPC clients for localnet only (use mapped ports from container)
+		if (testSetup.config.environment === 'localnet' && testSetup.config.localnetUrls) {
+			suiGraphQLClient = new SuiGraphQLClient({
+				url: testSetup.config.localnetUrls.graphql,
+				network: 'localnet',
+			});
 			suiGrpcClient = new SuiGrpcClient({
 				network: 'localnet',
-				transport: new GrpcWebFetchTransport({ baseUrl: 'http://127.0.0.1:9000' }),
+				transport: new GrpcWebFetchTransport({ baseUrl: testSetup.config.localnetUrls.grpc }),
 			});
 		}
 	}, 200000);
 
 	afterAll(async () => {
 		// Cleanup test environment if cleanup function is provided
-		if (testSetup.cleanup) {
+		if (testSetup?.cleanup) {
 			await testSetup.cleanup();
 		}
 	});
@@ -363,10 +364,13 @@ describe('Integration tests - Write Path', () => {
 			tx.setSenderIfNotSet(signer.toSuiAddress());
 
 			// Sign and execute the transaction
-			const { digest } = await signer.signAndExecuteTransaction({
+			const txResult = await signer.signAndExecuteTransaction({
 				transaction: tx,
 				client: client.core,
 			});
+			const txn =
+				txResult.$kind === 'Transaction' ? txResult.Transaction : txResult.FailedTransaction;
+			const digest = txn!.digest;
 
 			expect(digest).toBeDefined();
 

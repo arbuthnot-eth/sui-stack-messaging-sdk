@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../../src/logging/index.ts"],
+  "sourcesContent": ["// Copyright (c) Mysten Labs, Inc.\n// SPDX-License-Identifier: Apache-2.0\n\nimport { getLogger as getLogTapeLogger } from '@logtape/logtape';\n\n/**\n * Get a logger for the specified category.\n *\n * This is a thin wrapper around LogTape's getLogger function.\n * Use the CATEGORIES constants for consistency.\n *\n * @param category - The logging category (use CATEGORIES constants)\n * @returns A logger instance\n *\n * @example\n * ```typescript\n * import { getLogger, LOG_CATEGORIES } from './logging/index.js';\n *\n * const logger = getLogger(LOG_CATEGORIES.CLIENT_READS);\n * logger.info(\"Fetching channels\", { count: 10 });\n * ```\n */\nexport function getLogger(category: readonly string[]) {\n\treturn getLogTapeLogger(category);\n}\n\nexport { LOG_CATEGORIES } from './categories.js';\n"],
+  "mappings": ";;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAGA,qBAA8C;AAuB9C,wBAA+B;AAJxB,SAAS,UAAU,UAA6B;AACtD,aAAO,eAAAA,WAAiB,QAAQ;AACjC;",
+  "names": ["getLogTapeLogger"]
+}

@@ -1,22 +1,27 @@
 /* --- Place your @mysten/sui imports here --- */
-import type { SuiTransactionBlockResponse } from "@mysten/sui/client";
-import { SuiClient } from "@mysten/sui/client";
+import type { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
+import type { SuiClientTypes } from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
-
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 
+export type ExecuteTransactionResult = {
+  digest: string;
+  effects?: SuiClientTypes.TransactionEffects;
+  objectChanges?: unknown[];
+};
+
 /**
- * @param {SuiClient} client - The SuiClient instance
+ * @param {SuiJsonRpcClient} client - The Sui JSON-RPC client instance
  * @param {Transaction} transaction - The Transaction instance
  * @param {Ed25519Keypair} signer - The Keypair signer
- * @return {Promise<SuiTransactionBlockResponse>}
+ * @return {Promise<ExecuteTransactionResult>}
  */
 export async function executeTransaction(
-  client: SuiClient,
+  client: SuiJsonRpcClient,
   transaction: Transaction,
   signer: Ed25519Keypair
-): Promise<SuiTransactionBlockResponse> {
-  const txResult = await client.signAndExecuteTransaction({
+): Promise<ExecuteTransactionResult> {
+  const result = await client.signAndExecuteTransaction({
     transaction,
     signer,
     options: {
@@ -25,6 +30,17 @@ export async function executeTransaction(
     },
   });
 
-  // await client.waitForTransaction({ digest: txResult.digest });
-  return txResult;
+  if (result.effects?.status?.status === "failure") {
+    throw new Error(
+      `Transaction failed: ${result.effects.status.error ?? "Unknown error"}`
+    );
+  }
+
+  await client.waitForTransaction({ digest: result.digest });
+
+  return {
+    digest: result.digest,
+    effects: result.effects as SuiClientTypes.TransactionEffects | undefined,
+    objectChanges: result.objectChanges as unknown[] | undefined,
+  };
 }

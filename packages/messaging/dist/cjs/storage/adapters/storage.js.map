@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../../../src/storage/adapters/storage.ts"],
+  "sourcesContent": ["// Copyright (c) Mysten Labs, Inc.\n// SPDX-License-Identifier: Apache-2.0\nexport type StorageOptions = {\n\t[key: string]: unknown;\n};\n\nexport type StorageConfig =\n\t| {\n\t\t\tpublisher: string;\n\t\t\taggregator: string;\n\t\t\tepochs: number;\n\t\t\tuploadRelay?: never;\n\t  }\n\t| {\n\t\t\tepochs: number;\n\t\t\tuploadRelay: string;\n\t\t\taggregator: string;\n\t\t\tpublisher?: never;\n\t  };\n\nexport interface StorageAdapter {\n\tupload(data: Uint8Array[], options: StorageOptions): Promise<{ ids: string[] }>;\n\tdownload(ids: string[]): Promise<Uint8Array[]>;\n}\n"],
+  "mappings": ";;;;;;;;;;;;;;AAAA;AAAA;",
+  "names": []
+}

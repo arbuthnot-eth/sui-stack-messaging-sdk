@@ -3,7 +3,7 @@ import { createFactory } from "hono/factory";
 import { SuiContractService } from "./suiContractService.js";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { decodeSuiPrivateKey } from "@mysten/sui/cryptography";
-import { SuiClient } from "@mysten/sui/client";
+import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
 import { config } from "../../appConfig.js";
 
 // Define types for our dependencies
@@ -14,7 +14,10 @@ type ContractVariables = {
 };
 
 // Initialize services
-const suiClient = new SuiClient({ url: config.suiFullNode });
+const suiClient = new SuiJsonRpcClient({
+  url: config.suiFullNode,
+  network: "testnet",
+});
 const suiContractService = new SuiContractService(suiClient);
 
 // Create a new router instance with typed variables

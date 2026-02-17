@@ -17,16 +17,15 @@ This example shows how the builder or operator of a DeFi protocol, a game, or an
 The app initiates a messaging client, extended with Seal and the Messaging SDK. It utilizes the provided Walrus publisher and aggregator for handling attachments.
 
 ```typescript
-import { SuiClient } from "@mysten/sui/client";
-import { SealClient } from "@mysten/seal";
-import { messaging } from "@mysten/messaging";
+import { SuiClient, getFullnodeUrl } from "@mysten/sui/client";
+import { messaging, sealClientExtension } from "@mysten/messaging";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 
 const supportSigner = Ed25519Keypair.generate(); // Support handle/team account
 
-const client = new SuiClient({ url: "https://fullnode.testnet.sui.io:443" })
+const client = new SuiClient({ url: getFullnodeUrl("testnet") })
   .$extend(
-    SealClient.asClientExtension({
+    sealClientExtension({
       serverConfigs: [
         {
           objectId:
@@ -39,6 +38,7 @@ const client = new SuiClient({ url: "https://fullnode.testnet.sui.io:443" })
           weight: 1,
         },
       ],
+      verifyKeyServers: false,
     })
   )
   .$extend(
@@ -326,15 +326,14 @@ This pattern emulates a Pub/Sub workflow, but by using on-chain & decentralized 
 ### 1. Setup the client (Identity App Publisher)
 
 ```typescript
-import { SuiClient } from "@mysten/sui/client";
-import { SealClient } from "@mysten/seal";
-import { messaging } from "@mysten/messaging";
+import { SuiClient, getFullnodeUrl } from "@mysten/sui/client";
+import { messaging, sealClientExtension } from "@mysten/messaging";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 
 const publisherSigner = Ed25519Keypair.generate(); // Identity app's account
 
-const client = new SuiClient({ url: "https://fullnode.testnet.sui.io:443" })
-  .$extend(SealClient.asClientExtension({ serverConfigs: [] }))
+const client = new SuiClient({ url: getFullnodeUrl("testnet") })
+  .$extend(sealClientExtension({ serverConfigs: [], verifyKeyServers: false }))
   .$extend(
     messaging({
       walrusStorageConfig: {

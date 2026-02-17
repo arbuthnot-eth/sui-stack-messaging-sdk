@@ -43,7 +43,7 @@ describe('Integration tests - Read Path v2', () => {
 	}, 200000);
 
 	afterAll(async () => {
-		if (testSetup.cleanup) {
+		if (testSetup?.cleanup) {
 			await testSetup.cleanup();
 		}
 	});
@@ -61,7 +61,7 @@ describe('Integration tests - Read Path v2', () => {
 
 			while (hasNextPage) {
 				const result = await client.messaging.getChannelMemberships({
-					address: testUser,
+					owner: testUser,
 					cursor,
 					limit: 1, // Small limit to test pagination
 				});
@@ -80,7 +80,7 @@ describe('Integration tests - Read Path v2', () => {
 			const nonExistentUser = '0x0000000000000000000000000000000000000000000000000000000000000000';
 
 			const result = await client.messaging.getChannelMemberships({
-				address: nonExistentUser,
+				owner: nonExistentUser,
 				limit: 10,
 			});
 
@@ -96,7 +96,7 @@ describe('Integration tests - Read Path v2', () => {
 			const testUser = testData.channels[0].members[0].address;
 
 			const result = await client.messaging.getChannelObjectsByAddress({
-				address: testUser,
+				owner: testUser,
 				limit: 10,
 			});
 

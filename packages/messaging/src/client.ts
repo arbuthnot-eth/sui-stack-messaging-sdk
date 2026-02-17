@@ -5,7 +5,7 @@ import type { TransactionResult } from '@mysten/sui/transactions';
 import type { Signer } from '@mysten/sui/cryptography';
 import { deriveDynamicFieldID } from '@mysten/sui/utils';
 import { bcs } from '@mysten/sui/bcs';
-import type { Experimental_SuiClientTypes } from '@mysten/sui/experimental';
+import type { SuiClientTypes } from '@mysten/sui/client';
 import type { SessionKey } from '@mysten/seal';
 
 import { getLogger, LOG_CATEGORIES } from './logging/index.js';
@@ -74,6 +74,20 @@ import {
 } from './contracts/sui_stack_messaging/member_cap.js';
 import { none as noneConfig } from './contracts/sui_stack_messaging/config.js';
 import { Message } from './contracts/sui_stack_messaging/message.js';
+
+const ZERO_SUI_ADDRESS = `0x${'0'.repeat(64)}`;
+
+function normalizeNonZeroSuiAddress(value: unknown): string | null {
+	if (typeof value !== 'string') return null;
+	let raw = value.trim().toLowerCase();
+	if (!raw) return null;
+	if (raw.startsWith('0x')) raw = raw.slice(2);
+	if (!raw || raw.length > 64 || /[^0-9a-f]/.test(raw)) return null;
+	raw = raw.replace(/^0+/, '');
+	if (!raw) return null;
+	const normalized = `0x${raw.padStart(64, '0')}`;
+	return normalized === ZERO_SUI_ADDRESS ? null : normalized;
+}
 
 export class SuiStackMessagingClient {
 	#suiClient: MessagingCompatibleClient;
@@ -225,6 +239,14 @@ export class SuiStackMessagingClient {
 		return this.#channelResolver.resolve(channelNameOrId);
 	}
 
+	#resolveSignerAddress(signer: Signer, action: string): string {
+		const directAddress = normalizeNonZeroSuiAddress(signer.toSuiAddress());
+		if (directAddress) return directAddress;
+		const keyAddress = normalizeNonZeroSuiAddress(signer.getPublicKey().toSuiAddress());
+		if (keyAddress) return keyAddress;
+		throw new MessagingClientError(`Signer returned invalid address while trying to ${action}`);
+	}
+
 	/**
 	 * Get user's member cap ID for a specific channel.
 	 * @param userAddress - The user's address
@@ -337,14 +359,12 @@ export class SuiStackMessagingClient {
 	async getChannelMemberships(
 		request: ChannelMembershipsRequest,
 	): Promise<ChannelMembershipsResponse> {
-		const memberCapsRes = await this.#suiClient.core.getOwnedObjects({
+		const memberCapsRes = await this.#suiClient.core.listOwnedObjects({
 			...request,
 			type: MemberCap.name.replace('@local-pkg/sui-stack-messaging', this.#packageConfig.packageId),
+			include: { content: true },
 		});
-		// Filter out any error objects
-		const validObjects = memberCapsRes.objects.filter(
-			(object): object is Experimental_SuiClientTypes.ObjectResponse => !(object instanceof Error),
-		);
+		const validObjects = memberCapsRes.objects;
 
 		if (validObjects.length === 0) {
 			return {
@@ -395,7 +415,7 @@ export class SuiStackMessagingClient {
 
 		const channelObjects = await this.getChannelObjectsByChannelIds({
 			channelIds: deduplicatedMemberships.map((m) => m.channel_id),
-			userAddress: request.address,
+			userAddress: request.owner,
 			memberCapIds: deduplicatedMemberships.map((m) => m.member_cap_id),
 		});
 
@@ -424,6 +444,7 @@ export class SuiStackMessagingClient {
 
 		const channelObjectsRes = await this.#suiClient.core.getObjects({
 			objectIds: channelIds,
+			include: { content: true },
 		});
 
 		const parsedChannels = await Promise.all(
@@ -553,6 +574,7 @@ export class SuiStackMessagingClient {
 		// 1. Get the channel object to access the auth structure
 		const channelObjectsRes = await this.#suiClient.core.getObjects({
 			objectIds: [channelId],
+			include: { content: true },
 		});
 		const channelObject = channelObjectsRes.objects[0];
 		if (channelObject instanceof Error || !channelObject.content) {
@@ -570,6 +592,7 @@ export class SuiStackMessagingClient {
 		// 3. Fetch all MemberCap objects
 		const memberCapObjects = await this.#suiClient.core.getObjects({
 			objectIds: memberCapIds,
+			include: { content: true },
 		});
 
 		// 4. Parse MemberCap objects and extract member addresses
@@ -643,11 +666,19 @@ export class SuiStackMessagingClient {
 	}: GetChannelMessagesRequest): Promise<DecryptedMessagesResponse> {
 		const channelId = await this.#resolveChannelId(channelNameOrId);
 		const logger = getLogger(LOG_CATEGORIES.CLIENT_READS);
-		logger.debug('Fetching channel messages', { channelId, originalInput: channelNameOrId, userAddress, cursor, limit, direction });
+		logger.debug('Fetching channel messages', {
+			channelId,
+			originalInput: channelNameOrId,
+			userAddress,
+			cursor,
+			limit,
+			direction,
+		});
 
 		// 1. Get channel metadata (we need the raw channel object for metadata, not decrypted)
 		const channelObjectsRes = await this.#suiClient.core.getObjects({
 			objectIds: [channelId],
+			include: { content: true },
 		});
 		const channelObject = channelObjectsRes.objects[0];
 		if (channelObject instanceof Error || !channelObject.content) {
@@ -751,6 +782,7 @@ export class SuiStackMessagingClient {
 		// 1. Get current channel state to check for new messages
 		const channelObjectsRes = await this.#suiClient.core.getObjects({
 			objectIds: [channelId],
+			include: { content: true },
 		});
 		const channelObject = channelObjectsRes.objects[0];
 		if (channelObject instanceof Error || !channelObject.content) {
@@ -819,11 +851,14 @@ export class SuiStackMessagingClient {
 			? await this.#resolveAddresses(initialMemberAddresses)
 			: undefined;
 
+		const pkg = this.#packageConfig.packageId;
 		const build = () => {
 			const logger = getLogger(LOG_CATEGORIES.CLIENT_WRITES);
 			const tx = new Transaction();
-			const config = tx.add(noneConfig());
-			const [channel, creatorCap, creatorMemberCap] = tx.add(newChannel({ arguments: { config } }));
+			const config = tx.add(noneConfig({ package: pkg }));
+			const [channel, creatorCap, creatorMemberCap] = tx.add(
+				newChannel({ package: pkg, arguments: { config } }),
+			);
 
 			// Add initial members if provided
 			// Deduplicate addresses and filter out creator (who already gets a MemberCap automatically)
@@ -831,7 +866,10 @@ export class SuiStackMessagingClient {
 				resolvedInitialMemberAddresses && resolvedInitialMemberAddresses.length > 0
 					? this.#deduplicateAddresses(resolvedInitialMemberAddresses, creatorAddress)
 					: [];
-			if (resolvedInitialMemberAddresses && uniqueAddresses.length !== resolvedInitialMemberAddresses.length) {
+			if (
+				resolvedInitialMemberAddresses &&
+				uniqueAddresses.length !== resolvedInitialMemberAddresses.length
+			) {
 				logger.warn(
 					'Duplicate addresses or creator address detected in initialMemberAddresses. Creator automatically receives a MemberCap. Using unique non-creator addresses only.',
 					{
@@ -846,6 +884,7 @@ export class SuiStackMessagingClient {
 			if (uniqueAddresses.length > 0) {
 				memberCaps = tx.add(
 					addMembers({
+						package: pkg,
 						arguments: {
 							self: channel,
 							memberCap: creatorMemberCap,
@@ -856,16 +895,18 @@ export class SuiStackMessagingClient {
 			}
 
 			// Share the channel and transfer creator cap
-			tx.add(shareChannel({ arguments: { self: channel, creatorCap } }));
+			tx.add(shareChannel({ package: pkg, arguments: { self: channel, creatorCap } }));
 			// Transfer MemberCaps
 			tx.add(
 				transferMemberCap({
+					package: pkg,
 					arguments: { cap: creatorMemberCap, creatorCap, recipient: creatorAddress },
 				}),
 			);
 			if (memberCaps !== null) {
 				tx.add(
 					transferMemberCaps({
+						package: pkg,
 						arguments: {
 							memberAddresses: tx.pure.vector('address', uniqueAddresses),
 							memberCaps,
@@ -875,8 +916,10 @@ export class SuiStackMessagingClient {
 				);
 			}
 
-			tx.add(transferCreatorCap({ arguments: { self: creatorCap } }));
+			tx.add(transferCreatorCap({ package: pkg, arguments: { self: creatorCap } }));
 
+			// Pre-set gas budget to avoid dry-run (helps when fullnode indexing lags on localnet)
+			tx.setGasBudget(50_000_000);
 			return tx;
 		};
 
@@ -897,6 +940,7 @@ export class SuiStackMessagingClient {
 
 			tx.add(
 				addEncryptedKey({
+					package: pkg,
 					arguments: {
 						self: tx.object(creatorCap.channel_id),
 						memberCap: tx.object(creatorMemberCap.id.id),
@@ -905,6 +949,7 @@ export class SuiStackMessagingClient {
 				}),
 			);
 
+			tx.setGasBudget(50_000_000);
 			return {
 				transaction: tx,
 				creatorCap,
@@ -1118,7 +1163,7 @@ export class SuiStackMessagingClient {
 	} & { signer: Signer }): Promise<{ digest: string; messageId: string }> {
 		const channelId = await this.#resolveChannelId(channelNameOrId);
 		const logger = getLogger(LOG_CATEGORIES.CLIENT_WRITES);
-		const senderAddress = signer.toSuiAddress();
+		const senderAddress = this.#resolveSignerAddress(signer, 'send message');
 		logger.debug('Sending message', {
 			channelId,
 			originalInput: channelNameOrId,
@@ -1141,7 +1186,10 @@ export class SuiStackMessagingClient {
 		const { digest, effects } = await this.#executeTransaction(tx, signer, 'send message', true);
 
 		// Get the created Message object ID
-		const messageId = effects.changedObjects.find((obj) => obj.idOperation === 'Created')?.id;
+		const changedObjects = Array.isArray(effects?.changedObjects) ? effects.changedObjects : [];
+		const messageId = changedObjects.find(
+			(obj: SuiClientTypes.ChangedObject) => obj.idOperation === 'Created',
+		)?.objectId;
 		if (messageId === undefined) {
 			throw new MessagingClientError('Message id not found on the transaction effects');
 		}
@@ -1155,6 +1203,34 @@ export class SuiStackMessagingClient {
 		});
 
 		return { digest, messageId };
+	}
+
+	/**
+	 * Append a Thunder action message to an existing transaction.
+	 * The action is serialized, encrypted, and added as a send_message MoveCall.
+	 * This allows atomic journaling: the action and its log entry succeed or fail together.
+	 */
+	async appendThunderAction(
+		tx: Transaction,
+		channelId: string,
+		memberCapId: string,
+		action: import('./thunder.js').ThunderAction,
+		encryptedKey: EncryptedSymmetricKey,
+		sender: string,
+	): Promise<void> {
+		const { appendThunderMessage } = await import('./compose.js');
+		await appendThunderMessage(
+			tx,
+			{
+				packageId: this.#packageConfig.packageId,
+				channelId,
+				memberCapId,
+				action,
+				encryptedKey,
+				sender,
+			},
+			this.#envelopeEncryption,
+		);
 	}
 
 	/**
@@ -1323,9 +1399,10 @@ export class SuiStackMessagingClient {
 
 		// If creatorCapId is not provided, use signer's address to fetch it
 		const { memberCapId, newMemberAddresses, creatorCapId } = options;
+		const signerAddress = this.#resolveSignerAddress(signer, 'add members');
 		const addMembersOptions: AddMembersOptions = creatorCapId
 			? { channelId, memberCapId, newMemberAddresses, creatorCapId }
-			: { channelId, memberCapId, newMemberAddresses, address: signer.toSuiAddress() };
+			: { channelId, memberCapId, newMemberAddresses, address: signerAddress };
 
 		const tx = transaction ?? new Transaction();
 		const addMembersTxBuilder = this.addMembers(addMembersOptions);
@@ -1403,7 +1480,7 @@ export class SuiStackMessagingClient {
 		encryptedKeyBytes: Uint8Array<ArrayBuffer>;
 	}> {
 		const logger = getLogger(LOG_CATEGORIES.CLIENT_WRITES);
-		const creatorAddress = signer.toSuiAddress();
+		const creatorAddress = this.#resolveSignerAddress(signer, 'create channel');
 		logger.debug('Creating channel', {
 			creatorAddress,
 			initialMemberCount: initialMembers?.length ?? 0,
@@ -1460,32 +1537,55 @@ export class SuiStackMessagingClient {
 		action: string,
 		waitForTransaction: boolean = true,
 	) {
-		transaction.setSenderIfNotSet(signer.toSuiAddress());
+		transaction.setSenderIfNotSet(this.#resolveSignerAddress(signer, action));
 
-		const { digest, effects } = await signer.signAndExecuteTransaction({
+		const result = await signer.signAndExecuteTransaction({
 			transaction,
 			client: this.#suiClient,
 		});
+
+		const txn = result.$kind === 'Transaction' ? result.Transaction : result.FailedTransaction;
+		if (!txn) {
+			throw new MessagingClientError(`Failed to ${action}: no transaction in result`);
+		}
+
+		const { digest, effects } = txn;
 
 		if (effects?.status.error) {
 			throw new MessagingClientError(`Failed to ${action} (${digest}): ${effects?.status.error}`);
 		}
 
+		let resolvedEffects = effects;
 		if (waitForTransaction) {
-			await this.#suiClient.core.waitForTransaction({
+			const waitResult = await this.#suiClient.core.waitForTransaction({
 				digest,
+				include: { effects: true },
 			});
+			const waitedTxn =
+				waitResult.$kind === 'Transaction'
+					? waitResult.Transaction
+					: waitResult.FailedTransaction;
+			if (waitedTxn?.effects) {
+				resolvedEffects = waitedTxn.effects;
+			}
 		}
 
-		return { digest, effects };
+		return { digest, effects: resolvedEffects };
 	}
 
 	async #getGeneratedCaps(digest: string) {
-		const {
-			transaction: { effects },
-		} = await this.#suiClient.core.waitForTransaction({
+		const waitResult = await this.#suiClient.core.waitForTransaction({
 			digest,
+			include: { effects: true },
 		});
+		const txn =
+			waitResult.$kind === 'Transaction' ? waitResult.Transaction : waitResult.FailedTransaction;
+		if (!txn) {
+			throw new MessagingClientError(
+				`Failed to get generated caps: no transaction for digest ${digest}`,
+			);
+		}
+		const effects = txn.effects!;
 
 		// Get CreatorCap
 		const creatorCapsWithOwner = await this.#getCreatedObjectsByType({
@@ -1553,22 +1653,24 @@ export class SuiStackMessagingClient {
 		parseFunction,
 		errorMessage,
 	}: {
-		effects: Experimental_SuiClientTypes.TransactionEffects;
+		effects: SuiClientTypes.TransactionEffects;
 		objectTypeName: string;
 		parseFunction: (content: Uint8Array) => T;
 		errorMessage: string;
-	}): Promise<Array<{ object: T; owner: Experimental_SuiClientTypes.ObjectOwner }>> {
+	}): Promise<Array<{ object: T; owner: SuiClientTypes.ObjectOwner }>> {
 		const objectType = objectTypeName.replace(
 			'@local-pkg/sui-stack-messaging',
 			this.#packageConfig.packageId,
 		);
 
-		const createdObjectIds = effects.changedObjects
+		const changedObjects = Array.isArray(effects.changedObjects) ? effects.changedObjects : [];
+		const createdObjectIds = changedObjects
 			.filter((object) => object.idOperation === 'Created' && object.outputState !== 'DoesNotExist')
-			.map((object) => object.id);
+			.map((object) => object.objectId);
 
 		const createdObjects = await this.#suiClient.core.getObjects({
 			objectIds: createdObjectIds,
+			include: { content: true },
 		});
 
 		const matchingObjects = createdObjects.objects.filter(
@@ -1617,7 +1719,7 @@ export class SuiStackMessagingClient {
 	// Note: the given message objects response
 	// is in the form of dynamic_field::Field<u64, Message>
 	async #parseMessageObjects(
-		messageObjects: Experimental_SuiClientTypes.GetObjectsResponse,
+		messageObjects: SuiClientTypes.GetObjectsResponse,
 	): Promise<ParsedMessageObject[]> {
 		const DynamicFieldMessage = bcs.struct('DynamicFieldMessage', {
 			id: bcs.Address, // UID is represented as an address
@@ -1750,7 +1852,10 @@ export class SuiStackMessagingClient {
 			return [];
 		}
 
-		const messageObjects = await this.#suiClient.core.getObjects({ objectIds: messageIds });
+		const messageObjects = await this.#suiClient.core.getObjects({
+			objectIds: messageIds,
+			include: { content: true },
+		});
 		return await this.#parseMessageObjects(messageObjects);
 	}
 
@@ -1820,15 +1925,15 @@ export class SuiStackMessagingClient {
 		let hasNextPage = true;
 
 		while (hasNextPage) {
-			const response = await this.#suiClient.core.getOwnedObjects({
-				address: ownerAddress,
-				cursor,
-				type: objectType,
-			});
+			const response: SuiClientTypes.ListOwnedObjectsResponse<{ content: true }> =
+				await this.#suiClient.core.listOwnedObjects({
+					owner: ownerAddress,
+					cursor,
+					type: objectType,
+					include: { content: true },
+				});
 
-			const validObjects = response.objects.filter(
-				(obj): obj is Experimental_SuiClientTypes.ObjectResponse => !(obj instanceof Error),
-			);
+			const validObjects = response.objects;
 
 			if (validObjects.length > 0) {
 				const contents = await this.#getObjectContents(validObjects);
@@ -1851,7 +1956,7 @@ export class SuiStackMessagingClient {
 	 * Helper method to get object contents, handling both SuiClient and SuiGrpcClient
 	 */
 	async #getObjectContents(
-		objects: Experimental_SuiClientTypes.ObjectResponse[],
+		objects: SuiClientTypes.Object<{ content: true }>[],
 	): Promise<Uint8Array[]> {
 		// First, try to get all contents directly (works for SuiClient)
 		const contentPromises = objects.map(async (object) => {
@@ -1876,8 +1981,11 @@ export class SuiStackMessagingClient {
 
 		if (needsBatchFetch) {
 			// Batch fetch all objects that need content
-			const objectIds = objects.map((obj) => obj.id);
-			const objectResponses = await this.#suiClient.core.getObjects({ objectIds });
+			const objectIds = objects.map((obj) => obj.objectId);
+			const objectResponses = await this.#suiClient.core.getObjects({
+				objectIds,
+				include: { content: true },
+			});
 
 			// Map the results back to the original order and await the content
 			const batchContents = await Promise.all(
@@ -1893,7 +2001,7 @@ export class SuiStackMessagingClient {
 		}
 
 		// Filter out null values and return
-		return contents.filter((content): content is Uint8Array => content !== null);
+		return contents.filter((content): content is Uint8Array<ArrayBuffer> => content !== null);
 	}
 }
 

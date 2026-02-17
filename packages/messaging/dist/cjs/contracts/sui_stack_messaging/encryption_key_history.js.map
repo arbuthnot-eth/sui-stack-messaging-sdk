@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../../../src/contracts/sui_stack_messaging/encryption_key_history.ts"],
+  "sourcesContent": ["// Copyright (c) Mysten Labs, Inc.\n// SPDX-License-Identifier: Apache-2.0\nimport { MoveStruct, MoveTuple } from '../utils/index.js';\nimport { bcs } from '@mysten/sui/bcs';\nimport * as table_vec from './deps/sui/table_vec.js';\nconst $moduleName = '@local-pkg/sui-stack-messaging::encryption_key_history';\nexport const EncryptionKeyHistory = new MoveStruct({\n\tname: `${$moduleName}::EncryptionKeyHistory`,\n\tfields: {\n\t\tlatest: bcs.vector(bcs.u8()),\n\t\tlatest_version: bcs.u32(),\n\t\thistory: table_vec.TableVec,\n\t},\n});\nexport const EditEncryptionKey = new MoveTuple({\n\tname: `${$moduleName}::EditEncryptionKey`,\n\tfields: [bcs.bool()],\n});\n"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAEA,mBAAsC;AACtC,iBAAoB;AACpB,gBAA2B;AAC3B,MAAM,cAAc;AACb,MAAM,uBAAuB,IAAI,wBAAW;AAAA,EAClD,MAAM,GAAG,WAAW;AAAA,EACpB,QAAQ;AAAA,IACP,QAAQ,eAAI,OAAO,eAAI,GAAG,CAAC;AAAA,IAC3B,gBAAgB,eAAI,IAAI;AAAA,IACxB,SAAS,UAAU;AAAA,EACpB;AACD,CAAC;AACM,MAAM,oBAAoB,IAAI,uBAAU;AAAA,EAC9C,MAAM,GAAG,WAAW;AAAA,EACpB,QAAQ,CAAC,eAAI,KAAK,CAAC;AACpB,CAAC;",
+  "names": []
+}

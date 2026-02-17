@@ -589,6 +589,11 @@ export class EnvelopeEncryption {
 				tx.object(memberCapId),
 			],
 		});
+		const sessionKey = await this.#sessionKeyManager.getSessionKey();
+		const sessionAddress = this.#sessionKeyManager.resolveSessionAddress(sessionKey);
+		if (sessionAddress) {
+			tx.setSenderIfNotSet(sessionAddress);
+		}
 		const txBytes = await tx.build({ client: this.#suiClient, onlyTransactionKind: true });
 		// Decrypt using Seal
 		// NOTE: checkLEEncoding is needed for backward compatibility with ciphertexts
@@ -598,7 +603,7 @@ export class EnvelopeEncryption {
 		try {
 			dekBytes = await this.#suiClient.seal.decrypt({
 				data: encryptedKey.encryptedBytes,
-				sessionKey: await this.#sessionKeyManager.getSessionKey(),
+				sessionKey,
 				txBytes,
 				checkLEEncoding: true, // Support legacy LE-encoded ciphertexts
 			});

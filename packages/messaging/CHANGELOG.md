@@ -1,5 +1,17 @@
 # @mysten/messaging
 
+## 0.4.0
+
+### Minor Changes
+
+- Update to Sui SDK 2.x and Seal 1.x for compatibility with latest Sui toolchain
+  - @mysten/sui ^2.4.0
+  - @mysten/seal ^1.0.1
+  - @mysten/bcs ^2.0.2
+  - @mysten/walrus ^1.0.3
+  - Move package builds with Sui 1.65
+  - Scripts and load-tests updated to use SuiJsonRpcClient API (options vs include, objectChanges format)
+
 ## 0.3.0
 
 ### Minor Changes

@@ -8,7 +8,7 @@
 
 # Developer Setup
 
-This guide shows you how to gte started with the Sui Stack Messaging SDK in your application.
+This guide shows you how to get started with the Sui Stack Messaging SDK in your application.
 
 ## Client extension system
 
@@ -26,9 +26,8 @@ The `MessagingClient` uses Sui's client extension system, which allows you to ex
 Before extending your client, ensure you have:
 
 ```typescript
-import { SuiClient } from "@mysten/sui/client";
-import { SealClient } from "@mysten/seal";
-import { messaging } from "@mysten/messaging";
+import { SuiClient, getFullnodeUrl } from "@mysten/sui/client";
+import { messaging, sealClientExtension } from "@mysten/messaging";
 ```
 
 ### Step-by-Step extension
@@ -37,7 +36,7 @@ import { messaging } from "@mysten/messaging";
 
 ```typescript
 const baseClient = new SuiClient({
-  url: "https://fullnode.testnet.sui.io:443",
+  url: getFullnodeUrl("testnet"),
   mvr: {
     overrides: {
       packages: {
@@ -50,11 +49,11 @@ const baseClient = new SuiClient({
 
 **Step 2: Extend with SealClient (required for encryption)**
 
-The `SealClient` configures which key servers to use for encryption and decryption:
+The `SealClient` configures which key servers to use for encryption and decryption. Use the `sealClientExtension` helper:
 
 ```typescript
 const clientWithSeal = baseClient.$extend(
-  SealClient.asClientExtension({
+  sealClientExtension({
     // Testnet key servers
     serverConfigs: [
       {
@@ -68,6 +67,7 @@ const clientWithSeal = baseClient.$extend(
         weight: 1,
       },
     ],
+    verifyKeyServers: false, // Set to true in production
   })
 );
 ```
@@ -111,7 +111,7 @@ const msg = messagingClient.messaging;
 
 ```typescript
 const client = new SuiClient({
-  url: "https://fullnode.testnet.sui.io:443",
+  url: getFullnodeUrl("testnet"),
   mvr: {
     overrides: {
       packages: {
@@ -121,7 +121,7 @@ const client = new SuiClient({
   },
 })
   .$extend(
-    SealClient.asClientExtension({
+    sealClientExtension({
       serverConfigs: [
         {
           objectId:
@@ -134,6 +134,7 @@ const client = new SuiClient({
           weight: 1,
         },
       ],
+      verifyKeyServers: false,
     })
   )
   .$extend(
@@ -286,7 +287,7 @@ sealConfig?: {
 
 #### Distinction between the two Seal configurations
 
-- `SealClient` configuration (`SealClient.asClientExtension`): Defines **which** key servers to use
+- `sealClientExtension`: Defines **which** key servers to use
 - `MessagingClient` sealConfig: Defines operational parameters like encryption **threshold**
 
 Refer to [Seal design](https://seal-docs.wal.app/Design/) and [Seal developer guide](https://seal-docs.wal.app/UsingSeal/) for relevant information.
@@ -294,13 +295,14 @@ Refer to [Seal design](https://seal-docs.wal.app/Design/) and [Seal developer gu
 **Example:**
 
 ```typescript
-// SealClient: Configure key servers
-SealClient.asClientExtension({
+// sealClientExtension: Configure key servers
+sealClientExtension({
   serverConfigs: [
     { objectId: "0x...", weight: 1 },
     { objectId: "0x...", weight: 1 },
     { objectId: "0x...", weight: 1 },
   ],
+  verifyKeyServers: false,
 });
 
 // MessagingClient: Configure threshold (how many servers must participate)

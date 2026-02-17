@@ -1,3 +1,4 @@
+#[allow(deprecated_usage)] // type_name::get -> with_defining_ids, vec_map::size -> length (pending migration)
 module sui_stack_messaging::auth;
 
 use std::type_name::{Self, TypeName};
@@ -52,7 +53,7 @@ public(package) fun grant_permission<WPermission: drop>(
         self.member_permissions.get_mut(&member_cap_id).insert(type_name::get<WPermission>());
     } else {
         let config = self.config.load_value<Config>();
-        let at_max_members = self.member_permissions.size() == config.max_channel_members();
+        let at_max_members = self.member_permissions.length() == config.max_channel_members();
         assert!(!at_max_members, 420);
 
         let permissions = vec_set::singleton(type_name::get<WPermission>());

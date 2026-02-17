@@ -1,5 +1,5 @@
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
-import { SuiClient } from "@mysten/sui/client";
+import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
 import { Transaction } from "@mysten/sui/transactions";
 import { bcs } from "@mysten/sui/bcs";
 import type {
@@ -22,12 +22,15 @@ import {
  * Service for handling Sui user generation and management
  */
 export class SuiUserService {
-  private suiClient: SuiClient;
+  private suiClient: SuiJsonRpcClient;
   private userRepository: UserRepository;
 
   constructor(userRepository: UserRepository) {
     // Initialize SuiClient with testnet
-    this.suiClient = new SuiClient({ url: config.suiFullNode });
+    this.suiClient = new SuiJsonRpcClient({
+      url: config.suiFullNode,
+      network: "testnet",
+    });
     this.userRepository = userRepository;
   }
 
@@ -230,7 +233,7 @@ export class SuiUserService {
         );
 
         // Sign and execute the transaction
-        const response = await this.suiClient.signAndExecuteTransaction({
+        const txResult = await this.suiClient.signAndExecuteTransaction({
           transaction: tx,
           signer: senderKeypair,
           options: {
@@ -239,18 +242,31 @@ export class SuiUserService {
           },
         });
 
-        await this.suiClient.waitForTransaction({ digest: response.digest });
-
-        if (response.effects?.status.status === "success") {
-          result.successCount += batch.length;
-          result.totalFunded += BigInt(batch.length) * config.amountPerUser;
-        } else {
-          console.error("Transaction failed:", response);
+        if (txResult.effects?.status?.status === "failure") {
+          console.error("Transaction failed:", txResult.effects.status);
           result.failedCount += batch.length;
           if (!result.errors) result.errors = [];
           result.errors.push(
             `Batch ${i / config.maxUsersPerBatch + 1} failed: ${
-              response.effects?.status.error || "Unknown error"
+              txResult.effects.status.error || "Unknown error"
+            }`
+          );
+          continue;
+        }
+
+        await this.suiClient.waitForTransaction({ digest: txResult.digest });
+
+        const isSuccess = txResult.effects?.status?.status === "success";
+        if (isSuccess) {
+          result.successCount += batch.length;
+          result.totalFunded += BigInt(batch.length) * config.amountPerUser;
+        } else {
+          console.error("Transaction failed:", txResult);
+          result.failedCount += batch.length;
+          if (!result.errors) result.errors = [];
+          result.errors.push(
+            `Batch ${i / config.maxUsersPerBatch + 1} failed: ${
+              txResult.effects?.status?.error || "Unknown error"
             }`
           );
         }

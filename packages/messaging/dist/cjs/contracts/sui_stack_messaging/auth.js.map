@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../../../src/contracts/sui_stack_messaging/auth.ts"],
+  "sourcesContent": ["// Copyright (c) Mysten Labs, Inc.\n// SPDX-License-Identifier: Apache-2.0\nimport { MoveStruct, MoveTuple } from '../utils/index.js';\nimport { bcs } from '@mysten/sui/bcs';\nimport * as vec_map from './deps/sui/vec_map.js';\nimport * as vec_set from './deps/sui/vec_set.js';\nimport * as type_name from './deps/std/type_name.js';\nimport * as versioned from './deps/sui/versioned.js';\nconst $moduleName = '@local-pkg/sui-stack-messaging::auth';\nexport const Auth = new MoveStruct({\n\tname: `${$moduleName}::Auth`,\n\tfields: {\n\t\tmember_permissions: vec_map.VecMap(bcs.Address, vec_set.VecSet(type_name.TypeName)),\n\t\tconfig: versioned.Versioned,\n\t},\n});\nexport const EditPermissions = new MoveTuple({\n\tname: `${$moduleName}::EditPermissions`,\n\tfields: [bcs.bool()],\n});\n"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAEA,mBAAsC;AACtC,iBAAoB;AACpB,cAAyB;AACzB,cAAyB;AACzB,gBAA2B;AAC3B,gBAA2B;AAC3B,MAAM,cAAc;AACb,MAAM,OAAO,IAAI,wBAAW;AAAA,EAClC,MAAM,GAAG,WAAW;AAAA,EACpB,QAAQ;AAAA,IACP,oBAAoB,QAAQ,OAAO,eAAI,SAAS,QAAQ,OAAO,UAAU,QAAQ,CAAC;AAAA,IAClF,QAAQ,UAAU;AAAA,EACnB;AACD,CAAC;AACM,MAAM,kBAAkB,IAAI,uBAAU;AAAA,EAC5C,MAAM,GAAG,WAAW;AAAA,EACpB,QAAQ,CAAC,eAAI,KAAK,CAAC;AACpB,CAAC;",
+  "names": []
+}

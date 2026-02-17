@@ -14,6 +14,18 @@ import type { SealApproveContract, SessionKeyConfig } from './types.js';
 export class SessionKeyManager {
 	private managedSessionKey?: SessionKey;
 
+	private static normalizeNonZeroSuiAddress(value: unknown): string | null {
+		if (typeof value !== 'string') return null;
+		let raw = value.trim().toLowerCase();
+		if (!raw) return null;
+		if (raw.startsWith('0x')) raw = raw.slice(2);
+		if (!raw || raw.length > 64 || /[^0-9a-f]/.test(raw)) return null;
+		raw = raw.replace(/^0+/, '');
+		if (!raw) return null;
+		const normalized = `0x${raw.padStart(64, '0')}`;
+		return normalized === `0x${'0'.repeat(64)}` ? null : normalized;
+	}
+
 	constructor(
 		private sessionKey: SessionKey | undefined,
 		private readonly sessionKeyConfig: SessionKeyConfig | undefined,
@@ -84,5 +96,28 @@ export class SessionKeyManager {
 		}
 		this.managedSessionKey = undefined;
 		return this.getSessionKey();
+	}
+
+	resolveSessionAddress(activeSessionKey?: SessionKey): string | null {
+		const fromConfig = SessionKeyManager.normalizeNonZeroSuiAddress(this.sessionKeyConfig?.address);
+		if (fromConfig) return fromConfig;
+
+		const key =
+			activeSessionKey ??
+			this.sessionKey ??
+			this.managedSessionKey;
+		if (!key) return null;
+
+		try {
+			const keyWithAddress = key as SessionKey & { address?: unknown; getAddress?: () => unknown };
+			if (typeof keyWithAddress.getAddress === 'function') {
+				const fromMethod = SessionKeyManager.normalizeNonZeroSuiAddress(keyWithAddress.getAddress());
+				if (fromMethod) return fromMethod;
+			}
+			const fromField = SessionKeyManager.normalizeNonZeroSuiAddress(keyWithAddress.address);
+			if (fromField) return fromField;
+		} catch (_error) {}
+
+		return null;
 	}
 }
